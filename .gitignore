@@ -1,0 +1,52 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+
+# .gitignore 파일 내용
+
+# Google Cloud Credentials
+src/main/resources/gcp-credentials.json
+
+# (선택 사항) Spring Boot 프로젝트를 위한 일반적인 항목들
+# 이미 있다면 추가하지 않아도 됩니다.
+.DS_Store
+/build
+/out
+*.log
+*.jar
+*.war

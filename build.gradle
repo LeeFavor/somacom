@@ -1,0 +1,129 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+		// Spring Boot 2.7.x와 호환되는 Spring Cloud GCP 버전
+		springCloudGcpVersion = "3.5.0"
+		
+		// [신규] Google Cloud 라이브러리 버전을 통일합니다. (VerifyError 해결)
+		googleCloudLibrariesVersion = "26.39.0" // Google Cloud 핵심 라이브러리 BOM
+		googleCloudRetailVersion = "2.39.0"   // Retail 라이브러리 BOM
+	}
+}
+
+plugins {
+	id 'java'
+	id 'war'
+	id 'org.springframework.boot' version '2.7.17'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	
+	//쿼리DSL 추가
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+}
+
+group = 'com.kosta'
+version = '0.0.1-SNAPSHOT'
+description = 'Demo project for Spring Boot'
+
+java {
+    sourceCompatibility = '11'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+// [수정됨] Google Cloud BOM 3개를 모두 임포트합니다.
+dependencyManagement {
+    imports {
+		// 1. Spring-GCP 연동 라이브러리
+        mavenBom "com.google.cloud:spring-cloud-gcp-dependencies:${springCloudGcpVersion}"
+		
+		// 2. Google Cloud 핵심 라이브러리 (VerifyError 해결용)
+		// (spring-cloud-gcp-dependencies가 가져오는 오래된 버전을 덮어씁니다)
+		mavenBom "com.google.cloud:libraries-bom:${googleCloudLibrariesVersion}"
+
+        // 3. Retail 라이브러리 (PlacementName 임포트용)
+        mavenBom "com.google.cloud:google-cloud-retail-bom:${googleCloudRetailVersion}"
+    }
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	annotationProcessor 'org.projectlombok:lombok'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// ⭐️ JSP 및 JSTL 의존성 (javax)
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	implementation 'javax.servlet:jstl' // Spring Boot 2.7용 JSTL
+
+	// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+	implementation("org.modelmapper:modelmapper:3.2.0")
+
+	//쿼리DSL 추가
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	//annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}" // JPA 전용 사용
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+	annotationProcessor 'javax.persistence:javax.persistence-api' // java.lang.NoClassDefFoundError(javax.annotation.Generated) 대응
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// --- [Google Cloud Vertex AI 의존성 추가] ---
+	// (버전은 위 BOM에서 자동으로 관리됩니다)
+	
+	// 1. Google Cloud Starter (인증 자동 설정)
+	implementation 'com.google.cloud:spring-cloud-gcp-starter'
+	
+	// 2. Vertex AI Search for retail (Recommendations AI)
+	implementation 'com.google.cloud:google-cloud-retail'
+	
+	// 3. Google API 인증
+	implementation 'com.google.auth:google-auth-library-oauth2-http'
+	
+	// 4. JSON 파싱을 위한 Protobuf 유틸리티
+	implementation 'com.google.protobuf:protobuf-java-util'
+	// --- [의존성 추가 끝] ---
+}
+
+tasks.named('bootBuildImage') {
+	builder = 'paketobuildpacks/builder-jammy-base:latest'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    systemProperty 'file.encoding', 'UTF-8' // ⭐️ JVM 인코딩 설정 추가
+}
+//쿼리DSL 추가 빌드시작
+def querydslDir = "$buildDir/generated/querydsl"
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+//쿼리DSL 추가 빌드끝
