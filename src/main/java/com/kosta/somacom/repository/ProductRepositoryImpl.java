@@ -11,8 +11,8 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.kosta.somacom.domain.part.PartCategory;
 import com.kosta.somacom.dto.request.ProductSearchCondition;
@@ -45,9 +45,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 ))
                 .from(product)
                 .join(product.baseSpec, baseSpec)
-                .join(sellerInfo).on(product.seller.id.eq(sellerInfo.id))
+                .join(sellerInfo).on(product.seller.id.eq(sellerInfo.user.id))
                 // 상세 스펙 테이블들은 필터 조건이 있을 때만 동적으로 조인
-                .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.id))
+                .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.baseSpec.id))
                 .where(
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
@@ -62,8 +62,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .select(product.count())
                 .from(product)
                 .join(product.baseSpec, baseSpec)
-                .join(sellerInfo).on(product.seller.id.eq(sellerInfo.id))
-                .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.id))
+                .join(sellerInfo).on(product.seller.id.eq(sellerInfo.user.id))
+                .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.baseSpec.id))
                 .where(
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
