@@ -212,6 +212,18 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `ProductSearchRequest` DTO (동적 필터 파라미터용) 및 `ProductSearchResponse` DTO 생성
     - `[ ]` `UserIntentLoggingService`를 호출하여 검색 및 필터 이벤트 로깅 (`SYS-3` 구현 시 연결)
 
+- **[신규] `P-201.1`: 검색 자동완성**
+  - **Page**: `common-header`
+  - **API**: `GET /api/products/autocomplete?query={keyword}`
+  - **Logic**: `base_specs` 테이블에서 `name`을 기준으로 `LIKE` 검색하여 상위 N개의 모델명을 반환.
+  - **Tables**: `base_specs`
+  - **Status**: 신규 추가
+  - **Tasks**:
+    - `[ ]` `ProductSearchController`에 자동완성 엔드포인트 추가
+    - `[ ]` `ProductSearchService`에 자동완성 로직 추가
+    - `[ ]` `BaseSpecRepository`에 `findTop10ByNameContainingIgnoreCase`와 같은 쿼리 메소드 추가
+    - `[ ]` `AutocompleteResponse` DTO 생성
+
 - ✅ [완료] `P-202`: 상품 상세 조회
   - **Page**: `P-202`
   - **API**: `GET /api/products/{productId}`
@@ -224,6 +236,17 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `ProductDetailService` 내에서 가격 비교 목록을 조합하는 로직 구현
     - `[x]` `ProductDetailResponse` DTO 생성 (여러 정보를 담는 복합 DTO)
     - `[ ]` `UserIntentLoggingService`를 호출하여 조회 이벤트 로깅 (`SYS-3` 구현 시 연결)
+    - `[ ]` **(즉시 구매)** `OrderService`에 단일 상품으로 주문을 생성하는 로직 추가 또는 기존 로직 확장
+
+- **[신규] `P-203`: 호환성 필터 적용 검색**
+  - **Page**: `P-201-SEARCH`
+  - **API**: `GET /api/products/search?compatFilter=true&...`
+  - **Logic**: `ProductRepositoryImpl`의 `search` 메소드에 호환성 필터 로직 추가. 사용자의 장바구니(`carts`)에 담긴 부품들과 호환되는 `base_spec_id` 목록을 `SYS-1` 엔진을 통해 조회하고, 이 목록을 `WHERE` 절의 `IN` 조건으로 사용.
+  - **Tables**: `carts`, `cart_items`, `product_compatibility_scores`
+  - **Status**: 신규 추가
+  - **Tasks**:
+    - `[ ]` `ProductSearchCondition` DTO에 `boolean compatFilter` 필드 추가
+    - `[ ]` `ProductRepositoryImpl`의 `search` 메소드에 호환성 필터 조건(BooleanExpression) 추가
 
 - ✅ [완료] `P-301`: 장바구니 관리 (추가/조회/수정/삭제)
   - **Page**: `P-301`
@@ -253,6 +276,29 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[ ]` `OrderCreateRequest` DTO 생성
     - `[ ]` `UserIntentLoggingService`를 호출하여 구매 이벤트 로깅
 
+- **[신규] `P-402`: 비밀번호 찾기/재설정**
+  - **Page**: `P-102-USER`의 '비밀번호 찾기' 링크
+  - **API**: `POST /api/auth/password/reset-request`, `POST /api/auth/password/reset`
+  - **Logic**: 이메일로 인증 코드를 발송하고, 사용자가 인증 코드와 새 비밀번호를 입력하면 비밀번호를 업데이트.
+  - **Tables**: `users`, (필요 시) `password_reset_tokens`
+  - **Status**: 신규 추가
+  - **Tasks**:
+    - `[ ]` 이메일 발송 서비스(`EmailService`) 구현 (`spring-boot-starter-mail` 의존성 추가)
+    - `[ ]` `AuthController`에 비밀번호 재설정 요청 및 처리 엔드포인트 추가
+    - `[ ]` `AuthService`에 인증 코드 생성/검증 및 비밀번호 업데이트 로직 추가
+
+- **[신규] `P-601`: 파일 업로드 (상품 이미지 등)**
+  - **Page**: `S-202`, `A-201-ADD` 등
+  - **API**: `POST /api/files/upload`
+  - **Logic**: 판매자 또는 관리자가 업로드한 이미지를 서버 또는 클라우드 스토리지(예: Google Cloud Storage)에 저장하고, 저장된 URL을 반환.
+  - **Tables**: (직접 관련 없음, `products`나 `base_specs`의 `image_url` 필드에 저장됨)
+  - **Status**: 신규 추가
+  - **Tasks**:
+    - `[ ]` `FileController` 및 `FileService` 생성
+    - `[ ]` `multipart/form-data` 처리를 위한 로직 구현
+    - `[ ]` (선택) 클라우드 스토리지 연동 시 관련 SDK 의존성 추가 및 설정
+    - `[ ]` `FileUploadResponse` DTO 생성 (저장된 파일 URL 포함)
+
 ---
 
 ### 🔐 공통 (보안 및 인증)
@@ -270,6 +316,7 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[ ]` `UserDetailsService` 구현체 생성
     - `[ ]` `SecurityConfig` 클래스 생성 (URL별 접근 권한 설정)
     - `[ ]` `JwtAuthenticationFilter` 생성
+    - `[ ]` (로그아웃) Refresh Token을 무효화하는 로직 추가 (선택 사항)
 
 - **[예정] API 접근 제어 설정**
   - **Page**: N/A
