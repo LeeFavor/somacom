@@ -225,21 +225,21 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `ProductDetailResponse` DTO 생성 (여러 정보를 담는 복합 DTO)
     - `[ ]` `UserIntentLoggingService`를 호출하여 조회 이벤트 로깅 (`SYS-3` 구현 시 연결)
 
-- ➡️ [대기] `P-301`: 장바구니 관리 (추가/조회/수정/삭제)
+- ✅ [완료] `P-301`: 장바구니 관리 (추가/조회/수정/삭제)
   - **Page**: `P-301`
   - **API**: `POST /api/cart/items`, `GET /api/cart`, `PUT /api/cart/items/{cartItemId}`, `DELETE /api/cart/items/{cartItemId}`
   - **Logic**: 장바구니 조회 시 `SYS-1` 엔진을 실시간 호출하여 전체 견적의 호환성 상태를 계산하고 응답에 포함.
   - **Logging**: 장바구니에 상품 추가 시 `user_intent_score.cartCount` 증가.
   - **Tables**: `carts`, `cart_items`, `products`
-  - **Status**: 개발 대기
+  - **Status**: 핵심 기능 구현 완료. 호환성 검사 및 로깅 연동 대기.
   - **Tasks**:
-    - `[ ]` `Cart`, `CartItem` Entity 및 Repository 생성
-    - `[ ]` `CartController` 및 `CartService` 생성
-    - `[ ]` `CartService`에 추가/조회/수정/삭제 로직 및 `SYS-1` 호출 로직 구현
-    - `[ ]` `CartResponse` DTO (호환성 결과 포함) 생성
+    - `[x]` `Cart`, `CartItem` Entity 및 Repository 생성
+    - `[x]` `CartController` 및 `CartService` 생성
+    - `[x]` `CartService`에 추가/조회/수정/삭제 로직 구현
+    - `[~]` `CartResponse` DTO (호환성 결과 포함) 생성
     - `[ ]` `UserIntentLoggingService`를 호출하여 장바구니 추가 이벤트 로깅
 
-- **[예정] `P-501`: 주문 생성 (결제)**
+- ➡️ [대기] `P-501`: 주문 생성 (결제)
   - **Page**: `P-302`
   - **API**: `POST /api/orders`
   - **Logic**: `orders` 및 `order_items` 생성, `products.stock_quantity` 재고 차감, `carts`에서 주문된 아이템 삭제. (트랜잭션 처리 필수)
