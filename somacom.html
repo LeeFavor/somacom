@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOMACOM - 지능형 PC 부품 쇼핑몰 (v3.3)</title>
+    
+    <!-- 
+      이 HTML 문서는 v3.2 기준 사용자 피드백(메인 페이지 개편)을
+      반영한 v3.3 구조 스케치입니다.
+    -->
+    
+    <style>
+        :root { 
+            --primary-color: #2563eb; 
+            --primary-hover: #1d4ed8;
+            --border-color: #e5e7eb; 
+            --text-dark: #111827;
+            --text-medium: #374151;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --ad-bg: #fffbeb; /* 광고 카드 배경 */
+            --compat-success: #10b981;
+            --compat-warn: #f59e0b;
+            --compat-fail: #ef4444;
+        }
+        
+        body { 
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-medium); 
+            background: var(--bg-light);
+            margin: 0;
+            padding: 0;
+        }
+        
+        h1, h2, h3, h4, h5, h6 { 
+            margin-top: 1.5em; 
+            margin-bottom: 0.5em;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        hr { border: 0; height: 1px; background-color: var(--border-color); margin: 2em 0; }
+        
+        /* 페이지 구분 스타일 */
+        .page {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 30px;
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .page-title {
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color); 
+            padding-bottom: 10px;
+        }
+        
+        /* 공통 헤더 스타일 */
+        #common-header {
+            background: var(--bg-white);
+            padding: 15px 5%;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        #common-header h1 { margin: 0; font-size: 1.8em; }
+        #common-header h1 a { text-decoration: none; color: var(--primary-color); font-weight: 700; }
+        #common-header nav > ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; align-items: center; }
+        #global-search { display: flex; gap: 5px; }
+        
+        /* 드롭다운 네비게이션 */
+        .nav-item { position: relative; }
+        .nav-item a { text-decoration: none; color: var(--text-medium); padding: 8px 12px; border-radius: 6px; }
+        .nav-item a:hover { background-color: var(--bg-light); }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            min-width: 150px;
+            z-index: 10;
+        }
+        .dropdown-menu a { display: block; padding: 10px 15px; }
+        .nav-item:hover .dropdown-menu { display: block; }
+
+        /* 기능별 스타일 */
+        .feature-section { margin-top: 20px; padding: 20px; background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; }
+        .key-feature { background-color: #fff8e1; border: 1px solid #ffecb3; }
+        .key-feature h3 { color: #c08000; }
+
+        /* 상품 그리드 (P-101, P-201-X) */
+        .product-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 20px; 
+        }
+        .product-card, .ad-card {
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            background: var(--bg-white);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: box-shadow 0.2s, transform 0.2s;
+            overflow: hidden; /* 이미지 radius 적용 */
+        }
+        .product-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .product-card a { text-decoration: none; color: inherit; }
+        .product-card img { width: 100%; height: 220px; object-fit: cover; }
+        .product-card-info { padding: 15px; }
+        .product-card-info h4 { font-size: 16px; margin: 0 0 5px 0; height: 40px; overflow: hidden; }
+        .product-card-info .price { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .product-card-info .seller { font-size: 14px; color: var(--text-light); }
+        
+        /* 광고 카드 */
+        .ad-card {
+            background: var(--ad-bg);
+            border-color: #fde68a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+        }
+        .ad-card h4 { color: #b45309; margin-top: 0; }
+        .ad-card p { font-size: 14px; }
+        .ad-card .product-card-info { padding: 10px 0 0 0; } /* 광고 카드 내 상품 정보 */
+
+        /* 폼 요소 (admin-모델등록.html 스타일) */
+        .form-group { margin-bottom: 20px; }
+        label, .label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-medium); }
+        input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], select, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            font-size: 16px; 
+            box-sizing: border-box; /* 너비 계산 */
+            transition: border-color 0.2s; 
+        }
+        textarea { min-height: 120px; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
+        
+        .checkbox-group { display: flex; gap: 15px; align-items: center; }
+        .checkbox-group label { margin-bottom: 0; font-weight: normal; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        input[type="checkbox"] { width: auto; }
+
+        /* 버튼 (admin-모델등록.html 스타일) */
+        .btn { 
+            padding: 10px 20px; 
+            border-radius: 6px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            border: none; 
+            transition: all 0.2s; 
+            text-decoration: none; /* a 태그 버튼용 */
+            display: inline-block;
+            font-size: 16px;
+        }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: white; border: 1px solid var(--border-color); color: var(--text-medium); }
+        .btn-secondary:hover { background: var(--bg-light); }
+        .btn-danger { background: #fee2e2; color: #b91c1c; }
+        .btn-danger:hover { background: #fecaca; }
+        .btn-small { padding: 6px 12px; font-size: 14px; }
+        
+        /* 테이블 */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid var(--border-color); padding: 12px 15px; text-align: left; vertical-align: middle; }
+        th { background-color: var(--bg-light); }
+        
+        /* 장바구니 광고 행 스타일 */
+        tr.cart-ad-row td {
+            background: var(--ad-bg);
+            border-left: 4px solid #fde68a;
+            border-right: 4px solid #fde68a;
+            text-align: left;
+            padding: 15px;
+        }
+        tr.cart-ad-row td:first-child { border-left-width: 1px; }
+        tr.cart-ad-row td:last-child { border-right-width: 1px; }
+
+        /* 페이지네이션 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 5px;
+        }
+        .pagination a {
+            color: var(--primary-color);
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+        .pagination a.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .pagination a:hover { background-color: var(--bg-light); }
+        
+        /* 유틸리티 */
+        .flex-container { display: flex; gap: 20px; }
+        .flex-grow { flex-grow: 1; }
+        .w-auto { width: auto; }
+        .text-right { text-align: right; }
+        .visually-hidden { display: none; } /* 접근성을 위한 레이블 숨김 */
+
+        /* admin-모델등록.html 전용 스타일 */
+        .sub-label { font-size: 0.9em; color: #6b7280; font-weight: normal; }
+        .spec-form { display: none; /* 기본적으로 숨김 */ animation: fadeIn 0.3s ease-in-out; }
+        .spec-form.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .dynamic-list { border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; background: #f8fafc; }
+        .dynamic-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .dynamic-row input, .dynamic-row select { flex: 1; }
+        .future-expansion { margin-top: 20px; border-top: 1px dashed var(--border-color); padding-top: 20px; }
+        .future-toggle { color: var(--primary-color); cursor: pointer; font-size: 14px; display: inline-block; margin-bottom: 15px; }
+
+        /* [신규] P-101 메인 배너 스타일 */
+        .hero-banner {
+            background: linear-gradient(90deg, var(--primary-color) 0%, #3b82f6 100%);
+            color: var(--bg-white);
+            padding: 50px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .hero-banner h2 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--bg-white);
+        }
+        .hero-banner p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        /* [신규] P-101 섹션 제목 */
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =================================================================== -->
+    <!-- 1. [공통] 상단 헤더 (Header) -->
+    <!-- =================================================================== -->
+    <header id="common-header">
+        <h1><a href="#P-101">SOMACOM</a></h1>
+        
+        <!-- 통합 검색창 (U-203) -->
+        <!-- [수정됨] 검색 결과 페이지 P-201-SEARCH로 연결 -->
+        <form id="global-search" action="#P-201-SEARCH" method="get">
+            <label for="search-input" class="visually-hidden">통합 검색</label>
+            <input type="search" id="search-input" name="query" placeholder="DDR5 램, i5-13600K..." style="width: 300px;">
+            <!-- (U-203.1) base_specs 기준 자동완성 목록 제시 -->
+            <!-- (U-705) 검색어 AI 학습 데이터로 전송 -->
+            <button type="submit" class="btn btn-primary" style="padding: 10px 15px;">검색</button>
+        </form>
+
+        <nav id="global-navigation">
+            <ul>
+                <!-- 로그인/회원가입 드롭다운 -->
+                <li class="nav-item">
+                    <a href="#P-102-USER">로그인</a>
+                    <div class="dropdown-menu">
+                        <a href="#P-102-USER">일반 사용자</a>
+                        <a href="#P-102-SELLER">판매자</a>
+                        <a href="#P-102-ADMIN">관리자</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#P-103-USER">회원가입</a>
+                    <div class="dropdown-menu">
+                        <a href="#P-103-USER">일반 회원가입</a>
+                        <a href="#P-103-SELLER">판매자 입점신청</a>
+                    </div>
+                </li>
+                
+                <!-- 로그인 시 (주석 처리) -->
+                <!-- 
+                <li><a href="#P-401">내 정보</a></li>
+                <li><a href="/logout">로그아웃 (U-103)</a></li>
+                -->
+                
+                <li><a href="#P-301">장바구니 (견적)</a></li>
+                
+                <!-- 조건부 노출 (주석 처리) -->
+                <!-- 
+                <li class="seller-only"><a href="#S-101">판매자 센터</a></li>
+                <li class="admin-only"><a href="#A-101">관리자 페이지</a></li>
+                -->
+            </ul>
+        </nav>
+    </header>
+
+
+    <!-- =================================================================== -->
+    <!-- 2. 사용자 (User) 페이지 -->
+    <!-- =================================================================== -->
+
+    <!-- [수정됨] P-101: 메인 페이지 (상품 목록) -->
+    <main id="P-101" class="page">
+        <h2 class="page-title">[P-101] SOMACOM 메인</h2>
+
+        <!-- [신규] 히어로 배너 -->
+        <section class="hero-banner">
+            <h2>나만의 PC, SOMACOM에서 완성하세요</h2>
+            <p>AI가 추천하는 최적의 부품 조합을 만나보세요.</p>
+        </section>
+
+        <nav id="category-navigation" style="margin-bottom: 20px;">
+            <h3 style="margin-top: 0;">카테고리 네비게이션</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <!-- [수정됨] P-201-SEARCH 페이지로 검색 쿼리와 함께 이동 -->
+                <a href="#P-201-SEARCH?query=all" class="btn btn-secondary">전체</a>
+                <a href="#P-201-SEARCH?query=CPU" class="btn btn-secondary">CPU</a>
+                <a href="#P-201-SEARCH?query=Motherboard" class="btn btn-secondary">Motherboard</a>
+                <a href="#P-201-SEARCH?query=RAM" class="btn btn-secondary">RAM</a>
+                <a href="#P-201-SEARCH?query=GPU" class="btn btn-secondary">GPU</a>
+                <!-- ...기타 카테고리... -->
+            </div>
+            <!-- (U-202) 클릭 시 P-201-SEARCH 페이지로 쿼리(예: "CPU")와 함께 이동합니다. -->
+        </nav>
+
+        <!-- [삭제됨] 호환성 필터 체크박스 (U-203.2) -->
+        
+        <!-- [신규] 섹션 분리 -->
+        <section id="top-sellers">
+            <h3 class="section-title">🔥 지금 가장 인기있는 상품</h3>
+            <div class="product-grid">
+                <!-- (U-202) Product 목록 (인기순 고정) -->
+                <article class="product-card">
+                    <a href="#P-202?product_id=prod_B_456">
+                        <img src="https://placehold.co/220x220/eee/333?text=i5-13600K+(Seller B)" alt="i5-13600K (신품)">
+                        <div class="product-card-info">
+                            <h4>[신품] Intel Core i5-13600K</h4>
+                            <span class="seller">판매자 B</span>
+                            <div class="price">$319</div>
+                        </div>
+                    </a>
+                </article>
+                <article class="product-card">
+                     <a href="#P-202?product_id=prod_A_123">
+                        <img src="https://placehold.co/220x220/eee/333?text=i5-13600K+(Seller A)" alt="i5-13600K (리퍼)">
+                        <div class="product-card-info">
+                            <h4>[리퍼] Intel Core i5-13600K</h4>
+                            <span class="seller">판매자 A</span>
+                            <div class="price">$299</div>
+                        </div>
+                    </a>
+                </article>
+                <article class="product-card">
+                    <a href="#P-202?product_id=prod_C_789">
+                        <img src="https://placehold.co/220x220/eee/333?text=RTX+4070" alt="RTX 4070 (신품)">
+                        <div class="product-card-info">
+                            <h4>[신품] Gigabyte RTX 4070</h4>
+                            <span class="seller">판매자 C</span>
+                            <div class="price">$599</div>
+                        </div>
+                    </a>
+                </article>
+                <article class="product-card">
+                    <a href="#P-202?product_id=prod_D_101">
+                        <img src="https://placehold.co/220x220/eee/333?text=DDR5+RAM" alt="DDR5 RAM (신품)">
+                        <div class="product-card-info">
+                            <h4>[신품] G.Skill DDR5 32GB</h4>
+                            <span class="seller">판매자 D</span>
+                            <div class="price">$120</div>
+                        </div>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <section id="ai-recommendations">
+            <h3 class="section-title">🚀 AI 추천! 회원님을 위한 상품 (U-401)</h3>
+            <!-- 상품 그리드 (shopMain.jsp 참고) -->
+            <div class="product-grid">
+                <!-- (U-401) 로직: AI가 'base_spec' 추천 -> 호환성/인기도 검증 -> 해당 'product' (상품) 노출 -->
+                <article class="ad-card key-feature">
+                    <h4>✨ 회원님을 위한 맞춤 광고</h4>
+                    <a href="#P-202?product_id=ad_prod_1" class="product-card" style="text-decoration: none; color: inherit; width: 100%; margin-top: 10px;">
+                        <img src="https://placehold.co/220x220/fdf9e4/b45309?text=AI+Rec+Mobo" alt="AI 추천 메인보드" style="height: 150px;">
+                        <div class="product-card-info" style="padding: 10px;">
+                            <h4 style="font-size: 15px;">[AI 추천] Z790 Aorus Elite</h4>
+                            <span class="seller">판매자 X</span>
+                            <div class="price">$350</div>
+                        </div>
+                    </a>
+                </article>
+                 <article class="product-card">
+                    <a href="#P-202?product_id=ad_prod_ram">
+                        <img src="https://placehold.co/220x220/eee/333?text=AI+Rec+RAM" alt="AI 추천 램">
+                        <div class="product-card-info">
+                            <h4>[신품] G.Skill DDR5 32GB</h4>
+                            <span class="seller">판매자 Y</span>
+                            <div class="price">$120</div>
+                        </div>
+                    </a>
+                </article>
+                <article class="product-card">
+                    <a href="#P-202?product_id=ad_prod_cooler">
+                        <img src="https://placehold.co/220x220/eee/333?text=AI+Rec+Cooler" alt="AI 추천 쿨러">
+                        <div class="product-card-info">
+                            <h4>[신품] Thermalright PA 120</h4>
+                            <span class="seller">판매자 Z</span>
+                            <div class="price">$45</div>
+                        </div>
+                    </a>
+                </article>
+                <!-- ... AI 추천 상품 카드 반복 ... -->
+            </div>
+        </section>
+    </main>
+    
+    <!-- P-201-SEARCH: 검색 결과 페이지 (변경 없음) -->
+    <main id="P-201-SEARCH" class="page">
+        <!-- (U-203) 검색 쿼리(예: "i5-13600K" 또는 "CPU")에 따라 동적으로 제목 변경 -->
+        <h2 class="page-title">[P-201-SEARCH] "CPU" 검색 결과</h2>
+        
+        <!-- (U-203) 키워드(모델명) 기반 검색. 빈 키워드 검색 시 전체 상품 노출. 인기도순 고정. -->
+
+        <div class="flex-container">
+            <!-- [신규] 필터 사이드바 -->
+            <aside id="filters" style="width: 25%; padding-right: 20px; border-right: 1px solid var(--border-color);">
+                <h3>필터</h3>
+                
+                <!-- 호환성 필터 체크박스 (U-203.2) -->
+                <fieldset class="form-group">
+                    <legend class="label">견적 호환성</legend>
+                    <div class="checkbox-group" style="margin-bottom: 20px;">
+                        <input type="checkbox" id="compat-filter-search" name="compat_filter">
+                        <label for="compat-filter-search">내 가상견적(장바구니)과 호환되는 부품만 보기 (SYS-101)</label>
+                    </div>
+                </fieldset>
+
+                <!-- 
+                  [신규] 동적 사양 필터 (U-203.3 / U-705)
+                  - 검색된 쿼리(예: "CPU")의 카테고리에 맞는 필터 블록만 JS로 노출시킵니다.
+                  - 필터 적용 시 (U-705): AI 학습을 위해 적용된 필터 조합(예: socket=LGA1700)을 로깅합니다.
+                -->
+                
+                <!-- (CPU 검색 시 노출) -->
+                <fieldset id="filter_CPU" class="form-group spec-form active"> <!-- (설명을 위해 active 기본 적용) -->
+                    <legend class="label">(U-705) CPU 상세 필터</legend>
+                    <div class="form-group">
+                        <label>소켓 (Socket)</label>
+                        <div class="checkbox-group"><input type="checkbox" id="f_cpu_s_1"><label for="f_cpu_s_1">LGA 1700</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="f_cpu_s_2"><label for="f_cpu_s_2">AM5</label></div>
+                    </div>
+                    <div class="form-group">
+                        <label>지원 메모리 (Memory Type)</label>
+                        <div class="checkbox-group"><input type="checkbox" id="f_cpu_m_1"><label for="f_cpu_m_1">DDR5</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="f_cpu_m_2"><label for="f_cpu_m_2">DDR4</label></div>
+                    </div>
+                     <div class="form-group">
+                        <label>내장 그래픽 (iGPU)</label>
+                        <div class="checkbox-group"><input type="checkbox" id="f_cpu_g_1"><label for="f_cpu_g_1">포함</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="f_cpu_g_2"><label for="f_cpu_g_2">미포함(F)</label></div>
+                    </div>
+                </fieldset>
+
+                <!-- (Motherboard 검색 시 노출) -->
+                <fieldset id="filter_Motherboard" class="form-group spec-form">
+                    <legend class="label">(U-705) MB 상세 필터</legend>
+                    <div class="form-group">
+                        <label>칩셋 (Chipset)</label>
+                        <div class="checkbox-group"><input type="checkbox" id="f_mb_c_1"><label for="f_mb_c_1">Z790</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="f_mb_c_2"><label for="f_mb_c_2">B650</label></div>
+                    </div>
+                </fieldset>
+                
+                <!-- (GPU 검색 시 노출) -->
+                <fieldset id="filter_GPU" class="form-group spec-form">
+                     <legend class="label">(U-705) GPU 상세 필터</legend>
+                    <div class="form-group">
+                        <label>PCIe 버전</label>
+                        <div class="checkbox-group"><input type="checkbox" id="f_gpu_p_1"><label for="f_gpu_p_1">5.0</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="f_gpu_p_2"><label for="f_gpu_p_2">4.0</label></div>
+                    </div>
+                </fieldset>
+                
+                <!-- (RAM 검색 시 노출) -->
+                <fieldset id="filter_RAM" class="form-group spec-form">
+                     <legend class="label">(U-705) RAM 상세 필터</legend>
+                    <div class="form-group">
+                        <label>메모리 타입</label>
+                        <div class="checkbox-group"><input type="checkbox" id="f_ram_t_1"><label for="f_ram_t_1">DDR5</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="f_ram_t_2"><label for="f_ram_t_2">DDR4</label></div>
+                    </div>
+                     <div class="form-group">
+                        <label>동작 속도 (MHz)</label>
+                        <div class="checkbox-group"><input type="checkbox" id="f_ram_s_1"><label for="f_ram_s_1">5600</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="f_ram_s_2"><label for="f_ram_s_2">3200</label></div>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">필터 적용</button>
+            </aside>
+
+            <!-- 상품 목록 -->
+            <section id="search-results-content" style="width: 75%;">
+                <section class="product-grid">
+                    <!-- (U-203) 검색된 모델명(예: i5-13600K)과 일치하는 '상품(Product)' 목록 -->
+                    <article class="product-card">
+                        <a href="#P-202?product_id=prod_B_456">
+                            <img src="https://placehold.co/220x220/eee/333?text=i5-13600K+(Seller B)" alt="i5-13600K (신품)">
+                            <div class="product-card-info">
+                                <h4>[신품] Intel Core i5-13600K</h4>
+                                <span class="seller">판매자 B</span>
+                                <div class="price">$319</div>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="product-card">
+                         <a href="#P-202?product_id=prod_A_123">
+                            <img src="https://placehold.co/220x220/eee/333?text=i5-13600K+(Seller A)" alt="i5-13600K (리퍼)">
+                            <div class="product-card-info">
+                                <h4>[리퍼] Intel Core i5-13600K</h4>
+                                <span class="seller">판매자 A</span>
+                                <div class="price">$299</div>
+                            </div>
+                        </a>
+                    </article>
+                    <!-- ... 검색 결과 상품 카드 반복 ... -->
+                </section>
+            </section>
+        </div>
+    </main>
+    
+
+    <!-- [P-102] 로그인 페이지들 (변경 없음) -->
+    <main id="P-102-USER" class="page" style="max-width: 500px;">
+        <h2 class="page-title">[P-102] 로그인 (일반 사용자)</h2>
+        <form id="login-form-user">
+            <!-- (U-102) -->
+            <div class="form-group">
+                <label for="login-email-user">이메일:</label>
+                <input type="email" id="login-email-user" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password-user">비밀번호:</label>
+                <input type="password" id="login-password-user" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">로그인</button>
+            <a href="#P-401-PASSWORD-RESET" style="display: block; text-align: right; margin-top: 10px; font-size: 14px;">비밀번호 찾기 (U-104)</a>
+
+            <!-- (U-102.5) 소셜 로그인 -->
+            <div class="social-login" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center;">
+                <p style="margin-bottom: 15px;">--- 또는 소셜 계정으로 로그인 ---</p>
+                <button type="button" class="btn btn-secondary" style="background-color: #DB4437; color: white; margin-right: 10px;">Google</button>
+                <button type="button" class="btn btn-secondary" style="background-color: #03C75A; color: white;">Naver</button>
+            </div>
+            <p style="margin-top: 20px;">계정이 없으신가요? <a href="#P-103-USER">회원가입</a></p>
+        </form>
+    </main>
+    <main id="P-102-SELLER" class="page" style="max-width: 500px;">
+        <h2 class="page-title">[P-102] 로그인 (판매자)</h2>
+        <form id="login-form-seller">
+            <div class="form-group">
+                <label for="login-email-seller">판매자 이메일:</label>
+                <input type="email" id="login-email-seller" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password-seller">비밀번호:</label>
+                <input type="password" id="login-password-seller" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">판매자 로그인</button>
+            <p style="margin-top: 20px; font-size: 14px; text-align: center;">아직 입점 신청 전이신가요? <a href="#P-103-SELLER">판매자 입점신청</a></p>
+        </form>
+    </main>
+    <main id="P-102-ADMIN" class="page" style="max-width: 500px;">
+        <h2 class="page-title">[P-102] 로그인 (관리자)</h2>
+        <form id="login-form-admin">
+            <div class="form-group">
+                <label for="login-email-admin">관리자 ID:</label>
+                <input type="email" id="login-email-admin" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password-admin">비밀번호:</label>
+                <input type="password" id="login-password-admin" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">관리자 로그인</button>
+        </form>
+    </main>
+
+    <!-- [P-103] 회원가입 페이지들 (변경 없음) -->
+    <main id="P-103-USER" class="page" style="max-width: 600px;">
+        <h2 class="page-title">[P-103] 회원가입 (U-101)</h2>
+        <form id="register-form-user">
+            <div class="form-group">
+                <label for="reg-email">이메일 (ID):</label>
+                <input type="email" id="reg-email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-password">비밀번호:</label>
+                <input type="password" id="reg-password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-username">닉네임:</label>
+                <input type="text" id="reg-username" name="username" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">회원가입</button>
+        </form>
+    </main>
+    <main id="P-103-SELLER" class="page" style="max-width: 600px;">
+        <h2 class="page-title">[P-103] 판매자 입점신청 (S-101)</h2>
+        <form id="register-form-seller">
+            <fieldset>
+                <legend style="font-weight: 600; font-size: 18px;">로그인 정보</legend>
+                <div class="form-group">
+                    <label for="reg-seller-email">이메일 (ID):</label>
+                    <input type="email" id="reg-seller-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-seller-password">비밀번호:</label>
+                    <input type="password" id="reg-seller-password" name="password" required>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend style="font-weight: 600; font-size: 18px;">사업자 정보</legend>
+                 <div class="form-group">
+                    <label for="reg-company-name">상호명:</label>
+                    <input type="text" id="reg-company-name" name="company_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-company-number">사업자등록번호:</label>
+                    <input type="text" id="reg-company-number" name="company_number" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-seller-phone">연락처:</label>
+                    <input type="tel" id="reg-seller-phone" name="seller_phone" required>
+                </div>
+            </fieldset>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">입점 신청하기</button>
+        </form>
+    </main>
+
+    <!-- P-202: 상품 상세 페이지 (변경 없음) -->
+    <main id="P-202" class="page">
+        <h2 class="page-title">[P-202] 상품 상세 페이지 (U-201)</h2>
+        
+        <div class="flex-container">
+            <!-- 판매자 상품 정보 (좌측) -->
+            <section id="product-info" style="flex: 2;">
+                <!-- (셀러가 올린 이미지가 우선) -->
+                <img src="https://placehold.co/600x600/eee/333?text=Seller+Image+(Priority)" alt="[신품] Intel Core i5-13600K" style="width: 100%; border-radius: 8px;">
+                
+                <h3 style="margin-top: 20px;">판매자 상품 상세 설명</h3>
+                <div class="feature-section">
+                    <p>(S-201.3) 판매자가 입력한 상세 설명이 여기에 노출됩니다. (예: "정품 박스, 미개봉 신품입니다.")</p>
+                </div>
+            </section>
+            
+            <!-- 구매/스펙 정보 (우측) -->
+            <aside id="product-purchase-info" style="flex: 1;">
+                <h3>[신품] Intel Core i5-13600K</h3>
+                <span class="seller">판매자: <strong>판매자 B</strong></span>
+                
+                <div class="price" style="font-size: 2.5em; margin: 15px 0;">$319</div>
+                
+                <div class="feature-section" style="background: #fafafa;">
+                    <p><strong>배송비:</strong> $5 (U-501)</p>
+                    <p><strong>상품 상태:</strong> <strong>신품 (New)</strong> (S-201.3)</p>
+                </div>
+
+                <form action="#P-301" method="post" style="margin-top: 20px;">
+                    <input type="hidden" name="product_id" value="prod_B_456">
+                    <div class="form-group">
+                        <label for="quantity">수량:</label>
+                        <input type="number" id="quantity" name="gAmount" value="1" min="1" style="width: 80px;">
+                    </div>
+                    <!-- (U-301) 장바구니 담기 -->
+                    <button type="submit" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">장바구니 담기</button>
+                    <!-- (U-201.5) 즉시 구매 -->
+                    <button type="submit" formaction="#P-302-INSTANT" class="btn btn-primary" style="width: 100%;">즉시 구매</button>
+                </form>
+            </aside>
+        </div>
+        
+        <hr>
+
+        <section id="base-model-specs">
+            <h3>[기반 모델] 상세 사양 (U-201.2)</h3>
+            <div class="feature-section">
+                <h4>Intel Core i5-13600K (base_specs)</h4>
+                <ul>
+                    <li>제조사: Intel</li>
+                    <li>소켓: LGA1700</li>
+                    <li>코어: 6P+8E</li>
+                    <li>스레드: 20</li>
+                    <li>지원 메모리: DDR5, DDR4</li>
+                    <li>내장 그래픽: 포함</li>
+                </ul>
+            </div>
+        </section>
+        
+        <hr>
+        
+        <section id="other-sellers-list"> <!-- (U-201.3) -->
+            <h3>이 모델의 다른 판매자 상품 (가격 비교)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>판매자</th>
+                        <th>상품명</th>
+                        <th>상태</th>
+                        <th>가격</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>판매자 A</td>
+                        <td>[리퍼] Intel i5-13600K</td>
+                        <td>리퍼비시</td>
+                        <td><strong>$299</strong></td>
+                        <td><a href="#P-202?product_id=prod_A_123" class="btn btn-secondary btn-small">보러가기</a></td>
+                    </tr>
+                    <tr>
+                        <td>판매자 B</td>
+                        <td>[신품] Intel Core i5-13600K</td>
+                        <td>신품</td>
+                        <td><strong>$319</strong></td>
+                        <td>(현재 페이지)</td>
+                    </tr>
+                    <tr>
+                        <td>판매자 C</td>
+                        <td>[신품] i5-13600K 정품</td>
+                        <td>신품</td>
+                        <td><strong>$320</strong></td>
+                        <td><a href="#P-202?product_id=prod_C_789" class="btn btn-secondary btn-small">보러가기</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <hr>
+
+        <!-- P-202 추천 상품 (U-401) (변경 없음) -->
+        <section id="compatible-recommendations" class="feature-section key-feature">
+            <h3>함께 구매된 추천 상품 (U-401)</h3>
+            <!-- (U-401) 로직: AI가 'base_spec' 추천 -> 호환성/인기도 검증 -> 해당 'product' (상품) 노출 -->
+            <div class="product-grid">
+                <article class="product-card">
+                    <a href="#P-202?product_id=ad_prod_mobo">
+                        <img src="https://placehold.co/220x220/eee/333?text=AI+Rec+Mobo" alt="AI 추천 메인보드">
+                        <div class="product-card-info">
+                            <h4>[신품] Z790 Aorus Elite</h4>
+                            <span class="seller">판매자 X</span>
+                            <div class="price">$350</div>
+                        </div>
+                    </a>
+                </article>
+                <article class="product-card">
+                    <a href="#P-202?product_id=ad_prod_ram">
+                        <img src="https://placehold.co/220x220/eee/333?text=AI+Rec+RAM" alt="AI 추천 램">
+                        <div class="product-card-info">
+                            <h4>[신품] G.Skill DDR5 32GB</h4>
+                            <span class="seller">판매자 Y</span>
+                            <div class="price">$120</div>
+                        </div>
+                    </a>
+                </article>
+                <article class="product-card">
+                    <a href="#P-202?product_id=ad_prod_cooler">
+                        <img src="https://placehold.co/220x220/eee/333?text=AI+Rec+Cooler" alt="AI 추천 쿨러">
+                        <div class="product-card-info">
+                            <h4>[신품] Thermalright PA 120</h4>
+                            <span class="seller">판매자 Z</span>
+                            <div class="price">$45</div>
+                        </div>
+                    </a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- P-301: 장바구니 페이지 (변경 없음) -->
+    <main id="P-301" class="page">
+        <h2 class="page-title">[P-301] 가상 견적 (장바구니)</h2>
+        
+        <!-- 호환성 상태 (U-302) -->
+        <div class="feature-section" style="border-left-width: 5px; border-left-color: var(--compat-success);">
+            <h3 style="margin-top: 0; color: var(--compat-success);">(U-302.1) ✅ 호환성 문제 없음</h3>
+            <!-- (U-302.2) <h3 style="color: var(--compat-warn);">⚠️ 주의: BIOS 업데이트 필요 (Z690)</h3> -->
+            <!-- (U-302.3) <h3 style="color: var(--compat-fail);">❌ 치명적 오류: 소켓 불일치 (LGA1700 vs AM5)</h3> -->
+            <p>현재 견적의 모든 부품이 호환됩니다.</p>
+        </div>
+
+        <form id="cart-form" method="post">
+            <section id="cart-list" style="margin-top: 20px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="cart-check-all"></th>
+                            <th colspan="2">상품정보</th>
+                            <th>판매가</th>
+                            <th>수량</th>
+                            <th>합계</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- (U-301) 상품 목록 -->
+                        <tr>
+                            <td><input type="checkbox" name="cart_item_id" value="cart_id_1" class="cart-check-item" checked></td>
+                            <td><img src="https://placehold.co/100x100/eee/333?text=i5-13600K" alt="상품 이미지" style="width:100px; height: 100px; border-radius: 6px;"></td>
+                            <td>
+                                [판매자 B] Intel i5-13600K (신품)<br>
+                                <a href="#P-301?delete=cart_id_1" class="btn btn-danger btn-small" style="font-size: 12px; padding: 3px 8px;">삭제</a>
+                            </td>
+                            <td>$319</td>
+                            <td><input type="number" id="qty_1" name="quantity_1" value="1" min="1" style="width: 70px;"></td>
+                            <td>$319</td>
+                        </tr>
+                        
+                        <!-- 광고 아이템 (디자인/기능 변경) -->
+                        <tr class="cart-ad-row">
+                            <td></td> <!-- 체크박스 없음 -->
+                            <td colspan="4">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <img src="https://placehold.co/80x80/fdf9e4/b45309?text=AD" alt="광고 상품" style="width: 80px; height: 80px; border-radius: 6px;">
+                                    <div>
+                                        <h4 style="margin: 0; color: #b45309;">✨ (U-401) 이 견적과 호환되는 CPU 쿨러를 찾고 계신가요?</h4>
+                                        <p style="margin: 0;">[AI 추천] Thermalright Peerless Assassin 120 (판매자 Z)</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="#P-202?product_id=ad_prod_2" class="btn btn-primary btn-small" style="width: 100%;">보러가기</a>
+                                <button type="button" class="btn btn-secondary btn-small" style="width: 100%; margin-top: 5px;">카트 담기</button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><input type="checkbox" name="cart_item_id" value="cart_id_2" class="cart-check-item" checked></td>
+                            <td><img src="https://placehold.co/100x100/eee/333?text=DDR5" alt="상품 이미지" style="width:100px; height: 100px; border-radius: 6px;"></td>
+                            <td>
+                                [판매자 D] G.Skill DDR5 32GB (신품)<br>
+                                <a href="#P-301?delete=cart_id_2" class="btn btn-danger btn-small" style="font-size: 12px; padding: 3px 8px;">삭제</a>
+                            </td>
+                            <td>$120</td>
+                            <td><input type="number" id="qty_2" name="quantity_2" value="1" min="1" style="width: 70px;"></td>
+                            <td>$120</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <section id="cart-actions" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <!-- 선택 삭제 / 수량 수정 버튼 (cartList.jsp 참고) -->
+                    <button type="button" class="btn btn-danger" formaction="#P-301?delete_selected">선택 삭제 (U-301.5)</button>
+                    <button type="button" class="btn btn-secondary" formaction="#P-301?update_quantities">수량 수정 (U-301)</button>
+                </div>
+                <div class="feature-section" style="margin: 0; padding: 15px; text-align: right;">
+                    <h3>총 견적 금액: <span class="price" style="font-size: 1.5em;">$439</span></h3>
+                    <!-- (U-301.6) 선택 상품 주문 -->
+                    <button type="submit" formaction="#P-302" class="btn btn-primary" style="width: 250px;">선택 상품 주문하기</button>
+                </div>
+            </section>
+        </form>
+    </main>
+
+    <!-- P-302: 결제 페이지 (변경 없음) -->
+    <main id="P-302" class="page">
+        <h2 class="page-title">[P-302] 결제 페이지 (U-501)</h2>
+        
+        <form id="checkout-form" action="#P-303" method="post">
+            <section id="order-summary">
+                <h3>주문 요약</h3>
+                <table style="margin-bottom: 20px;">
+                    <thead><tr><th>이미지</th><th>상품명</th><th>수량</th><th>금액</th></tr></thead>
+                    <tbody>
+                        <!-- 상품 이미지 추가 -->
+                        <tr>
+                            <td><img src="https://placehold.co/80x80/eee/333?text=i5-13600K" style="width: 80px; border-radius: 6px;"></td>
+                            <td>[판매자 B] Intel i5-13600K (신품)</td>
+                            <td>1</td>
+                            <td>$319</td>
+                        </tr>
+                        <tr>
+                            <td><img src="https://placehold.co/80x80/eee/333?text=DDR5" style="width: 80px; border-radius: 6px;"></td>
+                            <td>[판매자 D] G.Skill DDR5 32GB (신품)</td>
+                            <td>1</td>
+                            <td>$120</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <strong>총 결제 금액: $439</strong>
+            </section>
+
+            <hr>
+
+            <section id="shipping-info">
+                <h3>배송지 정보</h3>
+                <div class="form-group">
+                    <label for="recipient_name">받는 사람:</label>
+                    <input type="text" id="recipient_name" name="recipient_name" required>
+                </div>
+                <!-- 주소 검색 (orderConfirm.jsp 참고) -->
+                <div class="form-group">
+                    <label for="postcode">주소:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="postcode" name="post" placeholder="우편번호" style="width: 150px;" readonly>
+                        <button type="button" class="btn btn-secondary" style="width: auto;">주소 검색 (Daum API)</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="address" name="addr1" placeholder="기본 주소" readonly>
+                </div>
+                 <div class="form-group">
+                    <input type="text" id="detailAddress" name="addr2" placeholder="상세 주소">
+                </div>
+            </section>
+
+            <hr>
+            
+            <section id="payment-method">
+                <h3>결제 처리 (U-501)</h3>
+                <div class="feature-section" style="padding: 50px; text-align: center;">
+                    [카카오페이 / 토스 등 간편 결제 API 연동 영역]
+                </div>
+            </section>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.2em;">결제하기</button>
+        </form>
+    </main>
+
+    <!-- P-303: 주문 완료 페이지 (변경 없음) -->
+    <main id="P-303" class="page">
+        <div style="text-align: center; padding: 40px;">
+            <h2 class="page-title" style="color: var(--compat-success); border: none; font-size: 2em;">✅ 주문이 성공적으로 완료되었습니다.</h2>
+            <p>주문번호: <strong>ORD-12345</strong></p>
+            
+            <!-- 결제 정보 (orderDone.jsp 참고) -->
+            <div class="feature-section" style="text-align: left; max-width: 600px; margin: 20px auto; background: #fafafa;">
+                <h4>주문 요약</h4>
+                <ul>
+                    <li>[판매자 B] Intel i5-13600K (신품) x 1 - $319</li>
+                    <li>[판매자 D] G.Skill DDR5 32GB (신품) x 1 - $120</li>
+                </ul>
+                <hr style="margin: 15px 0;">
+                <h4>배송지 정보</h4>
+                <p style="margin: 0;">받는 사람: 홍길동<br>
+                   주소: (12345) 서울특별시 강남구 테헤란로<br>
+                   연락처: 010-1234-5678</p>
+                <hr style="margin: 15px 0;">
+                <h4>결제 정보</h4>
+                <p style="margin: 0;"><strong>총 결제 금액: $439</strong><br>
+                   결제 수단: 카카오페이</p>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <a href="#P-101" class="btn btn-secondary">계속 쇼핑하기</a>
+                <a href="#P-401" class="btn btn-primary" style="margin-left: 10px;">주문 내역 확인 (마이페이지)</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- P-401: 마이페이지 (변경 없음) -->
+    <main id="P-401" class="page">
+        <h2 class="page-title">[P-401] 마이페이지</h2>
+        
+        <!-- 비밀번호 확인 (mypage.jsp 참고) -->
+        <section id="password-confirm" class="feature-section" style="max-width: 500px; margin: 0 auto 30px auto;">
+            <h3 style="margin-top: 0;">회원 정보 보호</h3>
+            <p>개인정보를 안전하게 보호하기 위해 비밀번호를 다시 한번 확인합니다.</p>
+            <form id="confirm-password-form">
+                <div class="form-group">
+                    <label for="confirm-password">비밀번호:</label>
+                    <input type="password" id="confirm-password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">확인</button>
+            </form>
+        </section>
+
+        <!-- (비밀번호 확인 후 보일 내용) -->
+        <div id="mypage-content" style="display: block;"> <!-- 실제 구현 시 display: none; -> block; 변경 -->
+            <section id="order-list"> <!-- (U-502) -->
+                <h3>주문 목록</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>주문번호</th>
+                            <th>주문일</th>
+                            <th>상품</th>
+                            <th>결제 금액</th>
+                            <th>배송 상태 (order_status)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ORD-12345</td>
+                            <td>2025-11-07</td>
+                            <td>[판매자 B] Intel i5-13600K 외 1건</td>
+                            <td>$439</td>
+                            <td><span style="font-weight: bold; color: var(--compat-fail);">결제 완료</span></td>
+                        </tr>
+                        <!-- ... 주문 내역 반복 ... -->
+                    </tbody>
+                </table>
+                <!-- 페이지네이션 -->
+                <div class="pagination">
+                    <a href="#" class="active">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                </div>
+            </section>
+
+            <hr>
+            
+            <section id="user-info-edit" class="feature-section"> <!-- (U-504) -->
+                <h3>회원 정보 수정</h3>
+                <form id="edit-user-form" style="max-width: 600px;">
+                    <div class="form-group">
+                        <label>이메일 (ID):</label>
+                        <input type="email" value="user@example.com" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-username">닉네임:</label>
+                        <input type="text" id="edit-username" name="username" value="사용자명">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-password">새 비밀번호 (변경 시 입력):</label>
+                        <input type="password" id="edit-password" name="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">정보 수정</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+
+    <!-- =================================================================== -->
+    <!-- 3. 판매자 (Seller) 페이지 (변경 없음) -->
+    <!-- =================================================================== -->
+
+    <main id="S-101" class="page">
+        <h2 class="page-title">[S-101] 판매자 대시보드</h2>
+        
+        <section id="sales-stats">
+            <h3>판매 현황 (요약)</h3>
+            <div class="feature-section" style="padding: 50px; text-align: center;">
+                [일/주/월별 주문 건수, 매출 통계 차트]
+            </div>
+            <a href="#S-102" class="btn btn-primary" style="width: 100%; padding: 15px; margin-top: 15px; background-color: #28a745;">
+                [S-102] 주문/배송 관리 페이지로 이동 (S-301)
+            </a>
+        </section>
+
+        <section id="seller-product-management" style="margin-top: 30px;"> <!-- (S-202) -->
+            <h3>내 판매 상품 목록</h3>
+            <a href="#S-202" class="btn btn-primary" style="margin-bottom: 15px;">
+                + [S-202] 신규 판매 상품 등록
+            </a>
+            <table>
+                <thead>
+                    <tr>
+                        <th>기반 모델 (base_spec_id)</th>
+                        <th>내 판매 상품명</th>
+                        <th>상태</th>
+                        <th>가격</th>
+                        <th>재고</th>
+                        <th>관리 (RUD)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>i5-13600K</td>
+                        <td>Intel i5-13600K (리퍼비시)</td>
+                        <td>판매중</td>
+                        <td>$299</td>
+                        <td>10</td>
+                        <td>
+                            <a href="#S-203?product_id=prod_A_123" class="btn btn-secondary btn-small" style="background-color: #ffc107;">수정 (S-203)</a>
+                            <button type="button" class="btn btn-danger btn-small" style="margin-left: 5px;">삭제</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <main id="S-102" class="page">
+        <h2 class="page-title">[S-102] 주문 관리 (S-301)</h2>
+        
+        <section id="seller-order-list">
+            <h3>내 주문 내역 (신규 주문)</h3>
+            <form>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>주문번호</th>
+                            <th>상품명</th>
+                            <th>수량</th>
+                            <th>주문자</th>
+                            <th>배송 상태</th>
+                            <th>송장 번호 (S-302)</th>
+                            <th>처리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ORD-12345</td>
+                            <td>[판매자 B] Intel i5-13600K (신품)</td>
+                            <td>1</td>
+                            <td>홍길동</td>
+                            <td>
+                                <select name="order_status" class="w-auto">
+                                    <option value="pending" selected>결제 완료</option>
+                                    <option value="shipping">배송 중</option>
+                                    <option value="delivered">배송 완료</option>
+                                </select>
+                            </td>
+                            <td><input type="text" name="tracking_number" placeholder="송장 번호 입력" style="width: 90%;"></td>
+                            <td><button type="submit" class="btn btn-primary btn-small">저장</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <a href="#" class="active">1</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <main id="S-202" class="page">
+        <h2 class="page-title">[S-202] 신규 판매 상품 등록</h2>
+        <form id="new-product-form" method="post">
+            
+            <section class="key-feature"> <!-- (S-201) -->
+                <h3>1. 기반 모델 검색</h3>
+                <p>[핵심] Admin이 등록한 '기반 모델'을 검색하여 상품을 연결합니다.</p>
+                <div class="form-group">
+                    <label for="base-model-search">등록할 상품의 '기반 모델' 검색:</label>
+                    <input type="search" id="base-model-search" placeholder="예: RTX 4070">
+                    <button type="button" class="btn btn-secondary" style="width: auto; margin-top: 5px;">검색</button>
+                </div>
+                <div id="base-model-results" class="feature-section" style="background: #f0f9ff;">
+                    <!-- (AJAX 검색 결과) -->
+                    <p><strong>선택된 기반 모델:</strong> <code>Nvidia RTX 4070 (ID: base_4070)</code></p>
+                    <input type="hidden" name="base_spec_id" value="base_4070">
+                </div>
+            </section>
+            
+            <!-- (S-201.2) 기반 모델 등록 요청 -->
+            <section id="request-new-model" class="feature-section" style="margin-top: 10px;">
+                <p style="margin: 0;">기반 모델을 찾을 수 없나요? <button type="button" class="btn btn-secondary btn-small" formaction="#A-203">기반 모델 등록 요청 (S-201.2)</button></p>
+            </section>
+
+
+            <section style="margin-top: 30px;"> <!-- (S-201.3) -->
+                <h3>2. 판매 정보 입력</h3>
+                <div class="form-group">
+                    <label for="seller-product-name">판매자 상품명 (예: "ASUS TUF RTX 4070 OC (리퍼)")</label>
+                    <input type="text" id="seller-product-name" name="product_name" required>
+                </div>
+                <div class="flex-container">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="seller-product-price">판매가 (price)</label>
+                        <input type="number" id="seller-product-price" name="price" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="seller-product-stock">재고 (stock_quantity)</label>
+                        <input type="number" id="seller-product-stock" name="stock_quantity" required>
+                    </div>
+                </div>
+                <div class="flex-container">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="seller-product-condition">상품 상태</label>
+                        <select id="seller-product-condition" name="condition" class="w-auto">
+                            <option value="New">신품 (New)</option>
+                            <option value="Refurbished">리퍼비시 (Refurbished)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="seller-shipping-fee">배송비</label>
+                        <input type="number" id="seller-shipping-fee" name="shipping_fee" value="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="seller-description">상세 설명</label>
+                    <textarea id="seller-description" name="description"></textarea>
+                </div>
+            </section>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">판매 상품 등록</button>
+        </form>
+    </main>
+
+    <main id="S-203" class="page">
+        <h2 class="page-title">[S-203] 판매 상품 수정</h2>
+        <p>상품 <code>prod_A_123</code> (Intel i5-13600K (리퍼비시)) 수정 중</p>
+        <form id="edit-product-form" method="post">
+            
+            <section class="feature-section">
+                <h3>1. 기반 모델 (변경 불가)</h3>
+                <p><strong>기반 모델:</strong> <code>Intel Core i5-13600K (ID: base_13600k)</code></p>
+                
+                <div id="base-model-preview" class="feature-section" style="background: #fafafa; display: flex; gap: 20px;">
+                    <img src="https://placehold.co/150x150/eee/333?text=i5-13600K+Model" style="width: 150px; height: 150px; border-radius: 6px;">
+                    <div>
+                        <h4 style="margin-top: 0;">기반 모델 사양 (참고용)</h4>
+                        <ul>
+                            <li>소켓: LGA1700</li>
+                            <li>코어: 6P+8E</li>
+                            <li>지원 메모리: DDR5, DDR4</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section style="margin-top: 30px;">
+                <h3>2. 판매 정보 수정</h3>
+                <!-- S-202와 동일한 폼 구조 -->
+                 <div class="form-group">
+                    <label for="edit-seller-product-name">판매자 상품명</label>
+                    <input type="text" id="edit-seller-product-name" name="product_name" value="Intel i5-13600K (리퍼비시)" required>
+                </div>
+                <div class="flex-container">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="edit-seller-product-price">판매가 (price)</label>
+                        <input type="number" id="edit-seller-product-price" name="price" value="299" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="edit-seller-product-stock">재고 (stock_quantity)</label>
+                        <input type="number" id="edit-seller-product-stock" name="stock_quantity" value="10" required>
+                    </div>
+                </div>
+                <div class="flex-container">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="edit-seller-product-condition">상품 상태</label>
+                        <select id="edit-seller-product-condition" name="condition" class="w-auto">
+                            <option value="New">신품 (New)</option>
+                            <option value="Refurbished" selected>리퍼비시 (Refurbished)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="edit-seller-shipping-fee">배송비</label>
+                        <input type="number" id="edit-seller-shipping-fee" name="shipping_fee" value="5" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-seller-description">상세 설명</label>
+                    <textarea id="edit-seller-description" name="description">리퍼비시 제품입니다. 제조사 보증 1년.</textarea>
+                </div>
+            </section>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">판매 상품 수정</button>
+        </form>
+    </main>
+
+    <!-- =================================================================== -->
+    <!-- 4. 관리자 (Admin) 페이지 (변경 없음) -->
+    <!-- =================================================================== -->
+
+    <main id="A-101" class="page">
+        <h2 class="page-title">[A-101] 관리자 대시보드</h2>
+        
+        <section id="site-stats">
+            <h3>사이트 통계</h3>
+            <p>총 회원 수: 10,000 | 총 주문 수: 5,000 | 총 거래액: $1,500,000</p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
+                 <a href="#A-102" class="btn btn-secondary" style="width: 100%;">[A-102] 회원 관리</a>
+                 <a href="#A-201" class="btn btn-secondary" style="width: 100%;">[A-201] 기반 모델 관리</a>
+                 <a href="#A-203" class="btn btn-secondary" style="width: 100%;">[A-203] 모델 등록 요청</a>
+                 <a href="#A-103" class="btn btn-secondary" style="width: 100%;">[A-103] 스케줄러 관리</a>
+            </div>
+        </section>
+
+        <section id="seller-applications" style="margin-top: 30px;"> <!-- (A-101) -->
+            <h3>판매자 가입 요청 (SELLER_PENDING)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>신청일</th>
+                        <th>상호명</th>
+                        <th>사업자번호</th>
+                        <th>처리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2025-11-06</td>
+                        <td>(주)컴퓨터월드</td>
+                        <td>123-45-67890</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-small" style="background-color: #28a745;">승인</button>
+                            <button type="button" class="btn btn-danger btn-small" style="margin-left: 5px;">거절</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <main id="A-102" class="page">
+        <h2 class="page-title">[A-102] 회원/판매자 관리</h2>
+        
+        <form id="user-search-form" class="flex-container">
+            <input type="search" placeholder="이메일 또는 사용자명으로 검색..." class="flex-grow">
+            <button type="submit" class="btn btn-primary" style="width: 150px;">검색</button>
+        </form>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>이메일</th>
+                    <th>권한</th>
+                    <th>상태</th>
+                    <th>계정 상태 변경 (A-102)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>user_abc</td>
+                    <td>user@example.com</td>
+                    <td>USER</td>
+                    <td>ACTIVE</td>
+                    <td>
+                        <button type="button" class="btn btn-secondary btn-small" style="background-color: #ffc107;">일시 정지</button>
+                        <button type="button" class="btn btn-danger btn-small" style="margin-left: 5px;">영구 비활성</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>seller_xyz</td>
+                    <td>seller@example.com</td>
+                    <td>SELLER</td>
+                    <td>ACTIVE</td>
+                    <td>
+                        <button type="button" class="btn btn-secondary btn-small" style="background-color: #ffc107;">일시 정지</button>
+                        <button type="button" class="btn btn-danger btn-small" style="margin-left: 5px;">영구 비활성</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <main id="A-103" class="page">
+        <h2 class="page-title">[A-103] 스케줄러 관리 (A-301)</h2>
+        
+        <section id="scheduler-controls">
+            <h3>엔진 배치 프로세스 모니터링</h3>
+            <p>자동화된 배치 작업을 모니터링하고, 필요 시 수동으로 실행합니다.</p>
+            
+            <div class="feature-section" style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 8px;">
+                    <h4>SYS-101 (호환성 엔진)</h4>
+                    <p>마지막 실행: 2025-11-07 03:00 / 상태: <span style="color: var(--compat-success);">성공</span></p>
+                    <button type="button" class="btn btn-secondary" style="background-color: #17a2b8; color: white;">SYS-101 수동 실행 (A-301.2)</button>
+                </div>
+                <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 8px;">
+                    <h4>SYS-102 (인기도 엔진)</h4>
+                    <p>마지막 실행: 2025-11-07 04:00 / 상태: <span style="color: var(--compat-success);">성공</span></p>
+                    <button type="button" class="btn btn-secondary" style="background-color: #17a2b8; color: white;">SYS-102 수동 실행</button>
+                </div>
+                
+                <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 8px;">
+                    <h4>엔진 로그 (A-301.3)</h4>
+                    <p>배치 작업 및 AI API 연동(SYS-103) 로그를 확인합니다.</p>
+                    <a href="#A-104" class="btn btn-secondary">로그 뷰어로 이동</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <main id="A-104" class="page">
+        <h2 class="page-title">[A-104] 시스템 로그 뷰어</h2>
+        <div class="feature-section" style="background: #333; color: #eee; font-family: 'Courier New', Courier, monospace; min-height: 400px; overflow-y: scroll;">
+            <p>[2025-11-07 03:00:01] INFO: SYS-101 Batch Start...</p>
+            <p>[2025-11-07 03:00:05] INFO: Calculating compatibility for base_13600k...</p>
+            <p>[2025-11-07 03:15:20] INFO: SYS-101 Batch Finished. Processed 5,120,300 pairs.</p>
+            <p>[2025-11-07 04:00:01] INFO: SYS-102 Batch Start...</p>
+            <p>[2025-11-07 04:05:01] INFO: SYS-102 Batch Finished. Processed 1,200 orders.</p>
+            <p>[2025-11-07 10:14:00] (A-301.3) DEBUG: SYS-103 Ingest Event (U-701): User 'user_abc' viewed product 'prod_B_456'.</p>
+            <p>[2025-11-07 10:14:05] (A-301.3) DEBUG: SYS-103 Predict Request (U-401): Context=cart, User='user_abc'.</p>
+            <p>[2025-11-07 10:14:07] (A-301.3) DEBUG: SYS-103 Predict Response: OK (210ms).</p>
+        </div>
+    </main>
+
+    <main id="A-201" class="page">
+        <h2 class="page-title">[A-201] 기반 모델 관리 (목록)</h2>
+        
+        <section id="base-model-list">
+            <div class="flex-container" style="justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <!-- 기반 모델 검색/필터링 UI -->
+                <form id="model-search-filter" class="flex-container flex-grow" style="gap: 10px;">
+                    <input type="search" name="model_query" placeholder="모델명, ID 검색..." style="width: 50%;">
+                    <select name="model_type_filter" class="w-auto">
+                        <option value="">모든 타입</option>
+                        <option value="CPU">CPU</option>
+                        <option value="Motherboard">Motherboard</option>
+                        <option value="RAM">RAM</option>
+                        <option value="GPU">GPU</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary" style="width: 150px;">검색</button>
+                </form>
+                <a href="#A-201-ADD" class="btn btn-primary" style="width: 200px;">+ 신규 기반 모델 등록</a>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>모델명</th>
+                        <th>타입</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>base_13600k</td>
+                        <td>Intel Core i5-13600K</td>
+                        <td>CPU</td>
+                        <td>
+                            <a href="#A-201-ADD?edit=base_13600k" class="btn btn-secondary btn-small" style="background-color: #ffc107;">수정 (A-202)</a>
+                            <button type="button" class="btn btn-danger btn-small" style="margin-left: 5px;">삭제</button>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>base_4070</td>
+                        <td>Nvidia RTX 4070</td>
+                        <td>GPU</td>
+                        <td>
+                            <a href="#A-201-ADD?edit=base_4070" class="btn btn-secondary btn-small" style="background-color: #ffc107;">수정 (A-202)</a>
+                            <button type="button" class="btn btn-danger btn-small" style="margin-left: 5px;">삭제</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <main id="A-201-ADD" class="page">
+        <h2 class="page-title">🛠️ 기반 모델 등록 (A-201) / 수정 (A-202)</h2>
+    
+        <form id="modelRegisterForm">
+            <section>
+                <h2>1. 기본 정보</h2>
+                <div class="form-group">
+                    <label for="product_type">모델 타입 (Product Type) *</label>
+                    <select id="product_type" name="product_type" required onchange="changeFormType(this.value)" class="w-auto">
+                        <option value="">-- 선택해주세요 --</option>
+                        <option value="CPU">CPU (프로세서)</option>
+                        <option value="Motherboard">Motherboard (메인보드)</option>
+                        <option value="RAM">RAM (메모리)</option>
+                        <option value="GPU">GPU (그래픽카드)</option>
+                    </select>
+                </div>
+                <div class="row" style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex: 2;">
+                        <label for="name">기반 모델명 (Name) *</label>
+                        <input type="text" id="name" name="name" placeholder="예: Intel Core i5-13600K" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="manufacturer">제조사 (Manufacturer) *</label>
+                        <input type="text" id="manufacturer" name="manufacturer" placeholder="예: Intel" list="manuf_list" required>
+                        <datalist id="manuf_list">
+                            <option value="Intel"><option value="AMD"><option value="NVIDIA"><option value="Samsung"><option value="SK Hynix"><option value="ASUS"><option value="MSI"><option value="Gigabyte">
+                        </datalist>
+                    </div>
+                </div>
+            </section>
+    
+            <section id="form_CPU" class="spec-form">
+                <h2>2. CPU 상세 사양</h2>
+                <div class="form-group">
+                    <label>소켓 (Socket) * <span class="sub-label">(SYS-101: MB.socket과 1:1 비교)</span></label>
+                    <input type="text" name="cpu_socket" placeholder="예: LGA 1700, AM5">
+                </div>
+                <div class="form-group">
+                    <label>지원 메모리 타입 * <span class="sub-label">(SYS-101: MB.memory_type 호환 확인용)</span></label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="cpu_mem_type" value="DDR5"> DDR5</label>
+                        <label><input type="checkbox" name="cpu_mem_type" value="DDR4"> DDR4</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>내장 그래픽 여부 <span class="sub-label">(SYS-101: 외장 GPU 없을 시 경고용)</span></label>
+                    <div class="checkbox-group">
+                         <label><input type="checkbox" name="has_integrated_graphics" checked> 내장 그래픽(iGPU) 포함됨</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>최소 BIOS 요구사항 <span class="sub-label">(특정 칩셋에서 필요한 최소 버전)</span></label>
+                    <div class="dynamic-list" id="cpu_bios_list">
+                        </div>
+                    <button type="button" class="btn btn-secondary" onclick="addBiosRow()">+ 칩셋별 요구 BIOS 추가</button>
+                </div>
+            </section>
+    
+            <section id="form_Motherboard" class="spec-form">
+                <h2>2. Motherboard 상세 사양</h2>
+                <div class="row" style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex:1">
+                        <label>소켓 (Socket) *</label>
+                        <input type="text" name="mb_socket" placeholder="예: LGA 1700">
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label>칩셋 (Chipset) *</label>
+                        <input type="text" name="mb_chipset" placeholder="예: Z790, B650">
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label>출고 시 BIOS 버전 * <span class="sub-label">(SYS-101: CPU 호환 경고 기준)</span></label>
+                    <input type="text" name="factory_bios_version" placeholder="예: F2">
+                </div>
+                <div class="row" style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex:1">
+                        <label>메모리 타입 *</label>
+                        <select name="mb_memory_type" class="w-auto">
+                            <option value="DDR5">DDR5</option>
+                            <option value="DDR4">DDR4</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label>메모리 슬롯 수 *</label>
+                        <input type="number" name="memory_slots" placeholder="예: 4" min="1" max="8">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>지원 메모리 속도 <span class="sub-label">(콤마로 구분하여 입력)</span></label>
+                    <input type="text" name="supported_memory_speeds" placeholder="예: 4800,5200,5600(OC),6000(OC)">
+                </div>
+                 <div class="form-group">
+                    <label>PCIe 슬롯 목록 <span class="sub-label">(SYS-101: GPU 호환성 검사용)</span></label>
+                    <div class="dynamic-list" id="mb_pcie_list">
+                        </div>
+                    <button type="button" class="btn btn-secondary" onclick="addPcieRow()">+ PCIe 슬롯 추가</button>
+                </div>
+    
+                <div class="future-expansion">
+                    <span class="future-toggle" onclick="toggleFuture(this)">🔽 향후 확장 필드 (Form Factor, Headers) 열기</span>
+                    <div style="display:none;">
+                        <div class="row" style="display: flex; gap: 20px;">
+                             <div class="form-group" style="flex:1">
+                                <label>폼팩터 (Form Factor)</label>
+                                <select name="mb_form_factor" class="w-auto">
+                                    <option value="ATX">ATX</option>
+                                    <option value="mATX">Micro-ATX (mATX)</option>
+                                    <option value="ITX">Mini-ITX</option>
+                                    <option value="EATX">E-ATX</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex:1">
+                                <label>내부 USB 헤더</label>
+                                 <input type="text" name="mb_headers" placeholder="예: USB 3.0 x1, Type-C x1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+            <section id="form_RAM" class="spec-form">
+                 <h2>2. RAM 상세 사양</h2>
+                 <div class="row" style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex:1">
+                        <label>메모리 타입 *</label>
+                        <select name="ram_memory_type" class="w-auto">
+                            <option value="DDR5">DDR5</option>
+                            <option value="DDR4">DDR4</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label>동작 속도 (MHz) *</label>
+                        <input type="number" name="ram_speed" placeholder="예: 5600">
+                    </div>
+                </div>
+                <div class="row" style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex:1">
+                        <label>모듈 1개당 용량 (GB) *</label>
+                        <input type="number" name="ram_capacity" placeholder="예: 16">
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label>킷(Kit) 수량 * <span class="sub-label">(1개면 1, 2개 세트면 2)</span></label>
+                        <input type="number" name="ram_kit_quantity" placeholder="예: 2" value="1">
+                    </div>
+                </div>
+                 <div class="future-expansion">
+                    <span class="future-toggle" onclick="toggleFuture(this)">🔽 향후 확장 필드 (모듈 높이) 열기</span>
+                    <div style="display:none;">
+                         <div class="form-group">
+                            <label>모듈 높이 (mm) <span class="sub-label">(쿨러 간섭 확인용)</span></label>
+                            <input type="number" name="ram_height" placeholder="예: 44">
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+            <section id="form_GPU" class="spec-form">
+                <h2>2. GPU 상세 사양</h2>
+                 <div class="row" style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex:1">
+                        <label>PCIe 버전 * <span class="sub-label">(예: 4.0, 5.0)</span></label>
+                        <input type="number" name="gpu_pcie_version" placeholder="4.0" step="0.1">
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label>PCIe 레인 * <span class="sub-label">(x16, x8 등)</span></label>
+                        <input type="number" name="gpu_pcie_lanes" placeholder="16">
+                    </div>
+                </div>
+    
+                 <div class="future-expansion">
+                    <span class="future-toggle" onclick="toggleFuture(this)">🔽 향후 확장 필드 (길이, 파워) 열기</span>
+                    <div style="display:none;">
+                         <div class="row" style="display: flex; gap: 20px;">
+                            <div class="form-group" style="flex:1">
+                                <label>카드 길이 (mm) <span class="sub-label">(케이스 호환성)</span></label>
+                                <input type="number" name="gpu_length" placeholder="예: 320">
+                            </div>
+                            <div class="form-group" style="flex:1">
+                                 <label>권장 파워 (W)</label>
+                                <input type="number" name="gpu_psu_w" placeholder="예: 750">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                             <label>보조 전원 커넥터</label>
+                             <input type="text" name="gpu_connectors" placeholder="예: 8pin x2, 12VHPWR x1">
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; margin-top: 20px;">
+                SYS-101 규칙 엔진에 등록하기
+            </button>
+        </form>
+    </main>
+
+    <!-- [수정됨] A-203: 기반 모델 등록 요청 처리 -->
+    <main id="A-203" class="page">
+        <h2 class="page-title">[A-203] 기반 모델 등록 요청 처리 (A-203)</h2>
+        
+        <section id="model-request-list">
+            <h3>판매자 요청 목록 (status='PENDING' 조회)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>요청자 (Seller)</th>
+                        <th>요청 모델명</th>
+                        <th>처리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>(주)컴퓨터월드</td>
+                        <td>Nvidia RTX 5080</td>
+                        <td>
+                            <!-- [수정됨] A-201-ADD 페이지로 모델명을 파라미터로 전달 -->
+                            <a href="#A-201-ADD?model_name=Nvidia RTX 5080" class="btn btn-primary btn-small">
+                                검토 및 등록
+                            </a>
+                        </td>
+                    </tr>
+                    <!-- ... 요청 목록 반복 ... -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- [완전 교체됨] admin-모델등록.html 의 스크립트 (폼 전환용) -->
+    <script>
+        // 1. 폼 타입 변경 핸들러
+        function changeFormType(type) {
+            // 모든 spec-form 숨기기
+            document.querySelectorAll('.spec-form').forEach(el => el.classList.remove('active'));
+            // 선택된 타입의 폼만 보이기
+            if (type) {
+                const formElement = document.getElementById(`form_${type}`);
+                if (formElement) {
+                    formElement.classList.add('active');
+                }
+            }
+        }
+    
+        // 2. 동적 리스트 핸들러 (CPU BIOS)
+        function addBiosRow() {
+            const container = document.getElementById('cpu_bios_list');
+            const rowHtml = `
+                <div class="dynamic-row">
+                    <input type="text" placeholder="칩셋명 (예: Z690)" required>
+                    <input type="text" placeholder="요구 BIOS 버전 (예: F20)" required>
+                    <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">삭제</button>
+                </div>
+            `;
+            if(container) container.insertAdjacentHTML('beforeend', rowHtml);
+        }
+    
+        // 3. 동적 리스트 핸들러 (MB PCIe)
+        function addPcieRow() {
+            const container = document.getElementById('mb_pcie_list');
+            const rowHtml = `
+                <div class="dynamic-row">
+                    <input type="number" placeholder="Ver (예: 5.0)" step="0.1" style="flex:1" required>
+                    <input type="number" placeholder="Lanes (예: 16)" style="flex:1" required>
+                    <label style="flex:2; display:flex; align-items:center; font-weight:normal; font-size:14px;">
+                        <input type="checkbox" style="width:auto; margin-right:8px;"> 기본 GPU 슬롯
+                    </label>
+                    <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">삭제</button>
+                </div>
+            `;
+            if(container) container.insertAdjacentHTML('beforeend', rowHtml);
+        }
+    
+        // 4. 향후 확장 필드 토글
+        function toggleFuture(element) {
+            const content = element.nextElementSibling;
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                element.innerText = '🔼 향후 확장 필드 접기';
+            } else {
+                content.style.display = 'none';
+                 element.innerText = '🔽 향후 확장 필드 열기';
+            }
+        }
+    
+        // 5. 초기화: 페이지 로드 시 BIOS, PCIe 기본 행 1개씩 추가
+        document.addEventListener("DOMContentLoaded", () => {
+            const biosList = document.getElementById('cpu_bios_list');
+            const pcieList = document.getElementById('mb_pcie_list');
+
+            if (biosList && !biosList.hasChildNodes()) {
+                 addBiosRow();
+            }
+            if (pcieList && !pcieList.hasChildNodes()) {
+                addPcieRow();
+            }
+        });
+    
+        // 6. (참고) 폼 제출 시 데이터 처리 예시
+        const modelForm = document.getElementById('modelRegisterForm');
+        if (modelForm) { // Check if form exists
+            modelForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert("실제 구현 시에는 여기서 데이터를 JSON으로 직렬화하여 서버로 전송합니다.\n(콘솔 창에서 수집된 데이터를 확인할 수 있습니다.)");
+                
+                const productTypeEl = document.getElementById('product_type');
+                if(productTypeEl) {
+                    console.log("Form submitted based on type:", productTypeEl.value);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

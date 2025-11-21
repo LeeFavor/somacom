@@ -247,7 +247,9 @@ public class RecommendationService {
         PredictRequest request = PredictRequest.newBuilder()
                 .setPlacement(placement)
                 .setUserEvent(userEventBuilder.build())
-                .setFilter("category_paths: ANY(\"RAM\")") // 카테고리 필터 (RAM만 추천)
+                // [FIX 5] 'categories' 필터 대신 'tag' 필터 사용 (API 예시 기반)
+                // "RAM" 카테고리 대신 "mem_DDR5" 태그로 RAM 필터링
+                .setFilter("tag=\"mem_DDR5\"") 
                 .setPageSize(2) // 2개 요청
                 .build();
 
@@ -294,7 +296,9 @@ public class RecommendationService {
         PredictRequest request = PredictRequest.newBuilder()
                 .setPlacement(placement)
                 .setUserEvent(userEventBuilder.build())
-                .setFilter("category_paths: ANY(\"CPU\")") // (선택) 유사한 'CPU'만 추천
+                // [FIX 5] 'categories' 필터 대신 'tag' 필터 사용 (API 예시 기반)
+                // "CPU" 카테고리 대신 "socket_LGA1700" 태그로 CPU 필터링
+                .setFilter("tag=\"socket_LGA1700\"") 
                 .setPageSize(2) // 2개 요청
                 .build();
 

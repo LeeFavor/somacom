@@ -58,6 +58,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// [추가] Bean Validation (유효성 검사) 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
@@ -76,7 +79,10 @@ dependencies {
 	//쿼리DSL 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	//annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}" // JPA 전용 사용
+	// [수정] 'com.ewerk.gradle.plugins.querydsl' 플러그인이 Q-Type을 생성하므로,
+	// compileJava 단계에서 중복 생성을 막기 위해 아래 의존성은 주석 처리하는 것을 강력히 권장합니다.
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+
 	annotationProcessor 'javax.persistence:javax.persistence-api' // java.lang.NoClassDefFoundError(javax.annotation.Generated) 대응
 	annotationProcessor 'org.projectlombok:lombok'
 
@@ -112,9 +118,9 @@ querydsl {
 	querydslSourcesDir = querydslDir
 }
 
-sourceSets {
-	main.java.srcDir querydslDir
-}
+// sourceSets {
+// 	main.java.srcDir querydslDir
+// }
 
 configurations {
 	compileOnly {
