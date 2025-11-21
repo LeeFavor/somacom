@@ -62,9 +62,12 @@ public class Product {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @Column(name = "image_url")
+    private String image_url;
 
     @Builder
-    public Product(BaseSpec baseSpec, User seller, String name, BigDecimal price, int stockQuantity, ProductCondition condition, BigDecimal shippingFee, String description) {
+    public Product(BaseSpec baseSpec, User seller, String name, BigDecimal price, int stockQuantity, ProductCondition condition, BigDecimal shippingFee, String description, String img_url) {
         this.baseSpec = baseSpec;
         this.seller = seller;
         this.name = name;
@@ -73,5 +76,6 @@ public class Product {
         this.condition = condition;
         this.shippingFee = shippingFee;
         this.description = description;
+        this.image_url = img_url;
     }
 }

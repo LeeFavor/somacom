@@ -199,7 +199,7 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
 
 ## 👤 User (일반 사용자)
 
-- **➡️ [진행중] `P-201-SEARCH`: 상품 검색 (키워드, 카테고리, 상세 필터)**
+- **➡️ [대기] `P-201-SEARCH`: 상품 검색 (키워드, 카테고리, 상세 필터)**
   - **Page**: `P-201-SEARCH`
   - **API**: `GET /api/products/search`
   - **Logic**: QueryDSL을 사용하여 `products`와 `base_specs`를 조인하고, 카테고리별 동적 필터 조건을 적용. 검색 이벤트는 `SYS-3` 엔진에 로깅.
@@ -207,9 +207,9 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Tables**: `products`, `base_specs`, `cpu_specs`, `...`
   - **Status**: DTO 및 Repository 뼈대 구현 중
   - **Tasks**:
-    - `[진행중]` `ProductRepository`에 QueryDSL을 이용한 동적 검색 기능 구현
+    - `[ ]` `ProductRepository`에 동적 검색 기능 구현
     - `[ ]` `ProductSearchController` 및 `ProductSearchService` 생성
-    - `[진행중]` `ProductSearchRequest` DTO (동적 필터 파라미터용) 및 `ProductSearchResponse` DTO 생성
+    - `[ ]` `ProductSearchRequest` DTO (동적 필터 파라미터용) 및 `ProductSearchResponse` DTO 생성
     - `[ ]` `UserIntentLoggingService`를 호출하여 검색 및 필터 이벤트 로깅
 
 - **[예정] `P-202`: 상품 상세 조회**

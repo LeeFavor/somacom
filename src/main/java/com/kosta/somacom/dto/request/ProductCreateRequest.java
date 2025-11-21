@@ -35,6 +35,8 @@ public class ProductCreateRequest {
 
     // 배송비 필드 추가 (기본값 0)
     private BigDecimal shippingFee = BigDecimal.ZERO;
+    
+    private String imageUrl;
 
 
     public Product toEntity(BaseSpec baseSpec, User seller) {
@@ -46,6 +48,7 @@ public class ProductCreateRequest {
                 .stockQuantity(this.stockQuantity)
                 .condition(this.condition)
                 .shippingFee(this.shippingFee)
+                .img_url(imageUrl)
                 .build();
     }
 }
