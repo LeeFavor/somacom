@@ -43,11 +43,11 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         product.price,
                         product.image_url
                 ))
-                .from(product)
-                .join(product.baseSpec, baseSpec)
-                .join(sellerInfo).on(product.seller.id.eq(sellerInfo.user.id))
+                .from(baseSpec) // 기준 테이블을 baseSpec으로 변경
+                .leftJoin(product).on(baseSpec.id.eq(product.baseSpec.id)) // baseSpec에 해당하는 product를 LEFT JOIN
+                .leftJoin(sellerInfo).on(product.seller.id.eq(sellerInfo.user.id)) // product에 연결된 sellerInfo를 LEFT JOIN
                 // 상세 스펙 테이블들은 필터 조건이 있을 때만 동적으로 조인
-                .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.baseSpec.id))
+                .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.id))
                 .where(
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
@@ -60,10 +60,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         // Count 쿼리 (성능을 위해 content.size() 대신 별도 실행)
         JPAQuery<Long> countQuery = queryFactory
                 .select(product.count())
-                .from(product)
-                .join(product.baseSpec, baseSpec)
-                .join(sellerInfo).on(product.seller.id.eq(sellerInfo.user.id))
-                .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.baseSpec.id))
+                .from(baseSpec)
+                .leftJoin(product).on(baseSpec.id.eq(product.baseSpec.id))
+                .leftJoin(sellerInfo).on(product.seller.id.eq(sellerInfo.user.id))
+                .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.id))
                 .where(
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
@@ -75,7 +75,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
     private BooleanExpression keywordContains(String keyword) {
         // 상품명 또는 기반모델명에서 키워드 검색
-        return StringUtils.hasText(keyword) ? product.name.containsIgnoreCase(keyword).or(baseSpec.name.containsIgnoreCase(keyword)) : null;
+        if (!StringUtils.hasText(keyword)) {
+            return null;
+        }
+        // product가 LEFT JOIN으로 인해 null일 수 있으므로, product.name 검색은 product가 null이 아닐 때만 수행
+        BooleanExpression productNameContains = product.isNotNull().and(product.name.containsIgnoreCase(keyword));
+        return productNameContains.or(baseSpec.name.containsIgnoreCase(keyword));
     }
 
     private BooleanExpression categoryEq(String category) {

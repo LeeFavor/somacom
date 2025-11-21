@@ -199,33 +199,33 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
 
 ## 👤 User (일반 사용자)
 
-- **➡️ [대기] `P-201-SEARCH`: 상품 검색 (키워드, 카테고리, 상세 필터)**
+- ✅ [완료] `P-201-SEARCH`: 상품 검색 (키워드, 카테고리, 상세 필터)
   - **Page**: `P-201-SEARCH`
   - **API**: `GET /api/products/search`
   - **Logic**: QueryDSL을 사용하여 `products`와 `base_specs`를 조인하고, 카테고리별 동적 필터 조건을 적용. 검색 이벤트는 `SYS-3` 엔진에 로깅.
   - **Logging**: 키워드 검색 시 `user_intent_score.searchCount` 증가, 호환성 관련 상세 필터(소켓, 칩셋 등) 적용 시 `user_intent_score.filterCount` 증가.
   - **Tables**: `products`, `base_specs`, `cpu_specs`, `...`
-  - **Status**: DTO 및 Repository 뼈대 구현 중
+  - **Status**: 핵심 기능 구현 완료. 로깅 기능 연동 대기.
   - **Tasks**:
-    - `[ ]` `ProductRepository`에 동적 검색 기능 구현
-    - `[ ]` `ProductSearchController` 및 `ProductSearchService` 생성
-    - `[ ]` `ProductSearchRequest` DTO (동적 필터 파라미터용) 및 `ProductSearchResponse` DTO 생성
-    - `[ ]` `UserIntentLoggingService`를 호출하여 검색 및 필터 이벤트 로깅
+    - `[x]` `ProductRepository`에 동적 검색 기능 구현
+    - `[x]` `ProductSearchController` 및 `ProductSearchService` 생성
+    - `[x]` `ProductSearchRequest` DTO (동적 필터 파라미터용) 및 `ProductSearchResponse` DTO 생성
+    - `[ ]` `UserIntentLoggingService`를 호출하여 검색 및 필터 이벤트 로깅 (`SYS-3` 구현 시 연결)
 
-- **[예정] `P-202`: 상품 상세 조회**
+- ✅ [완료] `P-202`: 상품 상세 조회
   - **Page**: `P-202`
   - **API**: `GET /api/products/{productId}`
   - **Logic**: 상품 정보, 기반 사양, 판매자 정보와 함께 '가격 비교 목록(동일 `base_spec_id`의 다른 상품)' 및 'AI 추천 상품(`SYS-3` 호출)'을 함께 반환.
   - **Logging**: 상품 조회 시 `viewCount` 증가. 15초 이상 체류 시 `longViewCount` 증가. 상품 이미지 클릭 시 `imageViewCount` 증가.
   - **Tables**: `products`, `base_specs`, `seller_info`
-  - **Status**: 개발 대기
+  - **Status**: 핵심 기능 구현 완료. 로깅 및 AI 추천 연동 대기.
   - **Tasks**:
-    - `[ ]` `ProductController` 및 `ProductService` 생성
-    - `[ ]` `ProductService` 내에서 관련 정보(가격비교, AI추천)를 조합하는 로직 구현
-    - `[ ]` `ProductDetailResponse` DTO 생성 (여러 정보를 담는 복합 DTO)
-    - `[ ]` `UserIntentLoggingService`를 호출하여 조회 이벤트 로깅
+    - `[x]` `ProductDetailController` 및 `ProductDetailService` 생성
+    - `[x]` `ProductDetailService` 내에서 가격 비교 목록을 조합하는 로직 구현
+    - `[x]` `ProductDetailResponse` DTO 생성 (여러 정보를 담는 복합 DTO)
+    - `[ ]` `UserIntentLoggingService`를 호출하여 조회 이벤트 로깅 (`SYS-3` 구현 시 연결)
 
-- **[예정] `P-301`: 장바구니 관리 (추가/조회/수정/삭제)**
+- ➡️ [대기] `P-301`: 장바구니 관리 (추가/조회/수정/삭제)
   - **Page**: `P-301`
   - **API**: `POST /api/cart/items`, `GET /api/cart`, `PUT /api/cart/items/{cartItemId}`, `DELETE /api/cart/items/{cartItemId}`
   - **Logic**: 장바구니 조회 시 `SYS-1` 엔진을 실시간 호출하여 전체 견적의 호환성 상태를 계산하고 응답에 포함.
