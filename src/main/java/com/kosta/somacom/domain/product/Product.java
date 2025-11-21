@@ -78,4 +78,17 @@ public class Product {
         this.description = description;
         this.image_url = img_url;
     }
+    
+    //== 비즈니스 로직 ==//
+    /**
+     * 재고 수량을 감소시킵니다.
+     * @param quantity 감소시킬 수량
+     */
+    public void removeStock(int quantity) {
+        int restStock = this.stockQuantity - quantity;
+        if (restStock < 0) {
+            throw new IllegalStateException("Need more stock. Product ID: " + this.id);
+        }
+        this.stockQuantity = restStock;
+    }
 }

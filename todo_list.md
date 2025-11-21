@@ -262,19 +262,43 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[~]` `CartResponse` DTO (호환성 결과 포함) 생성
     - `[ ]` `UserIntentLoggingService`를 호출하여 장바구니 추가 이벤트 로깅
 
-- ➡️ [대기] `P-501`: 주문 생성 (결제)
+- ✅ [완료] `P-501`: 주문 생성 (결제)
   - **Page**: `P-302`
   - **API**: `POST /api/orders`
   - **Logic**: `orders` 및 `order_items` 생성, `products.stock_quantity` 재고 차감, `carts`에서 주문된 아이템 삭제. (트랜잭션 처리 필수)
   - **Logging**: 주문 완료 시 주문된 상품에 대해 `user_intent_score.purchaseCount` 증가.
   - **Tables**: `orders`, `order_items`, `carts`, `cart_items`
+  - **Status**: 핵심 기능 구현 완료. 로깅 연동 대기.
+  - **Tasks**:
+    - `[x]` `Order`, `OrderItem` Entity 및 Repository 생성
+    - `[x]` `OrderController` 및 `OrderService` 생성
+    - `[x]` `OrderService`에 주문 생성 트랜잭션 로직 구현 (재고 차감, 장바구니 비우기 포함)
+    - `[x]` `OrderCreateRequest` DTO 생성
+    - `[ ]` `UserIntentLoggingService`를 호출하여 구매 이벤트 로깅
+
+- **[예정] `P-502`: 결제 시스템 연동**
+  - **Page**: `P-302`
+  - **API**: `POST /api/payments/prepare`, `POST /api/payments/complete` (예시)
+  - **Logic**: 주문 생성(`P-501`) 전에 PG사(카카오페이, 토스 등)에 결제 정보를 등록하고, 결제가 완료되면 PG사로부터 받은 정보를 검증한 후 주문을 최종 생성.
+  - **Tables**: `orders` (결제 정보 필드 추가 가능)
+  - **Status**: 신규 추가
+  - **Tasks**:
+    - `[ ]` PG사 연동 라이브러리 의존성 추가
+    - `[ ]` `PaymentService` 생성 (결제 준비, 완료, 검증 로직)
+    - `[ ]` `OrderService`의 `createOrder` 로직을 결제 완료 후 호출되도록 수정
+    - `[ ]` `PaymentController` 생성
+
+- ➡️ [대기] `P-401`: 주문 내역 조회
+  - **Page**: `P-401` (마이페이지)
+  - **API**: `GET /api/orders`, `GET /api/orders/{orderId}`
+  - **Logic**: 로그인된 사용자의 `userId`로 `orders` 테이블을 조회. 페이징 처리. 상세 조회 시 `order_items`과 관련 `product` 정보까지 함께 반환.
+  - **Tables**: `orders`, `order_items`, `products`
   - **Status**: 개발 대기
   - **Tasks**:
-    - `[ ]` `Order`, `OrderItem` Entity 및 Repository 생성
-    - `[ ]` `OrderController` 및 `OrderService` 생성
-    - `[ ]` `OrderService`에 주문 생성 트랜잭션 로직 구현 (재고 차감, 장바구니 비우기 포함)
-    - `[ ]` `OrderCreateRequest` DTO 생성
-    - `[ ]` `UserIntentLoggingService`를 호출하여 구매 이벤트 로깅
+    - `[ ]` `OrderController`에 주문 목록 및 상세 조회 엔드포인트 추가
+    - `[ ]` `OrderService`에 주문 내역 조회 로직 구현 (페이징 처리 포함)
+    - `[ ]` `OrderRepository`에 사용자 ID로 주문을 조회하는 쿼리 메소드 추가 (페치 조인 활용)
+    - `[ ]` `OrderListResponseDto`, `OrderDetailResponseDto` 등 응답 DTO 생성
 
 - **[신규] `P-402`: 비밀번호 찾기/재설정**
   - **Page**: `P-102-USER`의 '비밀번호 찾기' 링크
