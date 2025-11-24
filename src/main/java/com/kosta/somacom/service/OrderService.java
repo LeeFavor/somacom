@@ -6,11 +6,15 @@ import com.kosta.somacom.domain.order.OrderItem;
 import com.kosta.somacom.domain.order.OrderItemStatus;
 import com.kosta.somacom.domain.order.OrderStatus;
 import com.kosta.somacom.domain.user.User;
+import com.kosta.somacom.order.dto.OrderDetailResponseDto;
+import com.kosta.somacom.order.dto.OrderListResponseDto;
 import com.kosta.somacom.order.dto.OrderRequest;
 import com.kosta.somacom.repository.CartItemRepository;
 import com.kosta.somacom.repository.OrderRepository;
 import com.kosta.somacom.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
 
@@ -28,6 +32,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
 
+    @Transactional
     public Long createOrder(Long userId, OrderRequest request) {
         // 1. 유저 조회
         User user = userRepository.findById(userId)
@@ -66,5 +71,16 @@ public class OrderService {
         cartItemRepository.deleteAll(cartItems);
 
         return order.getId();
+    }
+
+    public Page<OrderListResponseDto> findOrders(Long userId, Pageable pageable) {
+        Page<Order> orders = orderRepository.findOrdersByUserId(userId, pageable);
+        return orders.map(OrderListResponseDto::new);
+    }
+
+    public OrderDetailResponseDto findOrder(Long orderId, Long userId) {
+        Order order = orderRepository.findOrderDetails(orderId, userId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found or access denied"));
+        return new OrderDetailResponseDto(order);
     }
 }

@@ -5,12 +5,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Builder
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,6 +32,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
@@ -56,8 +59,8 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private SellerInfo sellerInfo;
 
-    @Builder
-    public User(String email, String password, String username, UserRole role, UserStatus status, AuthProvider provider, String providerId) {
+    public User(Long id, String email, String password, String username, UserRole role, UserStatus status, AuthProvider provider, String providerId, LocalDateTime createdAt, LocalDateTime updatedAt, SellerInfo sellerInfo) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.username = username;
@@ -65,6 +68,9 @@ public class User {
         this.status = status;
         this.provider = provider;
         this.providerId = providerId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.sellerInfo = sellerInfo;
     }
 
     public void setSellerInfo(SellerInfo sellerInfo) {

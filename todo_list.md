@@ -58,16 +58,16 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
 
 ## ✅ Admin (관리자)
 
-- **[예정] `A-101`: 판매자 가입 요청 처리**
+- ➡️ [대기] `A-101`: 판매자 가입 요청 처리
   - **Page**: `A-101`
   - **API**: `GET /api/admin/seller-requests`, `PUT /api/admin/seller-requests/{userId}/approve`
   - **Logic**: `users` 테이블에서 `role`이 `SELLER_PENDING`인 사용자를 조회하고, 승인 시 `SELLER`로 변경.
   - **Tables**: `users`, `seller_info`
   - **Status**: 개발 대기
   - **Tasks**:
-    - `[ ]` `AdminController`에 엔드포인트 추가
-    - `[ ]` `AdminService`에 `role`이 `SELLER_PENDING`인 사용자 조회 및 `SELLER`로 변경하는 메소드 추가
-    - `[ ]` `SellerRequestResponse` DTO 생성
+    - `[ ]` `AdminController` 생성 및 엔드포인트 추가
+    - `[ ]` `AdminService` 생성 및 `role` 변경 메소드 추가
+    - `[ ]` `SellerRequestDto` 등 응답 DTO 생성
 
 - **[예정] `A-102`: 회원/판매자 계정 관리**
   - **Page**: `A-102`
@@ -125,17 +125,6 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
 ---
 
 ## ✅ Seller (판매자)
-
-- **[예정] `S-101`: 판매자 입점 신청**
-  - **Page**: `P-103-SELLER`
-  - **API**: `POST /api/auth/signup/seller`
-  - **Logic**: `users` 테이블에 `role`을 `SELLER_PENDING`으로, `seller_info` 테이블에 사업자 정보를 함께 저장.
-  - **Tables**: `users`, `seller_info`
-  - **Status**: 개발 대기
-  - **Tasks**:
-    - `[ ]` `AuthController`에 판매자 회원가입 엔드포인트 추가
-    - `[ ]` `AuthService`에 판매자 정보 저장 로직 추가 (트랜잭션 처리)
-    - `[ ]` `SellerSignupRequest` DTO 생성
 
 - **[완료] `S-201`: 기반 모델 검색**
   - **Page**: `S-202`
@@ -198,6 +187,28 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
 ---
 
 ## 👤 User (일반 사용자)
+
+- ✅ [완료] `U-101`: 일반 회원가입
+  - **Page**: `P-103-USER`
+  - **API**: `POST /api/auth/signup/user`
+  - **Logic**: 이메일, 암호화된 비밀번호, 닉네임을 `users` 테이블에 저장. `role`은 `USER`로 기본 설정.
+  - **Tables**: `users`
+  - **Status**: 구현 및 테스트 완료.
+  - **Tasks**:
+    - `[x]` `AuthController`에 일반 회원가입 엔드포인트 추가
+    - `[x]` `AuthService`에 일반 사용자 정보 저장 로직 추가
+    - `[x]` `UserSignupRequest` DTO 생성
+
+- ✅ [완료] `S-101`: 판매자 입점 신청
+  - **Page**: `P-103-SELLER`
+  - **API**: `POST /api/auth/signup/seller`
+  - **Logic**: `users` 테이블에 `role`을 `SELLER_PENDING`으로, `seller_info` 테이블에 사업자 정보를 함께 저장.
+  - **Tables**: `users`, `seller_info`
+  - **Status**: 구현 및 테스트 완료.
+  - **Tasks**:
+    - `[x]` `AuthController`에 판매자 회원가입 엔드포인트 추가
+    - `[x]` `AuthService`에 판매자 정보 저장 로직 추가 (트랜잭션 처리)
+    - `[x]` `SellerSignupRequest` DTO 생성
 
 - ✅ [완료] `P-201-SEARCH`: 상품 검색 (키워드, 카테고리, 상세 필터)
   - **Page**: `P-201-SEARCH`
@@ -288,28 +299,17 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[ ]` `OrderService`의 `createOrder` 로직을 결제 완료 후 호출되도록 수정
     - `[ ]` `PaymentController` 생성
 
-- ➡️ [대기] `P-401`: 주문 내역 조회
+- ✅ [완료] `P-401`: 주문 내역 조회
   - **Page**: `P-401` (마이페이지)
   - **API**: `GET /api/orders`, `GET /api/orders/{orderId}`
   - **Logic**: 로그인된 사용자의 `userId`로 `orders` 테이블을 조회. 페이징 처리. 상세 조회 시 `order_items`과 관련 `product` 정보까지 함께 반환.
   - **Tables**: `orders`, `order_items`, `products`
-  - **Status**: 개발 대기
+  - **Status**: 핵심 기능 구현 완료. **[주의] 인증 시스템 연동 시 하드코딩된 사용자 ID 수정 필수.**
   - **Tasks**:
-    - `[ ]` `OrderController`에 주문 목록 및 상세 조회 엔드포인트 추가
-    - `[ ]` `OrderService`에 주문 내역 조회 로직 구현 (페이징 처리 포함)
-    - `[ ]` `OrderRepository`에 사용자 ID로 주문을 조회하는 쿼리 메소드 추가 (페치 조인 활용)
-    - `[ ]` `OrderListResponseDto`, `OrderDetailResponseDto` 등 응답 DTO 생성
-
-- **[신규] `P-402`: 비밀번호 찾기/재설정**
-  - **Page**: `P-102-USER`의 '비밀번호 찾기' 링크
-  - **API**: `POST /api/auth/password/reset-request`, `POST /api/auth/password/reset`
-  - **Logic**: 이메일로 인증 코드를 발송하고, 사용자가 인증 코드와 새 비밀번호를 입력하면 비밀번호를 업데이트.
-  - **Tables**: `users`, (필요 시) `password_reset_tokens`
-  - **Status**: 신규 추가
-  - **Tasks**:
-    - `[ ]` 이메일 발송 서비스(`EmailService`) 구현 (`spring-boot-starter-mail` 의존성 추가)
-    - `[ ]` `AuthController`에 비밀번호 재설정 요청 및 처리 엔드포인트 추가
-    - `[ ]` `AuthService`에 인증 코드 생성/검증 및 비밀번호 업데이트 로직 추가
+    - `[x]` `OrderController`에 주문 목록 및 상세 조회 엔드포인트 추가
+    - `[x]` `OrderService`에 주문 내역 조회 로직 구현 (페이징 처리 포함)
+    - `[x]` `OrderRepository`에 사용자 ID로 주문을 조회하는 쿼리 메소드 추가 (페치 조인 활용)
+    - `[x]` `OrderListResponseDto`, `OrderDetailResponseDto` 등 응답 DTO 생성
 
 - **[신규] `P-601`: 파일 업로드 (상품 이미지 등)**
   - **Page**: `S-202`, `A-201-ADD` 등
@@ -325,28 +325,39 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
 
 ---
 
-### 🔐 공통 (보안 및 인증)
+## 🔐 공통 (보안 및 인증)
 
-- **[예정] `U-102`: 로그인 (JWT 발급)**
+- ✅ [완료] `U-102`: 로그인 (JWT 발급)
   - **Page**: `P-102-*`
   - **API**: `POST /api/auth/login`
   - **Logic**: 이메일/비밀번호 검증 후 역할(`role`) 정보가 포함된 Access/Refresh Token 발급.
   - **Tables**: `users`
-  - **Status**: 개발 대기
+  - **Status**: 구현 및 테스트 완료.
   - **Tasks**:
-    - `[ ]` `spring-boot-starter-security` 의존성 추가
-    - `[ ]` `jjwt` 라이브러리 의존성 추가
-    - `[ ]` `JwtTokenProvider` 클래스 생성 (토큰 생성 및 검증)
-    - `[ ]` `UserDetailsService` 구현체 생성
-    - `[ ]` `SecurityConfig` 클래스 생성 (URL별 접근 권한 설정)
-    - `[ ]` `JwtAuthenticationFilter` 생성
+    - `[x]` `spring-boot-starter-security` 의존성 추가
+    - `[x]` `jjwt` 라이브러리 의존성 추가
+    - `[x]` `JwtTokenProvider` 클래스 생성 (토큰 생성 및 검증)
+    - `[x]` `UserDetailsService` 구현체 생성
+    - `[x]` `SecurityConfig` 클래스 생성 (URL별 접근 권한 설정)
+    - `[x]` `JwtAuthenticationFilter`, `JwtAuthorizationFilter` 생성 및 수정
     - `[ ]` (로그아웃) Refresh Token을 무효화하는 로직 추가 (선택 사항)
 
-- **[예정] API 접근 제어 설정**
+- ✅ [완료] API 접근 제어 설정
   - **Page**: N/A
   - **API**: 모든 API
   - **Logic**: Spring Security를 사용하여 각 API 엔드포인트에 역할(`USER`, `SELLER`, `ADMIN`) 기반 접근 권한 설정.
-  - **Status**: 개발 대기
+  - **Status**: `SecurityConfig`에 기본 설정 완료.
   - **Tasks**:
-    - `[ ]` `SecurityConfig`의 `configure(HttpSecurity http)` 메소드에 `antMatchers`를 사용하여 URL별 권한 설정
+    - `[x]` `SecurityConfig`의 `configure(HttpSecurity http)` 메소드에 `antMatchers`를 사용하여 URL별 권한 설정
     - `[ ]` Controller 메소드 레벨에서 `@PreAuthorize` 어노테이션을 사용한 세부 권한 설정
+
+- **[예정] `P-402`: 비밀번호 찾기/재설정**
+  - **Page**: `P-102-USER`의 '비밀번호 찾기' 링크
+  - **API**: `POST /api/auth/password/reset-request`, `POST /api/auth/password/reset`
+  - **Logic**: 이메일로 인증 코드를 발송하고, 사용자가 인증 코드와 새 비밀번호를 입력하면 비밀번호를 업데이트.
+  - **Tables**: `users`, (필요 시) `password_reset_tokens`
+  - **Status**: 신규 추가
+  - **Tasks**:
+    - `[ ]` 이메일 발송 서비스(`EmailService`) 구현 (`spring-boot-starter-mail` 의존성 추가)
+    - `[ ]` `AuthController`에 비밀번호 재설정 요청 및 처리 엔드포인트 추가
+    - `[ ]` `AuthService`에 인증 코드 생성/검증 및 비밀번호 업데이트 로직 추가
