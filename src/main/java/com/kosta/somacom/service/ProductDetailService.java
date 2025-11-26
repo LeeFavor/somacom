@@ -36,6 +36,7 @@ public class ProductDetailService {
                 .collect(Collectors.toList());
 
         // TODO: SYS-3 사용자 의도 로깅 (viewCount 증가)
+        // userIntentLoggingService.logView(userId, product.getBaseSpec().getId());
 
         // 3. 최종 응답 DTO 조립
         return new ProductDetailResponse(product, priceComparisonList); // 이제 product는 모든 데이터를 가짐

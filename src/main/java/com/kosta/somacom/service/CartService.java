@@ -80,7 +80,13 @@ public class CartService {
         cartItem.setQuantity(quantity);
     }
 
-    public void deleteCartItem(Long cartItemId) {
+    public void deleteCartItem(Long cartItemId, Long userId) {
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new EntityNotFoundException("CartItem not found: " + cartItemId));
+
+        if (!cartItem.getCart().getUser().getId().equals(userId)) {
+            throw new SecurityException("You do not have permission to delete this item.");
+        }
         cartItemRepository.deleteById(cartItemId);
     }
 }

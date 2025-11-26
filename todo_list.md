@@ -58,16 +58,16 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
 
 ## ✅ Admin (관리자)
 
-- ➡️ [대기] `A-101`: 판매자 가입 요청 처리
+- ✅ [완료] `A-101`: 판매자 가입 요청 처리
   - **Page**: `A-101`
   - **API**: `GET /api/admin/seller-requests`, `PUT /api/admin/seller-requests/{userId}/approve`
   - **Logic**: `users` 테이블에서 `role`이 `SELLER_PENDING`인 사용자를 조회하고, 승인 시 `SELLER`로 변경.
   - **Tables**: `users`, `seller_info`
-  - **Status**: 개발 대기
+  - **Status**: 구현 및 테스트 완료.
   - **Tasks**:
-    - `[ ]` `AdminController` 생성 및 엔드포인트 추가
-    - `[ ]` `AdminService` 생성 및 `role` 변경 메소드 추가
-    - `[ ]` `SellerRequestDto` 등 응답 DTO 생성
+    - `[x]` `AdminController` 생성 및 엔드포인트 추가
+    - `[x]` `AdminService` 생성 및 `role` 변경 메소드 추가
+    - `[x]` `SellerRequestDto` 등 응답 DTO 생성
 
 - **[예정] `A-102`: 회원/판매자 계정 관리**
   - **Page**: `A-102`
@@ -304,12 +304,13 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **API**: `GET /api/orders`, `GET /api/orders/{orderId}`
   - **Logic**: 로그인된 사용자의 `userId`로 `orders` 테이블을 조회. 페이징 처리. 상세 조회 시 `order_items`과 관련 `product` 정보까지 함께 반환.
   - **Tables**: `orders`, `order_items`, `products`
-  - **Status**: 핵심 기능 구현 완료. **[주의] 인증 시스템 연동 시 하드코딩된 사용자 ID 수정 필수.**
+  - **Status**: 핵심 기능 및 인증 연동 완료.
   - **Tasks**:
     - `[x]` `OrderController`에 주문 목록 및 상세 조회 엔드포인트 추가
     - `[x]` `OrderService`에 주문 내역 조회 로직 구현 (페이징 처리 포함)
     - `[x]` `OrderRepository`에 사용자 ID로 주문을 조회하는 쿼리 메소드 추가 (페치 조인 활용)
     - `[x]` `OrderListResponseDto`, `OrderDetailResponseDto` 등 응답 DTO 생성
+    - `[x]` `@AuthenticationPrincipal`을 사용하여 실제 로그인 사용자 정보 연동 완료
 
 - **[신규] `P-601`: 파일 업로드 (상품 이미지 등)**
   - **Page**: `S-202`, `A-201-ADD` 등
@@ -346,10 +347,11 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Page**: N/A
   - **API**: 모든 API
   - **Logic**: Spring Security를 사용하여 각 API 엔드포인트에 역할(`USER`, `SELLER`, `ADMIN`) 기반 접근 권한 설정.
-  - **Status**: `SecurityConfig`에 기본 설정 완료.
+  - **Status**: `SecurityConfig` 기본 설정 및 `@AuthenticationPrincipal`을 통한 사용자 정보 연동 완료.
   - **Tasks**:
     - `[x]` `SecurityConfig`의 `configure(HttpSecurity http)` 메소드에 `antMatchers`를 사용하여 URL별 권한 설정
-    - `[ ]` Controller 메소드 레벨에서 `@PreAuthorize` 어노테이션을 사용한 세부 권한 설정
+    - `[x]` `@AuthenticationPrincipal`을 사용하여 Controller에서 로그인 사용자 정보 획득
+    - `[ ]` (선택) `@PreAuthorize` 어노테이션을 사용한 메소드 레벨 세부 권한 설정
 
 - **[예정] `P-402`: 비밀번호 찾기/재설정**
   - **Page**: `P-102-USER`의 '비밀번호 찾기' 링크

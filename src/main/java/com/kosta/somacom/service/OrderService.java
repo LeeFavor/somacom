@@ -80,7 +80,12 @@ public class OrderService {
 
     public OrderDetailResponseDto findOrder(Long orderId, Long userId) {
         Order order = orderRepository.findOrderDetails(orderId, userId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found or access denied"));
+                .orElseThrow(() -> new EntityNotFoundException("Order not found or access denied."));
+
+        // 한번 더 명시적으로 체크
+        if (!order.getUser().getId().equals(userId)) {
+            throw new SecurityException("You do not have permission to view this order.");
+        }
         return new OrderDetailResponseDto(order);
     }
 }

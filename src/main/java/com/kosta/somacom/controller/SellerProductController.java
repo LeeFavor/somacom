@@ -1,10 +1,12 @@
 package com.kosta.somacom.controller;
 
+import com.kosta.somacom.auth.PrincipalDetails;
 import com.kosta.somacom.dto.request.ProductCreateRequest;
 import com.kosta.somacom.dto.response.BaseSpecSearchResponse;
 import com.kosta.somacom.service.SellerProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,10 +33,9 @@ public class SellerProductController {
      * S-201.3: 판매 상품 등록 API
      */
     @PostMapping("/products")
-    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductCreateRequest request) {
-        // TODO: 현재는 판매자 ID를 2L로 하드코딩. 추후 Spring Security로 인증된 사용자 ID를 가져와야 함.
-        Long sellerId = 2L;
-
+    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductCreateRequest request,
+                                                @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long sellerId = principalDetails.getUser().getId();
         Long newProductId = sellerProductService.createProduct(request, sellerId);
         URI location = URI.create("/api/products/" + newProductId);
 

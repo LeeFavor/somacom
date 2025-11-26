@@ -2,10 +2,12 @@ package com.kosta.somacom.controller;
 
 import com.kosta.somacom.cart.dto.CartItemAddRequest;
 import com.kosta.somacom.cart.dto.CartResponse;
+import com.kosta.somacom.auth.PrincipalDetails;
 import com.kosta.somacom.service.CartService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,18 +21,17 @@ public class CartController {
 
     // 장바구니에 상품 추가
     @PostMapping("/items")
-    public ResponseEntity<Void> addCartItem(@RequestBody CartItemAddRequest request) {
-        // TODO: @AuthenticationPrincipal 등을 통해 실제 사용자 ID를 가져와야 함
-        Long userId = 1L; // 임시 사용자 ID
+    public ResponseEntity<Void> addCartItem(@RequestBody CartItemAddRequest request,
+                                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = principalDetails.getUser().getId();
         cartService.addCartItem(userId, request);
         return ResponseEntity.ok().build();
     }
 
     // 내 장바구니 조회
     @GetMapping
-    public ResponseEntity<CartResponse> getCart() {
-        // TODO: @AuthenticationPrincipal 등을 통해 실제 사용자 ID를 가져와야 함
-        Long userId = 1L; // 임시 사용자 ID
+    public ResponseEntity<CartResponse> getCart(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = principalDetails.getUser().getId();
         return ResponseEntity.ok(cartService.getCart(userId));
     }
 
@@ -44,8 +45,10 @@ public class CartController {
 
     // 장바구니 상품 삭제
     @DeleteMapping("/items/{cartItemId}")
-    public ResponseEntity<Void> deleteCartItem(@PathVariable Long cartItemId) {
-        cartService.deleteCartItem(cartItemId);
+    public ResponseEntity<Void> deleteCartItem(@PathVariable Long cartItemId,
+                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = principalDetails.getUser().getId();
+        cartService.deleteCartItem(cartItemId, userId);
         return ResponseEntity.ok().build();
     }
 }

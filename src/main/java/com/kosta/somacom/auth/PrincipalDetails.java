@@ -1,10 +1,9 @@
 package com.kosta.somacom.auth;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.kosta.somacom.domain.user.User;
@@ -26,8 +25,9 @@ public class PrincipalDetails implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// UserRole Enum을 Spring Security가 인식할 수 있는 GrantedAuthority 형태로 변환합니다.
-		// "ROLE_" 접두사는 Spring Security의 규칙입니다.
-		return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(() -> "ROLE_" + user.getRole().name());
+		return authorities;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL COMMENT '해시된 비밀번호',
     username VARCHAR(100) NOT NULL UNIQUE COMMENT '닉네임',
     
-    `role` ENUM('USER', 'SELLER_PENDING', 'SELLER', 'ADMIN') NOT NULL DEFAULT 'USER' COMMENT '사용자 역할',
+    `role` ENUM('USER', 'SELLER_PENDING', 'SELLER', 'ADMIN') NOT NULL COMMENT '사용자 역할',
     `status` ENUM('ACTIVE', 'SUSPENDED', 'DEACTIVATED') NOT NULL DEFAULT 'ACTIVE' COMMENT '계정 상태 (A-102)',
     
     provider ENUM('LOCAL', 'GOOGLE', 'NAVER', 'KAKAO') NOT NULL DEFAULT 'LOCAL' COMMENT '가입 경로 (U-102.5)',
@@ -28,7 +28,7 @@ CREATE TABLE seller_info (
     seller_id BIGINT PRIMARY KEY COMMENT 'users.user_id (FK)',
     company_name VARCHAR(255) NOT NULL COMMENT '상호명',
     company_number VARCHAR(100) NOT NULL UNIQUE COMMENT '사업자등록번호',
-    phone_number VARCHAR(50) NOT NULL COMMENT '연락처',
+    phone_number VARCHAR(50) NOT NULL COMMENT '연락처 (S-101)',
     
     FOREIGN KEY (seller_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) COMMENT '판매자 상세 정보';
@@ -115,6 +115,7 @@ CREATE TABLE products (
     shipping_fee DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT '배송비',
     description TEXT COMMENT '판매자 상세 설명',
     
+    image_url VARCHAR(255) COMMENT '상품 대표 이미지 URL',
     -- (A-102) Admin이 판매자를 비활성하면 상품도 비노출
     is_visible BOOLEAN NOT NULL DEFAULT TRUE,
 
@@ -179,7 +180,7 @@ CREATE TABLE orders (
     shipping_address TEXT NOT NULL,
     shipping_postcode VARCHAR(20),
     
-    `status` ENUM('PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+    `status` ENUM('PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED') NOT NULL,
     
     ordered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     -- (결제 정보, PG사 ID 등 추가될 수 있음)
@@ -195,19 +196,20 @@ CREATE TABLE order_items (
     quantity INT NOT NULL,
     price_at_purchase DECIMAL(10, 2) NOT NULL COMMENT '주문 시점 가격 (고정)',
     
-    `status` ENUM('PAID', 'PREPARING', 'SHIPPED', 'DELIVERED', 'CONFIRMED', 'CANCELLED') NOT NULL DEFAULT 'PAID' COMMENT '개별 아이템 상태',
+    `status` ENUM('PAID', 'PREPARING', 'SHIPPED', 'DELIVERED', 'CONFIRMED', 'CANCELLED') NOT NULL COMMENT '개별 아이템 상태',
     tracking_number VARCHAR(100) COMMENT '송장 번호 (S-302)',
     
     FOREIGN KEY (order_id) REFERENCES orders(order_id),
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 ) COMMENT '주문 상세 내역 (판매자 정산 기준)';
 
--- U-503: 리뷰
+/*
+-- [주석 처리] U-503: 리뷰 (현재 엔티티 없음)
 CREATE TABLE reviews (
     review_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     product_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
-    order_item_id BIGINT NOT NULL UNIQUE COMMENT '구매 확정된 아이템 1건당 1리뷰 (U-503)',
+    order_item_id BIGINT NOT NULL UNIQUE COMMENT '구매 확정된 아이템 1건당 1리뷰',
     rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
     content TEXT,
     
@@ -216,7 +218,7 @@ CREATE TABLE reviews (
     FOREIGN KEY (product_id) REFERENCES products(product_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 ) COMMENT '상품 리뷰';
-
+*/
 
 -- =============================================================
 -- 5. 시스템 엔진 (SYS-101, 102, 103)
@@ -245,7 +247,6 @@ CREATE TABLE product_popularity_scores (
     PRIMARY KEY (spec_a_id, spec_b_id)
 ) COMMENT '인기도(함께 구매) 엔진 결과 (배치 작업)';
 
--- [주석 해제] Spring 레벨의 동적 필터링을 위해 의도 점수 테이블 활성화
 -- SYS-103: 사용자 의도 점수 (AI 하이브리드 솔루션)
 CREATE TABLE user_intent_score (
     user_id VARCHAR(100) NOT NULL,
@@ -269,18 +270,17 @@ CREATE TABLE user_intent_score (
 
 
 /*
--- [주석 처리] '추천 항목' 모델을 사용하지 않으므로 원본 로그 테이블 비활성화
--- SYS-103.1, U-70x: 원본 사용자 행동 로그 (AI 학습 원본)
+-- [주석 처리] SYS-103.1, U-70x: 원본 사용자 행동 로그 (AI 학습 원본, 현재 사용 안 함)
 CREATE TABLE user_activity_logs (
     log_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(100) NOT NULL COMMENT '사용자 ID (비회원일 시 세션 ID)',
-    event_type VARCHAR(50) NOT NULL COMMENT 'VIEW, SEARCH, FILTER, CART_ADD, HOVER (U-70x)',
+    event_type VARCHAR(50) NOT NULL COMMENT 'VIEW, SEARCH, FILTER, CART_ADD 등',
     target_base_spec_id VARCHAR(100) COMMENT '관련된 기반 모델 ID',
     target_product_id BIGINT COMMENT '관련된 판매 상품 ID',
     event_context TEXT COMMENT 'JSON 형태의 추가 정보 (예: {"query": "i7 14700k"}, {"filter": "socket=LGA1700"})',
     
     event_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    INDEX idx_user_activity_user (user_id)
+    INDEX idx_user_activity_user (user_id, event_timestamp)
 ) COMMENT '모든 사용자 원본 행동 로그 (AI 전송용)';
 */

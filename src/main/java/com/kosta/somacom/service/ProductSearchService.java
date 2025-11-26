@@ -19,11 +19,13 @@ public class ProductSearchService {
     private final ProductRepository productRepository;
     // private final UserIntentLoggingService userIntentLoggingService; // SYS-3 의존성
 
-    public Page<ProductSimpleResponse> searchProducts(ProductSearchCondition condition, Pageable pageable) {
+    public Page<ProductSimpleResponse> searchProducts(ProductSearchCondition condition, Pageable pageable, Long userId) {
         // TODO: SYS-3 사용자 의도 로깅 구현
-        // Long userId = 1L; // SecurityContext에서 사용자 ID 가져오기
+        // if (userId != null) {
+        //     // 로그인한 사용자의 경우에만 로그 기록
         // userIntentLoggingService.logSearch(userId, condition.getKeyword());
         // userIntentLoggingService.logFilter(userId, condition.getFilters());
+        // }
 
         return productRepository.search(condition, pageable);
     }
