@@ -1,5 +1,6 @@
 package com.kosta.somacom.domain.request;
 
+import com.kosta.somacom.domain.part.PartCategory;
 import com.kosta.somacom.domain.user.User;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,6 +31,13 @@ public class BaseSpecRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    private PartCategory category;
+
+    @Column(nullable = false)
+    private String manufacturer;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private BaseSpecRequestStatus status;
 
     @Lob
@@ -44,10 +52,19 @@ public class BaseSpecRequest {
     private LocalDateTime processedAt;
 
     @Builder
-    public BaseSpecRequest(User seller, String requestedModelName, BaseSpecRequestStatus status, String adminNotes, LocalDateTime processedAt) {
+    public BaseSpecRequest(User seller, String requestedModelName, PartCategory category, String manufacturer, BaseSpecRequestStatus status, String adminNotes, LocalDateTime processedAt) {
         this.seller = seller;
         this.requestedModelName = requestedModelName;
+        this.category = category;
+        this.manufacturer = manufacturer;
         this.status = status;
+        this.adminNotes = adminNotes;
+        this.processedAt = processedAt;
+    }
+
+    //== 비즈니스 로직 ==//
+    public void process(BaseSpecRequestStatus newStatus, String adminNotes, LocalDateTime processedAt) {
+        this.status = newStatus;
         this.adminNotes = adminNotes;
         this.processedAt = processedAt;
     }

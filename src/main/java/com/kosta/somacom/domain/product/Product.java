@@ -91,4 +91,15 @@ public class Product {
         }
         this.stockQuantity = restStock;
     }
+    
+    public void updateDetails(String name, BigDecimal price, Integer stockQuantity, ProductCondition condition, String description) {
+        this.name = name;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.condition = condition;
+        this.description = description;
+    }
+    public void softDelete() {
+        this.isVisible = false;
+    }
 }

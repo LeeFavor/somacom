@@ -131,6 +131,8 @@ CREATE TABLE base_spec_requests (
     request_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     seller_id BIGINT NOT NULL,
     requested_model_name VARCHAR(255) NOT NULL COMMENT '요청 모델명 (예: Nvidia RTX 5080)',
+    category ENUM('CPU', 'GPU', 'RAM', 'Motherboard', 'Storage', 'Cooler', 'Case', 'Power') NOT NULL COMMENT '요청 부품 카테고리',
+    manufacturer VARCHAR(100) NOT NULL COMMENT '요청 제조사',
     `status` ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
     admin_notes TEXT COMMENT 'Admin의 거절 사유 등',
     

@@ -49,6 +49,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 // 상세 스펙 테이블들은 필터 조건이 있을 때만 동적으로 조인
                 .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.id))
                 .where(
+                		product.isVisible.isTrue(), // Soft Delete된 상품 제외
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
                         dynamicFilters(condition.getFilters()) // 상세 필터 동적 적용

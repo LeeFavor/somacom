@@ -49,6 +49,7 @@ public class SecurityConfig {
 			.antMatchers("/api/admin/**").hasRole("ADMIN")
 			// SELLER 전용
 			.antMatchers("/api/seller/**").hasRole("SELLER")
+			.antMatchers("/api/seller/orders/**").hasRole("SELLER")
 			// USER 전용 (장바구니, 주문 등)
 			.antMatchers("/api/cart/**").hasRole("USER")
 			.antMatchers("/api/orders/**").hasRole("USER")

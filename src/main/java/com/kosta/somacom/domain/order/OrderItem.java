@@ -52,4 +52,9 @@ public class OrderItem {
         this.status = status;
         this.trackingNumber = trackingNumber;
     }
+
+    public void updateShippingInfo(OrderItemStatus status, String trackingNumber) {
+        this.status = status;
+        this.trackingNumber = trackingNumber;
+    }
 }
