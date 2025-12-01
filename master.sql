@@ -45,6 +45,7 @@ CREATE TABLE base_specs (
     `name` VARCHAR(255) NOT NULL COMMENT '기반 모델명 (예: Intel Core i5-13600K)',
     manufacturer VARCHAR(100) NOT NULL COMMENT '제조사 (예: Intel)',
     category ENUM('CPU', 'GPU', 'RAM', 'Motherboard', 'Storage', 'Cooler', 'Case', 'Power') NOT NULL COMMENT '부품 카테고리',
+    image_url VARCHAR(255) COMMENT '기반 모델 대표 이미지 URL',
     
     -- (A-201) Admin에 의해 등록/수정됨
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -69,6 +70,9 @@ CREATE TABLE motherboard_specs (
     memory_type VARCHAR(50) NOT NULL COMMENT '메모리 타입 (SYS-101)',
     memory_slots INT NOT NULL COMMENT '메모리 슬롯 수',
     form_factor VARCHAR(50) COMMENT '폼팩터 (ATX, mATX)',
+    -- GPU 호환성 검사를 위한 주 PCIe 슬롯 정보
+    pcie_version DECIMAL(3,1) COMMENT '주요 PCIe 슬롯 버전 (GPU용)',
+    pcie_lanes INT COMMENT '주요 PCIe 슬롯 레인 (GPU용)',
     
     FOREIGN KEY (base_spec_id) REFERENCES base_specs(base_spec_id) ON DELETE CASCADE
 ) COMMENT '메인보드 상세 사양';

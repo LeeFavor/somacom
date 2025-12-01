@@ -89,4 +89,17 @@ public class CartService {
         }
         cartItemRepository.deleteById(cartItemId);
     }
+
+    public void deleteCartItems(List<Long> cartItemIds, Long userId) {
+        List<CartItem> itemsToDelete = cartItemRepository.findAllById(cartItemIds);
+
+        for (CartItem item : itemsToDelete) {
+            if (!item.getCart().getUser().getId().equals(userId)) {
+                throw new SecurityException("You do not have permission to delete item: " + item.getId());
+            }
+        }
+
+        // 성능을 위해 일괄 삭제 실행
+        cartItemRepository.deleteAllInBatch(itemsToDelete);
+    }
 }

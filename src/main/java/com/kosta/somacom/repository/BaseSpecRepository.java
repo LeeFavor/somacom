@@ -10,4 +10,6 @@ import com.kosta.somacom.domain.part.BaseSpec;
 public interface BaseSpecRepository extends JpaRepository<BaseSpec, String> {
 
 	 List<BaseSpec> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+	 List<BaseSpec> findTop10ByNameContainingIgnoreCase(String name);
 }

@@ -76,8 +76,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "존재하지 않는 사용자입니다.");
 				return;
 			}
-			
-			PrincipalDetails principalDetails = new PrincipalDetails(ouser.get());
+
+			User user = ouser.get();
+
+			// 비활성화된 사용자인지 확인
+			if (user.getStatus() == com.kosta.somacom.domain.user.UserStatus.DEACTIVATED) {
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "비활성화된 계정입니다.");
+				return;
+			}
+
+			PrincipalDetails principalDetails = new PrincipalDetails(user);
 			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principalDetails,null,
 					principalDetails.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(auth);
@@ -112,7 +120,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "존재하지 않는 사용자입니다.");
 					return;									
 				}
-				
+
+				User user = ouser.get();
+
+				// 비활성화된 사용자인지 확인 (토큰 재발급 방지)
+				if (user.getStatus() == com.kosta.somacom.domain.user.UserStatus.DEACTIVATED) {
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "비활성화된 계정입니다.");
+					return;
+				}
+
 				//새 토큰 생성
 				JwtToken jwtToken = new JwtToken();
 				String nAccessToken = jwtToken.makeAccessToken(email);
@@ -127,7 +143,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 				//response header에 새로 만든 토큰을 넣어준다.
 				response.addHeader(JwtProperties.HEADER_STRING, nToken);
 				
-				PrincipalDetails principalDetails = new PrincipalDetails(ouser.get());
+				PrincipalDetails principalDetails = new PrincipalDetails(user);
 				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principalDetails,null,
 						principalDetails.getAuthorities());
 				SecurityContextHolder.getContext().setAuthentication(auth);				

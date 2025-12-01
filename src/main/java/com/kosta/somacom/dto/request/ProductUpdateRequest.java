@@ -19,4 +19,5 @@ public class ProductUpdateRequest {
     private Integer stockQuantity;
     private ProductCondition condition;
     private String description;
+    private String imageUrl;
 }

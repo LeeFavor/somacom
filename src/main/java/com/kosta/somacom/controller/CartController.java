@@ -1,6 +1,7 @@
 package com.kosta.somacom.controller;
 
 import com.kosta.somacom.cart.dto.CartItemAddRequest;
+import com.kosta.somacom.cart.dto.CartItemDeleteRequest;
 import com.kosta.somacom.cart.dto.CartResponse;
 import com.kosta.somacom.auth.PrincipalDetails;
 import com.kosta.somacom.service.CartService;
@@ -50,5 +51,13 @@ public class CartController {
         Long userId = principalDetails.getUser().getId();
         cartService.deleteCartItem(cartItemId, userId);
         return ResponseEntity.ok().build();
+    }
+    
+    @DeleteMapping("/items")
+    public ResponseEntity<Void> deleteCartItems(@RequestBody CartItemDeleteRequest request,
+                                                  @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = principalDetails.getUser().getId();
+        cartService.deleteCartItems(request.getCartItemIds(), userId);
+        return ResponseEntity.noContent().build();
     }
 }

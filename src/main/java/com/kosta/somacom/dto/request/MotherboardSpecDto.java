@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.math.BigDecimal;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -28,6 +29,9 @@ public class MotherboardSpecDto {
 
     private String formFactor;
 
+    private BigDecimal pcieVersion;
+    private Integer pcieLanes;
+
     public MotherboardSpec toEntity(BaseSpec baseSpec) {
         return MotherboardSpec.builder()
                 .baseSpec(baseSpec)
@@ -36,6 +40,8 @@ public class MotherboardSpecDto {
                 .memoryType(this.memoryType)
                 .memorySlots(this.memorySlots)
                 .formFactor(this.formFactor)
+                .pcieVersion(this.pcieVersion)
+                .pcieLanes(this.pcieLanes)
                 .build();
     }
 }

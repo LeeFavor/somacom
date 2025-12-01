@@ -1,12 +1,14 @@
 package com.kosta.somacom.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.kosta.somacom.domain.user.User;
+import com.kosta.somacom.domain.user.UserStatus;
 import com.kosta.somacom.repository.UserRepository;
 
 
@@ -22,6 +24,9 @@ public class PrincipalDetailsService implements UserDetailsService {
 		// Spring Security에서 전달된 username은 우리 시스템의 email에 해당합니다.
 		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+		if (user.getStatus() == UserStatus.DEACTIVATED) {
+            throw new DisabledException("비활성화된 계정입니다.");
+        }
 		return new PrincipalDetails(user);
 	}
 

@@ -11,4 +11,10 @@ public class ProductSearchCondition {
 
     // 상세 필터 (예: "socket" -> "LGA1700", "manufacturer" -> "Intel")
     private Map<String, String> filters;
+
+    // P-203: 호환성 필터 플래그
+    private boolean compatFilter = false;
+
+    // 호환성 필터링에 필요한 사용자 ID (API 파라미터로는 받지 않음)
+    private Long userId;
 }

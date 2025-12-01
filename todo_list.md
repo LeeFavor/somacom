@@ -80,7 +80,7 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[ ]` `AdminService`에 사용자 `status` 변경 메소드 추가
     - `[ ]` `UserManagementResponse` DTO 생성
 
-- **[완료] `A-201-ADD`: 신규 기반 모델 등록**
+- ✅ **[완료] `A-201-ADD`: 신규 기반 모델 등록**
   - **Page**: `A-201-ADD`
   - **API**: `POST /api/admin/parts`
   - **Logic**: `BaseSpec`과 하위 스펙(`CpuSpec` 등)을 트랜잭션 안에서 동시에 저장.
@@ -99,14 +99,14 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[ ]` `AdminPartController`에 `GET /api/admin/parts` 엔드포인트 추가
     - `[ ]` `BaseSpecListResponse` DTO 생성
 
-- **[예정] `A-202`: 기반 모델 수정**
+➡️ **[진행중] `A-202`: 기반 모델 수정**
   - **Page**: `A-201-ADD` (수정 모드)
   - **API**: `GET /api/admin/parts/{baseSpecId}`, `PUT /api/admin/parts/{baseSpecId}`
   - **Logic**: 기존 `BaseSpec` 및 하위 스펙 조회 및 수정.
   - **Tables**: `base_specs`, `cpu_specs`, `motherboard_specs`, `ram_specs`, `gpu_specs`
   - **Status**: 개발 대기
   - **Tasks**:
-    - `[ ]` `AdminPartController`에 `GET`, `PUT` 엔드포인트 추가
+    - `[ ]` `AdminPartController`에 `GET /api/admin/parts/{id}` 및 `PUT /api/admin/parts/{id}` 엔드포인트 추가
     - `[ ]` `AdminPartService`에 `BaseSpec` 조회 및 수정 메소드 추가
     - `[ ]` `BaseSpecUpdateRequest` DTO 생성
 
@@ -126,7 +126,7 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
 
 ## ✅ Seller (판매자)
 
-- **[완료] `S-201`: 기반 모델 검색**
+- ✅ **[완료] `S-201`: 기반 모델 검색**
   - **Page**: `S-202`
   - **API**: `GET /api/seller/base-specs?query={keyword}`
   - **Logic**: 상품 등록 전, 연결할 `BaseSpec`을 이름으로 검색.
@@ -246,17 +246,17 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `ProductSearchRequest` DTO (동적 필터 파라미터용) 및 `ProductSearchResponse` DTO 생성
     - `[ ]` `UserIntentLoggingService`를 호출하여 검색 및 필터 이벤트 로깅 (`SYS-3` 구현 시 연결)
 
-- **[신규] `P-201.1`: 검색 자동완성**
+- ✅ [완료] `P-201.1`: 검색 자동완성
   - **Page**: `common-header`
   - **API**: `GET /api/products/autocomplete?query={keyword}`
   - **Logic**: `base_specs` 테이블에서 `name`을 기준으로 `LIKE` 검색하여 상위 N개의 모델명을 반환.
   - **Tables**: `base_specs`
-  - **Status**: 신규 추가
+  - **Status**: 구현 및 테스트 완료.
   - **Tasks**:
-    - `[ ]` `ProductSearchController`에 자동완성 엔드포인트 추가
-    - `[ ]` `ProductSearchService`에 자동완성 로직 추가
-    - `[ ]` `BaseSpecRepository`에 `findTop10ByNameContainingIgnoreCase`와 같은 쿼리 메소드 추가
-    - `[ ]` `AutocompleteResponse` DTO 생성
+    - `[x]` `ProductSearchController`에 자동완성 엔드포인트 추가
+    - `[x]` `ProductSearchService`에 자동완성 로직 추가
+    - `[x]` `BaseSpecRepository`에 `findTop10ByNameContainingIgnoreCase`와 같은 쿼리 메소드 추가
+    - `[x]` `AutocompleteResponse` DTO 생성
 
 - ✅ [완료] `P-202`: 상품 상세 조회
   - **Page**: `P-202`
@@ -272,15 +272,19 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[ ]` `UserIntentLoggingService`를 호출하여 조회 이벤트 로깅 (`SYS-3` 구현 시 연결)
     - `[ ]` **(즉시 구매)** `OrderService`에 단일 상품으로 주문을 생성하는 로직 추가 또는 기존 로직 확장
 
-- **[신규] `P-203`: 호환성 필터 적용 검색**
+✅ **[완료] `P-203`: 호환성 필터 적용 검색**
   - **Page**: `P-201-SEARCH`
   - **API**: `GET /api/products/search?compatFilter=true&...`
-  - **Logic**: `ProductRepositoryImpl`의 `search` 메소드에 호환성 필터 로직 추가. 사용자의 장바구니(`carts`)에 담긴 부품들과 호환되는 `base_spec_id` 목록을 `SYS-1` 엔진을 통해 조회하고, 이 목록을 `WHERE` 절의 `IN` 조건으로 사용.
+  - **Logic**: 사용자의 장바구니(`carts`)에 담긴 부품과 호환되는 부품만 필터링. (CPU-MB 소켓, GPU-MB PCIe, RAM-MB/CPU 메모리 타입 규칙 등)
   - **Tables**: `carts`, `cart_items`, `product_compatibility_scores`
-  - **Status**: 신규 추가
+  - **Status**: 모든 부품(CPU, MB, RAM, GPU) 간의 양방향 호환성 규칙 구현 완료. `SYS-1` 엔진 연동 대기.
   - **Tasks**:
-    - `[ ]` `ProductSearchCondition` DTO에 `boolean compatFilter` 필드 추가
-    - `[ ]` `ProductRepositoryImpl`의 `search` 메소드에 호환성 필터 조건(BooleanExpression) 추가
+    - `[x]` `ProductSearchCondition` DTO에 `boolean compatFilter` 필드 추가
+    - `[x]` `ProductRepositoryImpl`의 `search` 메소드에 호환성 필터 조건(BooleanExpression) 추가
+    - `[x]` `MotherboardSpec`에 PCIe 슬롯 정보 추가 (GPU 호환성 검사용)
+    - `[x]` `ProductRepositoryImpl`의 `dynamicFilters` 메소드에 상세 필터링 로직 구현
+    - `[x]` `ProductRepositoryImpl`의 `compatibilityFilter` 메소드에 모든 부품 간 호환성 규칙 구현 완료
+    - `[ ]` `SYS-1` 엔진 연동
 
 - ✅ [완료] `P-301`: 장바구니 관리 (추가/조회/수정/삭제)
   - **Page**: `P-301`
@@ -296,16 +300,16 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[~]` `CartResponse` DTO (호환성 결과 포함) 생성
     - `[ ]` `UserIntentLoggingService`를 호출하여 장바구니 추가 이벤트 로깅
 
-- **[신규] `U-301.5`: 장바구니 선택 삭제**
+✅ **[완료] `U-301.5`: 장바구니 선택 삭제**
   - **Page**: `P-301`
   - **API**: `DELETE /api/cart/items`
   - **Logic**: 요청 본문에 포함된 여러 `cartItemId`들을 한 번에 삭제.
   - **Tables**: `cart_items`
-  - **Status**: 신규 추가
+  - **Status**: 구현 완료
   - **Tasks**:
-    - `[ ]` `CartController`에 `DELETE /api/cart/items` 엔드포인트 추가
-    - `[ ]` `CartService`에 여러 아이템을 삭제하는 로직 추가
-    - `[ ]` `CartItemDeleteRequest` DTO 생성 (`List<Long> cartItemIds` 포함)
+    - `[x]` `CartController`에 `DELETE /api/cart/items` 엔드포인트 추가
+    - `[x]` `CartService`에 여러 아이템을 삭제하는 로직 추가
+    - `[x]` `CartItemDeleteRequest` DTO 생성 (`List<Long> cartItemIds` 포함)
 
 - ✅ [완료] `P-501`: 주문 생성 (결제)
   - **Page**: `P-302`
@@ -345,41 +349,45 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `OrderRepository`에 사용자 ID로 주문을 조회하는 쿼리 메소드 추가 (페치 조인 활용)
     - `[x]` `OrderListResponseDto`, `OrderDetailResponseDto` 등 응답 DTO 생성
     - `[x]` `@AuthenticationPrincipal`을 사용하여 실제 로그인 사용자 정보 연동 완료
-
-- **[신규] `U-504`: 회원 정보 수정**
+ 
+✅ **[완료] `U-504`: 회원 정보 수정**
   - **Page**: `P-401` (마이페이지)
-  - **API**: `PUT /api/user/me`
+  - **API**: `GET /api/user/me`, `PUT /api/user/me`
   - **Logic**: 로그인한 사용자의 닉네임, 비밀번호 등을 수정. (비밀번호 변경은 이 기능을 통해 처리)
   - **Tables**: `users`
-  - **Status**: 신규 추가
+  - **Status**: 구현 완료
   - **Tasks**:
-    - `[ ]` `UserController` 생성 및 정보 수정 엔드포인트 추가
-    - `[ ]` `UserService` 생성 및 정보 수정 로직 추가
-    - `[ ]` `UserUpdateRequest` DTO 생성
-
-- **[신규] `U-505`: 회원 탈퇴**
+    - `[x]` `UserController` 생성 및 정보 조회/수정 엔드포인트 추가
+    - `[x]` `UserService` 생성 및 정보 조회/수정 로직 추가 (닉네임, 비밀번호 변경)
+    - `[x]` `UserUpdateRequest`, `UserInfoResponse` DTO 생성
+ 
+✅ **[완료] `U-505`: 회원 탈퇴**
   - **Page**: `P-401` (마이페이지)
   - **API**: `DELETE /api/user/me`
-  - **Logic**: 로그인한 사용자의 계정 상태를 `DEACTIVATED`로 변경 (Soft Delete).
+  - **Logic**: 로그인한 사용자의 계정 상태를 `DEACTIVATED`로 변경 (Soft Delete). 로그인 및 API 요청 시 비활성화 계정 차단.
   - **Tables**: `users`
-  - **Status**: 신규 추가
+  - **Status**: 구현 완료
   - **Tasks**:
-    - `[ ]` `UserController`에 회원 탈퇴 엔드포인트 추가
-    - `[ ]` `UserService`에 계정 비활성화 로직 추가
+    - `[x]` `UserController`에 회원 탈퇴 엔드포인트 추가
+    - `[x]` `UserService`에 계정 비활성화 로직 추가
+    - `[x]` `JwtAuthorizationFilter`에서 비활성화된 사용자 차단
+    - `[x]` `PrincipalDetailsService`에서 로그인 시 비활성화된 사용자 차단
 
-- **[신규] `P-601`: 파일 업로드 (상품 이미지 등)**
+✅ **[완료] `P-601`: 파일 업로드 (상품 이미지 등)**
   - **Page**: `S-202`, `A-201-ADD` 등
   - **API**: `POST /api/files/upload`
-  - **Logic**: 판매자 또는 관리자가 업로드한 이미지를 서버의 특정 디렉토리에 저장하고, DB에는 파일명만 저장. API는 저장된 파일명을 반환.
-  - **Tables**: (직접 관련 없음, `products`나 `base_specs`의 `image_url` 필드에 파일명이 저장됨)
+  - **Logic**: 판매자 또는 관리자가 업로드한 이미지를 서버의 특정 디렉토리에 저장하고, 저장된 고유 파일명과 접근 URL을 반환.
+  - **Tables**: (직접 관련 없음, `products`나 `base_specs`의 `image_url` 필드에 파일명이 저장됨) - 관련 엔티티 및 DTO 수정 완료
   - **Status**: 신규 추가
+  - **Workflow**:
+    - 1. 프론트엔드에서 이미지 파일 선택 시, 이 API(`POST /api/files/upload`)를 먼저 호출하여 서버에 파일을 저장하고 `fileName`을 응답받는다.
+    - 2. 상품/모델 등록/수정 폼 제출 시, 1번에서 받은 `fileName`을 `imageUrl` 필드에 담아 다른 데이터와 함께 전송한다.
   - **Tasks**:
-    - `[ ]` `FileController` 및 `FileService` 생성
-    - `[ ]` `multipart/form-data` 처리를 위한 로직 구현
-    - `[ ]` 파일 저장 경로 `application.yml`에 설정
-    - `[ ]` `FileUploadResponse` DTO 생성 (저장된 파일명 포함)
+    - `[x]` `FileController` 및 `FileService` 생성
+    - `[x]` `multipart/form-data` 처리를 위한 로직 구현
+    - `[x]` 파일 저장 경로 `application.properties`에 설정
+    - `[x]` `FileUploadResponse` DTO 생성 (저장된 파일명 포함)
 
----
 
 ## 🔐 공통 (보안 및 인증)
 

@@ -1,5 +1,6 @@
 package com.kosta.somacom.domain.part;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,14 +45,22 @@ public class MotherboardSpec {
     @Column(name = "form_factor", length = 50)
     private String formFactor;
 
+    @Column(name = "pcie_version", precision = 3, scale = 1)
+    private BigDecimal pcieVersion;
+
+    @Column(name = "pcie_lanes")
+    private Integer pcieLanes;
+
     @Builder
-    public MotherboardSpec(BaseSpec baseSpec, String socket, String chipset, String memoryType, int memorySlots, String formFactor) {
+    public MotherboardSpec(BaseSpec baseSpec, String socket, String chipset, String memoryType, int memorySlots, String formFactor, BigDecimal pcieVersion, Integer pcieLanes) {
         this.baseSpec = baseSpec;
         this.socket = socket;
         this.chipset = chipset;
         this.memoryType = memoryType;
         this.memorySlots = memorySlots;
         this.formFactor = formFactor;
+        this.pcieVersion = pcieVersion;
+        this.pcieLanes = pcieLanes;
     }
     
     // 연관관계 편의 메소드

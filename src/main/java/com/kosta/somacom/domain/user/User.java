@@ -76,4 +76,16 @@ public class User {
     public void setSellerInfo(SellerInfo sellerInfo) {
         this.sellerInfo = sellerInfo;
     }
+
+    public void updateUsername(String username) {
+        this.username = username;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void deactivate() {
+        this.status = UserStatus.DEACTIVATED;
+    }
 }

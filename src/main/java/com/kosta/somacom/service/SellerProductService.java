@@ -110,7 +110,8 @@ public class SellerProductService {
                 request.getPrice(),
                 request.getStockQuantity(),
                 request.getCondition(),
-                request.getDescription()
+                request.getDescription(),
+                request.getImageUrl()
         );
     }
 

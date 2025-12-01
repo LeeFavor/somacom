@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -92,12 +93,15 @@ public class Product {
         this.stockQuantity = restStock;
     }
     
-    public void updateDetails(String name, BigDecimal price, Integer stockQuantity, ProductCondition condition, String description) {
+    public void updateDetails(String name, BigDecimal price, Integer stockQuantity, ProductCondition condition, String description, String imageUrl) {
         this.name = name;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.condition = condition;
         this.description = description;
+        if (StringUtils.hasText(imageUrl)) {
+            this.image_url = imageUrl;
+        }
     }
     public void softDelete() {
         this.isVisible = false;
