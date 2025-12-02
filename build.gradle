@@ -17,7 +17,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	
 	//쿼리DSL 추가
-	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+	// id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" // [수정] 플러그인 비활성화
 }
 
 group = 'com.kosta'
@@ -67,6 +67,12 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// [수정] 테스트 실행 시 Spring Security 컨텍스트 로드를 위해 추가
+	testImplementation 'org.springframework.security:spring-security-test'
+	// [수정] 테스트 실행 시 JPA 관련 빈(Bean) 로드를 위해 추가
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// ⭐️ JSP 및 JSTL 의존성 (javax)
@@ -79,11 +85,17 @@ dependencies {
 	//쿼리DSL 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	//annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}" // JPA 전용 사용
-	// [수정] 'com.ewerk.gradle.plugins.querydsl' 플러그인이 Q-Type을 생성하므로,
-	// compileJava 단계에서 중복 생성을 막기 위해 아래 의존성은 주석 처리하는 것을 강력히 권장합니다.
-	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+	// [수정] 플러그인을 비활성화했으므로, 표준 annotationProcessor를 사용하여 Q-Type을 생성합니다.
+	// querydsl-apt 의존성의 주석을 해제합니다.
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
 
-	annotationProcessor 'javax.persistence:javax.persistence-api' // java.lang.NoClassDefFoundError(javax.annotation.Generated) 대응
+	// [수정] QueryDSL의 Q-Type 생성을 위해 필요한 의존성을 명시적으로 추가합니다.
+	// 이것이 빌드 오류 해결의 핵심입니다.
+	// annotationProcessor "javax.annotation:javax.annotation-api" // spring-boot-starter-web에 포함되어 있으므로 제거
+	// implementation "javax.annotation:javax.annotation-api" // spring-boot-starter-web에 포함되어 있으므로 제거
+	// [수정] Q-Type 생성을 위해 annotationProcessor 스코프에도 JPA API가 반드시 필요합니다.
+	annotationProcessor "javax.persistence:javax.persistence-api"
+	implementation "javax.persistence:javax.persistence-api"
 	annotationProcessor 'org.projectlombok:lombok'
 
 	// --- [Google Cloud Vertex AI 의존성 추가] ---
@@ -114,25 +126,16 @@ tasks.named('test') {
     useJUnitPlatform()
     systemProperty 'file.encoding', 'UTF-8' // ⭐️ JVM 인코딩 설정 추가
 }
-//쿼리DSL 추가 빌드시작
+
+// [수정] 플러그인을 제거했으므로, 표준 방식으로 Q-Type 생성 경로를 설정합니다.
 def querydslDir = "$buildDir/generated/querydsl"
-querydsl {
-	jpa = true
-	querydslSourcesDir = querydslDir
+
+// Q-Type 소스 코드를 컴파일 소스에 추가
+sourceSets {
+	main.java.srcDirs += [querydslDir]
 }
 
-// sourceSets {
-// 	main.java.srcDir querydslDir
-// }
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-	querydsl.extendsFrom compileClasspath
+// 기존 Q-Type 파일들을 삭제하고 새로 생성하도록 clean 태스크 설정
+clean {
+	delete querydslDir
 }
-
-compileQuerydsl {
-	options.annotationProcessorPath = configurations.querydsl
-}
-//쿼리DSL 추가 빌드끝
