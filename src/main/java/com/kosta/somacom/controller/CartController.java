@@ -2,7 +2,7 @@ package com.kosta.somacom.controller;
 
 import com.kosta.somacom.cart.dto.CartItemAddRequest;
 import com.kosta.somacom.cart.dto.CartItemDeleteRequest;
-import com.kosta.somacom.cart.dto.CartResponse;
+import com.kosta.somacom.dto.response.CartResponse;
 import com.kosta.somacom.auth.PrincipalDetails;
 import com.kosta.somacom.service.CartService;
 

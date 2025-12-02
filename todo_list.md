@@ -17,19 +17,20 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
 
 ## 🧠 1. System Engines (핵심 비즈니스 로직)
 
-이 프로젝트의 차별점인 '지능형 엔진'입니다. 가장 먼저, 그리고 가장 견고하게 구현되어야 합니다.
+이 프로젝트의 차별점인 '지능형 엔진'입니다.
 
-- **[예정] `SYS-1`: 호환성 규칙 엔진 (Rule Engine)**
+✅ **[완료] `SYS-1`: 호환성 규칙 엔진 (Rule Engine)**
   - **Description**: `base_specs`의 기술 사양을 비교하여 조립 가능 여부를 판별합니다.
   - **Logic (Batch)**: `base_specs`의 모든 조합(N*N)을 검사하여 `product_compatibility_scores` 테이블에 `SUCCESS/WARN/FAIL` 상태와 `reason_code`를 미리 저장하는 배치 작업 구현.
   - **Logic (Real-time)**: 장바구니(`carts`) 조회 시, 담긴 아이템들 간의 호환성을 즉시 검증하여 사용자에게 경고 메시지를 반환하는 로직 구현.
   - **Tables**: `base_specs`, `cpu_specs`, `motherboard_specs`, `ram_specs`, `gpu_specs`, `product_compatibility_scores`
-  - **Status**: 설계 완료, 개발 대기
+  - **Status**: 구현 및 테스트 완료.
   - **Tasks**:
-    - `[ ]` `CompatibilityRule` 인터페이스 및 구현체(e.g., `SocketRule`, `MemoryTypeRule`) 정의
-    - `[ ]` `RuleEngineService` 클래스 생성 (규칙들을 실행하고 결과 집계)
-    - `[ ]` `Spring Batch` Job 생성 (`CompatibilityBatchJob`) - 모든 `base_specs` 조합을 읽고 `RuleEngineService`를 실행하여 `product_compatibility_scores`에 저장
-    - `[ ]` `CartService`에 실시간 호환성 검증 로직 추가 (`RuleEngineService` 호출)
+    - `[x]` `CompatibilityRule` 인터페이스 및 구현체(e.g., `SocketRule`, `MemoryTypeRule`) 정의
+    - `[x]` `RuleEngineService` 클래스 생성 (규칙들을 실행하고 결과 집계)
+    - `[x]` `Spring Batch` Job 생성 (`CompatibilityBatchJob`) - 모든 `base_specs` 조합을 읽고 `RuleEngineService`를 실행하여 `product_compatibility_scores`에 저장
+    - `[x]` `BatchScheduler` 생성 (매일 새벽 3시 `CompatibilityBatchJob` 실행)
+    - `[x]` `CartService`에 실시간 호환성 검증 로직 추가 (`RuleEngineService` 호출)
 
 - **[예정] `SYS-2`: 인기도 엔진 (Popularity Engine)**
   - **Description**: 과거 주문 데이터를 분석하여 "A를 산 사람이 B도 샀다"는 연관성을 점수화합니다.
@@ -284,7 +285,7 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `MotherboardSpec`에 PCIe 슬롯 정보 추가 (GPU 호환성 검사용)
     - `[x]` `ProductRepositoryImpl`의 `dynamicFilters` 메소드에 상세 필터링 로직 구현
     - `[x]` `ProductRepositoryImpl`의 `compatibilityFilter` 메소드에 모든 부품 간 호환성 규칙 구현 완료
-    - `[ ]` `SYS-1` 엔진 연동
+    - `[x]` **(리팩토링 완료)** `ProductRepositoryImpl`의 `compatibilityFilter`를 `product_compatibility_scores` 테이블을 사용하도록 개선
 
 - ✅ [완료] `P-301`: 장바구니 관리 (추가/조회/수정/삭제)
   - **Page**: `P-301`
