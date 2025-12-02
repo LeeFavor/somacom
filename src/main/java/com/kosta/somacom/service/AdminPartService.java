@@ -6,10 +6,14 @@ import com.kosta.somacom.domain.part.GpuSpec;
 import com.kosta.somacom.domain.part.MotherboardSpec;
 import com.kosta.somacom.domain.part.RamSpec;
 import com.kosta.somacom.dto.request.BaseSpecCreateRequest;
+import com.kosta.somacom.dto.request.BaseSpecSearchCondition;
 import com.kosta.somacom.dto.request.BaseSpecUpdateRequest;
 import com.kosta.somacom.dto.response.BaseSpecDetailResponse;
+import com.kosta.somacom.dto.response.BaseSpecListResponse;
 import com.kosta.somacom.repository.BaseSpecRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +44,11 @@ public class AdminPartService {
         BaseSpec savedBaseSpec = baseSpecRepository.save(baseSpec);
 
         return savedBaseSpec.getId();
+    }
+
+    public Page<BaseSpecListResponse> listBaseSpecs(BaseSpecSearchCondition condition, Pageable pageable) {
+        Page<BaseSpec> baseSpecPage = baseSpecRepository.searchBaseSpecs(condition, pageable);
+        return baseSpecPage.map(BaseSpecListResponse::new); // 엔티티를 DTO로 변환
     }
 
     public BaseSpecDetailResponse getBaseSpecDetail(String baseSpecId) {

@@ -1,4 +1,4 @@
-package com.kosta.somacom.repository;
+package com.kosta.somacom.repository.impl;
 
 import static com.kosta.somacom.domain.part.QBaseSpec.baseSpec;
 import static com.kosta.somacom.domain.part.QCpuSpec.cpuSpec;
@@ -23,6 +23,8 @@ import com.kosta.somacom.domain.part.MotherboardSpec;
 import com.kosta.somacom.domain.part.PartCategory;
 import com.kosta.somacom.dto.request.ProductSearchCondition;
 import com.kosta.somacom.dto.response.ProductSimpleResponse;
+import com.kosta.somacom.repository.CartRepository;
+import com.kosta.somacom.repository.ProductRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;

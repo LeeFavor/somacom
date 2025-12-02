@@ -1,10 +1,14 @@
 package com.kosta.somacom.controller;
 
 import com.kosta.somacom.dto.request.BaseSpecCreateRequest;
+import com.kosta.somacom.dto.request.BaseSpecSearchCondition;
 import com.kosta.somacom.dto.request.BaseSpecUpdateRequest;
 import com.kosta.somacom.dto.response.BaseSpecDetailResponse;
+import com.kosta.somacom.dto.response.BaseSpecListResponse;
 import com.kosta.somacom.service.AdminPartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +31,14 @@ public class AdminPartController {
         // 생성된 리소스의 URI를 Location 헤더에 담아 201 Created 응답 반환
         URI location = URI.create("/api/parts/" + newBaseSpecId);
         return ResponseEntity.created(location).body("Base spec created successfully with ID: " + newBaseSpecId);
+    }
+
+    /**
+     * A-201-LIST: 기반 모델 목록 조회
+     */
+    @GetMapping
+    public ResponseEntity<Page<BaseSpecListResponse>> listBaseSpecs(@ModelAttribute BaseSpecSearchCondition condition, Pageable pageable) {
+        return ResponseEntity.ok(adminPartService.listBaseSpecs(condition, pageable));
     }
 
     /**
