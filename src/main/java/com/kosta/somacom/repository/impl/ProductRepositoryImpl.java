@@ -6,6 +6,7 @@ import static com.kosta.somacom.domain.part.QGpuSpec.gpuSpec;
 import static com.kosta.somacom.domain.part.QMotherboardSpec.motherboardSpec;
 import static com.kosta.somacom.domain.part.QRamSpec.ramSpec;
 import static com.kosta.somacom.domain.product.QProduct.product;
+import static com.kosta.somacom.domain.score.QCompatibilityScore.compatibilityScore;
 import static com.kosta.somacom.domain.user.QSellerInfo.sellerInfo;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import org.springframework.util.StringUtils;
 import com.kosta.somacom.domain.part.BaseSpec;
 import com.kosta.somacom.domain.part.MotherboardSpec;
 import com.kosta.somacom.domain.part.PartCategory;
+import com.kosta.somacom.domain.score.CompatibilityStatus;
 import com.kosta.somacom.dto.request.ProductSearchCondition;
 import com.kosta.somacom.dto.response.ProductSimpleResponse;
 import com.kosta.somacom.repository.CartRepository;
@@ -118,103 +120,39 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
 
     // P-203: 호환성 필터
-    private BooleanBuilder compatibilityFilter(boolean isCompatFilter, Long userId, String searchCategory) {
+    private BooleanBuilder compatibilityFilter(boolean isCompatFilter, Long userId) {
         if (!isCompatFilter || userId == null) {
+
+        	System.out.println("111111111111111필터링 실패");
             return new BooleanBuilder(); // 빈 Builder 반환
         }
-    
+
         List<BaseSpec> itemsInCart = cartRepository.findBaseSpecsInCartByUserId(userId);
         if (itemsInCart.isEmpty()) {
             return new BooleanBuilder(); // 빈 Builder 반환
         }
-    
-        // 장바구니에 있는 CPU 찾기
-        Optional<BaseSpec> cpuInCart = itemsInCart.stream()
-                .filter(item -> item.getCategory() == PartCategory.CPU)
-                .findFirst();
-    
-        // 장바구니에 있는 메인보드 찾기
-        Optional<BaseSpec> motherboardInCart = itemsInCart.stream()
-                .filter(item -> item.getCategory() == PartCategory.Motherboard)
-                .findFirst();
-    
-        // 장바구니에 있는 GPU 찾기
-        Optional<BaseSpec> gpuInCart = itemsInCart.stream()
-                .filter(item -> item.getCategory() == PartCategory.GPU)
-                .findFirst();
-    
-        // 장바구니에 있는 RAM 찾기
-        Optional<BaseSpec> ramInCart = itemsInCart.stream()
-                .filter(item -> item.getCategory() == PartCategory.RAM)
-                .findFirst();
-    
-        BooleanBuilder finalBuilder = new BooleanBuilder();
-    
-        // 검색 카테고리에 따라 분기
-        if ("Motherboard".equalsIgnoreCase(searchCategory)) {
-            BooleanBuilder motherboardCompat = new BooleanBuilder();
-            cpuInCart.ifPresent(cpu -> {
-                String socket = queryFactory.select(cpuSpec.socket).from(cpuSpec).where(cpuSpec.baseSpec.id.eq(cpu.getId())).fetchOne();
-                String supportedMemory = queryFactory.select(cpuSpec.supportedMemoryTypes).from(cpuSpec).where(cpuSpec.baseSpec.id.eq(cpu.getId())).fetchOne();
 
-                motherboardCompat.and(motherboardSpec.socket.equalsIgnoreCase(socket));
-                if (StringUtils.hasText(supportedMemory)) {
-                    motherboardCompat.and(motherboardSpec.memoryType.in(supportedMemory.split(",")));
-                }
-            });
-            gpuInCart.ifPresent(gpu -> {
-                BooleanExpression pcieVersionGoe = motherboardSpec.pcieVersion.goe(queryFactory.select(gpuSpec.pcieVersion).from(gpuSpec).where(gpuSpec.baseSpec.id.eq(gpu.getId())));
-                BooleanExpression pcieLanesGoe = motherboardSpec.pcieLanes.goe(queryFactory.select(gpuSpec.pcieLanes).from(gpuSpec).where(gpuSpec.baseSpec.id.eq(gpu.getId())));
-                motherboardCompat.and(pcieVersionGoe.and(pcieLanesGoe));
-            });
-            ramInCart.ifPresent(ram -> {
-                String memoryType = queryFactory.select(ramSpec.memoryType).from(ramSpec).where(ramSpec.baseSpec.id.eq(ram.getId())).fetchOne();
-                motherboardCompat.and(motherboardSpec.memoryType.equalsIgnoreCase(memoryType));
-            });
-            finalBuilder.and(motherboardCompat);
-    
-        } else if ("CPU".equalsIgnoreCase(searchCategory)) {
-            BooleanBuilder cpuCompat = new BooleanBuilder();
-            motherboardInCart.ifPresent(mb -> {
-                String socket = queryFactory.select(motherboardSpec.socket).from(motherboardSpec).where(motherboardSpec.baseSpec.id.eq(mb.getId())).fetchOne();
-                cpuCompat.and(cpuSpec.socket.equalsIgnoreCase(socket));
-            });
-            ramInCart.ifPresent(ram -> {
-                String memoryType = queryFactory.select(ramSpec.memoryType).from(ramSpec).where(ramSpec.baseSpec.id.eq(ram.getId())).fetchOne();
-                cpuCompat.and(cpuSpec.supportedMemoryTypes.containsIgnoreCase(memoryType));
-            });
-            finalBuilder.and(cpuCompat);
-    
-        } else if ("RAM".equalsIgnoreCase(searchCategory)) {
-            BooleanBuilder ramCompat = new BooleanBuilder();
-            cpuInCart.ifPresent(cpu -> {
-                String supportedMemory = queryFactory.select(cpuSpec.supportedMemoryTypes).from(cpuSpec).where(cpuSpec.baseSpec.id.eq(cpu.getId())).fetchOne();
-                if (StringUtils.hasText(supportedMemory)) {
-                    // CPU가 지원하는 메모리 타입 중 하나와 일치해야 함
-                    ramCompat.and(ramSpec.memoryType.in(supportedMemory.split(",")));
-                }
-            });
-            motherboardInCart.ifPresent(mb -> {
-                String memoryType = queryFactory.select(motherboardSpec.memoryType).from(motherboardSpec).where(motherboardSpec.baseSpec.id.eq(mb.getId())).fetchOne();
-                // 메인보드가 지원하는 메모리 타입과 정확히 일치해야 함
-                ramCompat.and(ramSpec.memoryType.equalsIgnoreCase(memoryType));
-            });
-            finalBuilder.and(ramCompat);
-    
-        } else if ("GPU".equalsIgnoreCase(searchCategory)) {
-            BooleanBuilder gpuCompat = new BooleanBuilder();
-            motherboardInCart.ifPresent(mb -> {
-                MotherboardSpec specInCart = queryFactory.selectFrom(motherboardSpec).where(motherboardSpec.baseSpec.id.eq(mb.getId())).fetchOne();
-                if (specInCart != null) {
-                    gpuCompat.and(gpuSpec.pcieVersion.loe(specInCart.getPcieVersion())
-                            .and(gpuSpec.pcieLanes.loe(specInCart.getPcieLanes())));
-                }
-            });
-            finalBuilder.and(gpuCompat);
+        BooleanBuilder compatibilityBuilder = new BooleanBuilder();
+
+        // 장바구니의 모든 아이템과 호환되어야 함
+        for (BaseSpec itemInCart : itemsInCart) {
+            // 검색 대상(baseSpec)이 장바구니 아이템과 FAIL 관계가 아니어야 함
+            BooleanExpression isNotFail = compatibilityScore.status.ne(CompatibilityStatus.FAIL);
+
+            // (A, B) 와 (B, A) 양방향으로 체크
+            BooleanExpression pair1 = compatibilityScore.specAId.eq(baseSpec.id).and(compatibilityScore.specBId.eq(itemInCart.getId()));
+            BooleanExpression pair2 = compatibilityScore.specAId.eq(itemInCart.getId()).and(compatibilityScore.specBId.eq(baseSpec.id));
+
+            // 장바구니의 각 아이템에 대해, 호환성 점수 테이블에 FAIL이 아닌 레코드가 존재하는지 확인
+            compatibilityBuilder.and(
+                queryFactory.selectFrom(compatibilityScore)
+                    .where(
+                        (pair1.or(pair2)).and(isNotFail)
+                    ).exists()
+            );
         }
-        // 다른 카테고리(Storage, Cooler 등)는 호환성 필터링을 적용하지 않음
-    
-        return finalBuilder;
+
+        return compatibilityBuilder;
     }
 
     // 상세 필터들을 동적으로 조합하는 메소드
@@ -222,7 +160,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         BooleanBuilder builder = new BooleanBuilder();
         if (filters == null || filters.isEmpty()) {
         	
-        	System.out.println("111111111111111필터링 실패");
             return builder;
         }
 
@@ -307,7 +244,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         product.isVisible.isTrue(),
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
-                        compatibilityFilter(condition.isCompatFilter(), condition.getUserId(), condition.getCategory()), // 호환성 필터 적용
+                        compatibilityFilter(condition.isCompatFilter(), condition.getUserId()), // 리팩토링된 호환성 필터 적용
                         dynamicFilters(condition.getFilters(), condition.getCategory())
                 )
                 .offset(pageable.getOffset())
@@ -327,7 +264,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         product.isVisible.isTrue(),
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
-                        compatibilityFilter(condition.isCompatFilter(), condition.getUserId(), condition.getCategory()),
+                        compatibilityFilter(condition.isCompatFilter(), condition.getUserId()),
                         dynamicFilters(condition.getFilters(), condition.getCategory())
                 );
 

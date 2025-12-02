@@ -285,7 +285,7 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `MotherboardSpec`에 PCIe 슬롯 정보 추가 (GPU 호환성 검사용)
     - `[x]` `ProductRepositoryImpl`의 `dynamicFilters` 메소드에 상세 필터링 로직 구현
     - `[x]` `ProductRepositoryImpl`의 `compatibilityFilter` 메소드에 모든 부품 간 호환성 규칙 구현 완료
-    - `[ ]` `SYS-1` 엔진 연동
+    - `[x]` **(리팩토링 완료)** `ProductRepositoryImpl`의 `compatibilityFilter`를 `product_compatibility_scores` 테이블을 사용하도록 개선
 
 - ✅ [완료] `P-301`: 장바구니 관리 (추가/조회/수정/삭제)
   - **Page**: `P-301`
