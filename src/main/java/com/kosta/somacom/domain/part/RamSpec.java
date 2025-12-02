@@ -9,6 +9,8 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.springframework.util.StringUtils;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,5 +59,23 @@ public class RamSpec {
     // 연관관계 편의 메소드
     public void setBaseSpec(BaseSpec baseSpec) {
         this.baseSpec = baseSpec;
+    }
+    
+    public void updateSpec(String memoryType, Integer speedMhz, Integer capacityGb, Integer kitQuantity, Integer heightMm) {
+        if (StringUtils.hasText(memoryType)) {
+            this.memoryType = memoryType;
+        }
+        if (speedMhz != null) {
+            this.speedMhz = speedMhz;
+        }
+        if (capacityGb != null) {
+            this.capacityGb = capacityGb;
+        }
+        if (kitQuantity != null) {
+            this.kitQuantity = kitQuantity;
+        }
+        if (heightMm != null) {
+            this.heightMm = heightMm;
+        }
     }
 }

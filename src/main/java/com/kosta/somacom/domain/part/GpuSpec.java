@@ -52,4 +52,16 @@ public class GpuSpec {
     public void setBaseSpec(BaseSpec baseSpec) {
         this.baseSpec = baseSpec;
     }
+    
+    public void updateSpec(BigDecimal pcieVersion, Integer pcieLanes, Integer lengthMm) {
+        if (pcieVersion != null) {
+            this.pcieVersion = pcieVersion;
+        }
+        if (pcieLanes != null) {
+            this.pcieLanes = pcieLanes;
+        }
+        if (lengthMm != null) {
+            this.lengthMm = lengthMm;
+        }
+    }
 }

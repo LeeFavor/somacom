@@ -1,13 +1,13 @@
 package com.kosta.somacom.domain.cart;
 
 import com.kosta.somacom.domain.product.Product;
-import javax.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,6 +21,7 @@ public class CartItem {
     @Column(name = "cart_item_id")
     private Long id;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
@@ -29,6 +30,7 @@ public class CartItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Setter
     @Column(nullable = false)
     private int quantity;
 
@@ -36,10 +38,14 @@ public class CartItem {
     @Column(name = "added_at", updatable = false)
     private LocalDateTime addedAt;
 
-    @Builder
-    public CartItem(Cart cart, Product product, int quantity) {
-        this.cart = cart;
-        this.product = product;
-        this.quantity = quantity;
+    public static CartItem createCartItem(Product product, int quantity) {
+        CartItem cartItem = new CartItem();
+        cartItem.product = product;
+        cartItem.setQuantity(quantity);
+        return cartItem;
+    }
+
+    public void addQuantity(int quantity) {
+        this.quantity += quantity;
     }
 }

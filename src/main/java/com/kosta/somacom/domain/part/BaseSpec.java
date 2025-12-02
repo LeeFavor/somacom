@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -39,6 +40,9 @@ public class BaseSpec {
     @Column(nullable = false, length = 20)
     private PartCategory category;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -61,11 +65,12 @@ public class BaseSpec {
     private GpuSpec gpuSpec;
 
     @Builder
-    public BaseSpec(String id, String name, String manufacturer, PartCategory category) {
+    public BaseSpec(String id, String name, String manufacturer, PartCategory category, String imageUrl) {
         this.id = id;
         this.name = name;
         this.manufacturer = manufacturer;
         this.category = category;
+        this.imageUrl = imageUrl;
     }
 
     // 연관관계 편의 메소드
@@ -106,6 +111,18 @@ public class BaseSpec {
         this.gpuSpec = gpuSpec;
         if (gpuSpec != null) {
             gpuSpec.setBaseSpec(this);
+        }
+    }
+
+    public void updateBaseInfo(String name, String manufacturer, String imageUrl) {
+        if (StringUtils.hasText(name)) {
+            this.name = name;
+        }
+        if (StringUtils.hasText(manufacturer)) {
+            this.manufacturer = manufacturer;
+        }
+        if (StringUtils.hasText(imageUrl)) {
+            this.imageUrl = imageUrl;
         }
     }
 }

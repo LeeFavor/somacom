@@ -27,6 +27,8 @@ public class BaseSpecCreateRequest {
     @NotNull(message = "모델 타입은 필수입니다.")
     private PartCategory category;
 
+    private String imageUrl;
+
     // 각 카테고리별 상세 스펙 DTO
     @Valid
     private CpuSpecDto cpuSpec;
@@ -50,6 +52,7 @@ public class BaseSpecCreateRequest {
                 .name(this.name)
                 .manufacturer(this.manufacturer)
                 .category(this.category)
+                .imageUrl(this.imageUrl)
                 .build();
 
         // 카테고리에 맞는 상세 스펙 엔티티를 생성하고 연관관계를 설정

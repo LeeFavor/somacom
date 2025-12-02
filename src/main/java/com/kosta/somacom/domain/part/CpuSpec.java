@@ -1,5 +1,7 @@
 package com.kosta.somacom.domain.part;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.springframework.util.StringUtils;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -49,5 +53,17 @@ public class CpuSpec {
     // 연관관계 편의 메소드
     public void setBaseSpec(BaseSpec baseSpec) {
         this.baseSpec = baseSpec;
+    }
+    
+    public void updateSpec(String socket, String supportedMemoryTypes, Boolean hasIgpu) {
+        if (StringUtils.hasText(socket)) {
+            this.socket = socket;
+        }
+        if (StringUtils.hasText(supportedMemoryTypes)) {
+            this.supportedMemoryTypes = supportedMemoryTypes;
+        }
+        if (hasIgpu != null) {
+            this.hasIgpu = hasIgpu;
+        }
     }
 }

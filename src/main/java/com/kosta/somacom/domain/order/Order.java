@@ -61,4 +61,10 @@ public class Order {
         this.shippingPostcode = shippingPostcode;
         this.status = status;
     }
+
+    //== 연관관계 편의 메소드 ==//
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
 }

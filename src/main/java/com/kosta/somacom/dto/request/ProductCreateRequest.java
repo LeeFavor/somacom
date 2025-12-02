@@ -37,7 +37,7 @@ public class ProductCreateRequest {
     private BigDecimal shippingFee = BigDecimal.ZERO;
     
     private String imageUrl;
-
+    private String description;
 
     public Product toEntity(BaseSpec baseSpec, User seller) {
         return Product.builder()
@@ -48,7 +48,8 @@ public class ProductCreateRequest {
                 .stockQuantity(this.stockQuantity)
                 .condition(this.condition)
                 .shippingFee(this.shippingFee)
-                .img_url(imageUrl)
+                .description(this.description)
+                .img_url(this.imageUrl)
                 .build();
     }
 }
