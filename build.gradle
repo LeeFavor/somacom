@@ -16,6 +16,7 @@ plugins {
 	id 'org.springframework.boot' version '2.7.17'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	
+	id 'eclipse' // [추가] STS(Eclipse) IDE 통합을 위한 플러그인
 	//쿼리DSL 추가
 	// id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" // [수정] 플러그인 비활성화
 }
@@ -138,4 +139,9 @@ sourceSets {
 // 기존 Q-Type 파일들을 삭제하고 새로 생성하도록 clean 태스크 설정
 clean {
 	delete querydslDir
+}
+
+// [추가] Annotation Processor가 Q-Type을 생성할 경로를 명시적으로 지정합니다.
+tasks.withType(JavaCompile) {
+    options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
 }
