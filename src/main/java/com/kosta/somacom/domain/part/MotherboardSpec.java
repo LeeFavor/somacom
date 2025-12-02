@@ -10,6 +10,8 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.springframework.util.StringUtils;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,5 +68,29 @@ public class MotherboardSpec {
     // 연관관계 편의 메소드
     public void setBaseSpec(BaseSpec baseSpec) {
         this.baseSpec = baseSpec;
+    }
+
+    public void updateSpec(String socket, String chipset, String memoryType, Integer memorySlots, String formFactor, BigDecimal pcieVersion, Integer pcieLanes) {
+        if (StringUtils.hasText(socket)) {
+            this.socket = socket;
+        }
+        if (StringUtils.hasText(chipset)) {
+            this.chipset = chipset;
+        }
+        if (StringUtils.hasText(memoryType)) {
+            this.memoryType = memoryType;
+        }
+        if (memorySlots != null) {
+            this.memorySlots = memorySlots;
+        }
+        if (StringUtils.hasText(formFactor)) {
+            this.formFactor = formFactor;
+        }
+        if (pcieVersion != null) {
+            this.pcieVersion = pcieVersion;
+        }
+        if (pcieLanes != null) {
+            this.pcieLanes = pcieLanes;
+        }
     }
 }

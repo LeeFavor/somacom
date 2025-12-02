@@ -87,28 +87,28 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Tables**: `base_specs`, `cpu_specs`, `motherboard_specs`, `ram_specs`, `gpu_specs`
   - **Status**: 구현 및 API 테스트 완료
 
-- **[예정] `A-201-LIST`: 기반 모델 목록 조회**
+➡️ **[진행중] `A-201-LIST`: 기반 모델 목록 조회**
   - **Page**: `A-201`
   - **API**: `GET /api/admin/parts`
   - **Logic**: QueryDSL을 이용한 동적 검색 및 페이징 처리.
   - **Tables**: `base_specs`
   - **Status**: 개발 대기
   - **Tasks**:
-    - `[ ]` `BaseSpecRepository`에 QueryDSL 지원을 위한 Custom Repository 인터페이스/구현체 추가
+    - `[ ]` `BaseSpecRepository`에 QueryDSL 지원을 위한 Custom Repository 인터페이스/구현체 추가 (이미 `ProductRepositoryImpl`이 있으므로 패턴 참고)
     - `[ ]` `AdminPartService`에 `BaseSpec` 목록 조회 메소드 추가 (페이징 처리 포함)
     - `[ ]` `AdminPartController`에 `GET /api/admin/parts` 엔드포인트 추가
     - `[ ]` `BaseSpecListResponse` DTO 생성
 
-➡️ **[진행중] `A-202`: 기반 모델 수정**
+✅ **[완료] `A-202`: 기반 모델 수정**
   - **Page**: `A-201-ADD` (수정 모드)
   - **API**: `GET /api/admin/parts/{baseSpecId}`, `PUT /api/admin/parts/{baseSpecId}`
   - **Logic**: 기존 `BaseSpec` 및 하위 스펙 조회 및 수정.
   - **Tables**: `base_specs`, `cpu_specs`, `motherboard_specs`, `ram_specs`, `gpu_specs`
-  - **Status**: 개발 대기
+  - **Status**: 구현 및 API 테스트 완료
   - **Tasks**:
-    - `[ ]` `AdminPartController`에 `GET /api/admin/parts/{id}` 및 `PUT /api/admin/parts/{id}` 엔드포인트 추가
-    - `[ ]` `AdminPartService`에 `BaseSpec` 조회 및 수정 메소드 추가
-    - `[ ]` `BaseSpecUpdateRequest` DTO 생성
+    - `[x]` `AdminPartController`에 `GET /api/admin/parts/{id}` 및 `PUT /api/admin/parts/{id}` 엔드포인트 추가
+    - `[x]` `AdminPartService`에 `BaseSpec` 조회 및 수정 메소드 추가
+    - `[x]` `BaseSpecUpdateRequest`, `BaseSpecDetailResponse` DTO 생성 및 관련 DTO 수정 완료
 
 - ✅ [완료] `A-203`: 판매자의 기반 모델 등록 요청 처리
   - **Page**: `A-203`
