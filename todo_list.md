@@ -26,9 +26,9 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Tables**: `base_specs`, `cpu_specs`, `motherboard_specs`, `ram_specs`, `gpu_specs`, `product_compatibility_scores`
   - **Status**: 설계 완료, 개발 대기
   - **Tasks**:
-    - `[ ]` `CompatibilityRule` 인터페이스 및 구현체(e.g., `SocketRule`, `MemoryTypeRule`) 정의
-    - `[ ]` `RuleEngineService` 클래스 생성 (규칙들을 실행하고 결과 집계)
-    - `[ ]` `Spring Batch` Job 생성 (`CompatibilityBatchJob`) - 모든 `base_specs` 조합을 읽고 `RuleEngineService`를 실행하여 `product_compatibility_scores`에 저장
+    - `[x]` `CompatibilityRule` 인터페이스 및 구현체(e.g., `SocketRule`, `MemoryTypeRule`) 정의
+    - `[x]` `RuleEngineService` 클래스 생성 (규칙들을 실행하고 결과 집계)
+    - `[x]` `Spring Batch` Job 생성 (`CompatibilityBatchJob`) - 모든 `base_specs` 조합을 읽고 `RuleEngineService`를 실행하여 `product_compatibility_scores`에 저장
     - `[ ]` `CartService`에 실시간 호환성 검증 로직 추가 (`RuleEngineService` 호출)
 
 - **[예정] `SYS-2`: 인기도 엔진 (Popularity Engine)**
