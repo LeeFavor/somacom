@@ -69,14 +69,14 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `AdminService` 생성 및 `role` 변경 메소드 추가
     - `[x]` `SellerRequestDto` 등 응답 DTO 생성
 
-- **[예정] `A-102`: 회원/판매자 계정 관리**
+➡️ **[진행중] `A-102`: 회원/판매자 계정 관리**
   - **Page**: `A-102`
   - **API**: `GET /api/admin/users`, `PUT /api/admin/users/{userId}/status`
   - **Logic**: 사용자의 `status`를 `ACTIVE`, `SUSPENDED` 등으로 변경.
   - **Tables**: `users`
-  - **Status**: 개발 대기
+  - **Status**: 개발 대기 (빌드 오류 해결 후 진행 권장)
   - **Tasks**:
-    - `[ ]` `AdminController`에 엔드포인트 추가
+    - `[ ]` `AdminController`에 회원 목록 조회 및 상태 변경 엔드포인트 추가
     - `[ ]` `AdminService`에 사용자 `status` 변경 메소드 추가
     - `[ ]` `UserManagementResponse` DTO 생성
 
@@ -87,17 +87,17 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Tables**: `base_specs`, `cpu_specs`, `motherboard_specs`, `ram_specs`, `gpu_specs`
   - **Status**: 구현 및 API 테스트 완료
 
-➡️ **[진행중] `A-201-LIST`: 기반 모델 목록 조회**
+✅ **[완료] `A-201-LIST`: 기반 모델 목록 조회**
   - **Page**: `A-201`
   - **API**: `GET /api/admin/parts`
   - **Logic**: QueryDSL을 이용한 동적 검색 및 페이징 처리.
   - **Tables**: `base_specs`
-  - **Status**: 개발 대기
+  - **Status**: 구현 및 API 테스트 완료
   - **Tasks**:
-    - `[ ]` `BaseSpecRepository`에 QueryDSL 지원을 위한 Custom Repository 인터페이스/구현체 추가 (이미 `ProductRepositoryImpl`이 있으므로 패턴 참고)
-    - `[ ]` `AdminPartService`에 `BaseSpec` 목록 조회 메소드 추가 (페이징 처리 포함)
-    - `[ ]` `AdminPartController`에 `GET /api/admin/parts` 엔드포인트 추가
-    - `[ ]` `BaseSpecListResponse` DTO 생성
+    - `[x]` `BaseSpecRepository`에 QueryDSL 지원을 위한 Custom Repository 인터페이스/구현체 추가 (패키지 분리 및 `@QueryProjection` 제거로 빌드 문제 해결 시도)
+    - `[x]` `AdminPartService`에 `BaseSpec` 목록 조회 메소드 추가 (페이징 처리 포함)
+    - `[x]` `AdminPartController`에 `GET /api/admin/parts` 엔드포인트 추가
+    - `[x]` `BaseSpecListResponse` DTO 생성
 
 ✅ **[완료] `A-202`: 기반 모델 수정**
   - **Page**: `A-201-ADD` (수정 모드)
