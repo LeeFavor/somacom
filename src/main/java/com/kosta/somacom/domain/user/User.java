@@ -88,4 +88,8 @@ public class User {
     public void deactivate() {
         this.status = UserStatus.DEACTIVATED;
     }
+
+    public void updateStatus(UserStatus status) {
+        this.status = status;
+    }
 }

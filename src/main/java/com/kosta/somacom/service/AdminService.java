@@ -1,10 +1,12 @@
 package com.kosta.somacom.service;
 
 import com.kosta.somacom.admin.dto.SellerRequestDto;
+import com.kosta.somacom.admin.dto.UserManagementResponse;
 import com.kosta.somacom.domain.request.BaseSpecRequest;
 import com.kosta.somacom.domain.request.BaseSpecRequestStatus;
 import com.kosta.somacom.domain.user.User;
 import com.kosta.somacom.domain.user.UserRole;
+import com.kosta.somacom.domain.user.UserStatus;
 import com.kosta.somacom.dto.request.BaseSpecRequestProcessDto;
 import com.kosta.somacom.dto.response.BaseSpecRequestResponseDto;
 import com.kosta.somacom.repository.BaseSpecRequestRepository;
@@ -84,5 +86,26 @@ public class AdminService {
 
         user.setRole(UserRole.SELLER);
         // userRepository.save(user)는 @Transactional에 의해 더티 체킹(dirty checking)되므로 명시적으로 호출할 필요가 없습니다.
+    }
+
+    /**
+     * A-102: 모든 회원/판매자 목록 조회
+     */
+    @Transactional(readOnly = true)
+    public List<UserManagementResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserManagementResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * A-102: 회원/판매자 계정 상태 변경
+     */
+    @Transactional
+    public void updateUserStatus(Long userId, UserStatus status) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        user.updateStatus(status);
     }
 }

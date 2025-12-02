@@ -69,16 +69,16 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `AdminService` 생성 및 `role` 변경 메소드 추가
     - `[x]` `SellerRequestDto` 등 응답 DTO 생성
 
-➡️ **[진행중] `A-102`: 회원/판매자 계정 관리**
+✅ **[완료] `A-102`: 회원/판매자 계정 관리**
   - **Page**: `A-102`
   - **API**: `GET /api/admin/users`, `PUT /api/admin/users/{userId}/status`
   - **Logic**: 사용자의 `status`를 `ACTIVE`, `SUSPENDED` 등으로 변경.
   - **Tables**: `users`
-  - **Status**: 개발 대기 (빌드 오류 해결 후 진행 권장)
+  - **Status**: 구현 및 테스트 완료.
   - **Tasks**:
-    - `[ ]` `AdminController`에 회원 목록 조회 및 상태 변경 엔드포인트 추가
-    - `[ ]` `AdminService`에 사용자 `status` 변경 메소드 추가
-    - `[ ]` `UserManagementResponse` DTO 생성
+    - `[x]` `AdminController`에 회원 목록 조회 및 상태 변경 엔드포인트 추가
+    - `[x]` `AdminService`에 사용자 `status` 변경 메소드 추가
+    - `[x]` `UserManagementResponse` DTO 생성
 
 - ✅ **[완료] `A-201-ADD`: 신규 기반 모델 등록**
   - **Page**: `A-201-ADD`

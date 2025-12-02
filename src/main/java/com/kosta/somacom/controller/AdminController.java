@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.somacom.admin.dto.SellerRequestDto;
+import com.kosta.somacom.admin.dto.UserManagementResponse;
+import com.kosta.somacom.admin.dto.UserStatusUpdateRequest;
 import com.kosta.somacom.dto.request.BaseSpecRequestProcessDto;
 import com.kosta.somacom.dto.response.BaseSpecRequestResponseDto;
 import com.kosta.somacom.service.AdminService;
@@ -54,6 +56,26 @@ public class AdminController {
             @PathVariable Long requestId,
             @Valid @RequestBody BaseSpecRequestProcessDto requestDto) {
         adminService.processBaseSpecRequest(requestId, requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * A-102: 회원/판매자 목록 조회 API
+     */
+    @GetMapping("/users")
+    public ResponseEntity<List<UserManagementResponse>> getAllUsers() {
+        List<UserManagementResponse> users = adminService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+
+    /**
+     * A-102: 회원/판매자 계정 상태 변경 API
+     */
+    @PutMapping("/users/{userId}/status")
+    public ResponseEntity<Void> updateUserStatus(
+            @PathVariable Long userId,
+            @Valid @RequestBody UserStatusUpdateRequest request) {
+        adminService.updateUserStatus(userId, request.getStatus());
         return ResponseEntity.ok().build();
     }
 }
