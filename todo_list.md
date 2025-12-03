@@ -32,15 +32,15 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `BatchScheduler` 생성 (매일 새벽 3시 `CompatibilityBatchJob` 실행)
     - `[x]` `CartService`에 실시간 호환성 검증 로직 추가 (`RuleEngineService` 호출)
 
-- **[예정] `SYS-2`: 인기도 엔진 (Popularity Engine)**
+✅ **[완료] `SYS-2`: 인기도 엔진 (Popularity Engine)**
   - **Description**: 과거 주문 데이터를 분석하여 "A를 산 사람이 B도 샀다"는 연관성을 점수화합니다.
   - **Logic**: `order_items` 테이블을 주기적으로 분석하여 (Product A, Product B) 쌍의 빈도수(Frequency)를 계산하고 `product_popularity_scores` 테이블을 갱신(Upsert)하는 배치 작업 구현.
   - **Tables**: `order_items`, `product_popularity_scores`
-  - **Status**: 설계 완료, 개발 대기
+  - **Status**: 구현 및 테스트 완료.
   - **Tasks**:
-    - `[ ]` `Spring Batch` Job 생성 (`PopularityBatchJob`) - `order_items`를 읽어 연관 상품 쌍을 분석
-    - `[ ]` `PopularityScoreRepository`에 `Upsert` 로직을 위한 커스텀 메소드 추가
-    - `[ ]` `PopularityEngineService` 생성 (배치 작업의 핵심 로직 담당)
+    - `[x]` `Spring Batch` Job 생성 (`PopularityBatchJob`) - `order_items`를 읽어 연관 상품 쌍을 분석
+    - `[x]` `PopularityScoreRepository`에 `Upsert` 로직을 위한 커스텀 메소드 추가
+    - `[x]` `PopularityEngineService` 생성 (배치 작업의 핵심 로직 담당)
 
 - **[예정] `SYS-3`: 하이브리드 추천 엔진 (Intent Engine)**
   - **Description**: 사용자의 다양한 행동(조회, 검색, 필터링 등)에서 '호환 조건 태그'를 추출하여 의도 점수를 누적합니다. 이 점수를 '행동별 가중치 테이블'과 조합하여 사용자의 숨은 의도(예: "LGA1700 소켓과 DDR5를 지원하는 부품을 찾고 있음")를 추론하고, 이를 기반으로 스마트 필터 및 추천을 제공합니다.
@@ -271,7 +271,7 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `ProductDetailService` 내에서 가격 비교 목록을 조합하는 로직 구현
     - `[x]` `ProductDetailResponse` DTO 생성 (여러 정보를 담는 복합 DTO)
     - `[ ]` `UserIntentLoggingService`를 호출하여 조회 이벤트 로깅 (`SYS-3` 구현 시 연결)
-    - `[ ]` **(즉시 구매)** `OrderService`에 단일 상품으로 주문을 생성하는 로직 추가 또는 기존 로직 확장
+    - `[x]` **(즉시 구매)** `OrderService`에 단일 상품으로 주문을 생성하는 로직 추가 완료
 
 ✅ **[완료] `P-203`: 호환성 필터 적용 검색**
   - **Page**: `P-201-SEARCH`

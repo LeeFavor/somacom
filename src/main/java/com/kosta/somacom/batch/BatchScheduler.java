@@ -16,6 +16,7 @@ public class BatchScheduler {
 
     private final JobLauncher jobLauncher;
     private final Job compatibilityBatchJob; // BatchConfig에 정의된 Job Bean을 주입
+    private final Job popularityBatchJob;
 
     // 매일 새벽 3시에 실행
     @Scheduled(cron = "0 0 3 * * ?")
@@ -28,6 +29,20 @@ public class BatchScheduler {
             jobLauncher.run(compatibilityBatchJob, jobParameters);
         } catch (Exception e) {
             log.error("Error running scheduled compatibility batch job", e);
+        }
+    }
+    
+ // 매일 새벽 4시에 실행
+    @Scheduled(cron = "0 0 4 * * ?")
+    public void runPopularityJob() {
+        log.info("Starting scheduled popularity batch job...");
+        try {
+            JobParameters jobParameters = new JobParametersBuilder()
+                    .addLong("time", System.currentTimeMillis())
+                    .toJobParameters();
+            jobLauncher.run(popularityBatchJob, jobParameters);
+        } catch (Exception e) {
+            log.error("Error running scheduled popularity batch job", e);
         }
     }
 }

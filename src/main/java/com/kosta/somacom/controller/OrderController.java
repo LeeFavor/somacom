@@ -1,6 +1,7 @@
 package com.kosta.somacom.controller;
 
 import com.kosta.somacom.auth.PrincipalDetails;
+import com.kosta.somacom.order.dto.InstantOrderRequest;
 import com.kosta.somacom.order.dto.OrderDetailResponseDto;
 import com.kosta.somacom.order.dto.OrderListResponseDto;
 import com.kosta.somacom.order.dto.OrderRequest;
@@ -26,6 +27,18 @@ public class OrderController {
         Long orderId = orderService.createOrder(userId, request);
         return ResponseEntity.ok(orderId);
     }
+
+    /**
+     * P-202: 즉시 구매 API
+     */
+    @PostMapping("/instant")
+    public ResponseEntity<Long> createInstantOrder(@RequestBody InstantOrderRequest request,
+                                                   @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = principalDetails.getUser().getId();
+        Long orderId = orderService.createInstantOrder(userId, request);
+        return ResponseEntity.ok(orderId);
+    }
+
 
     @GetMapping
     public ResponseEntity<Page<OrderListResponseDto>> getOrders(Pageable pageable,

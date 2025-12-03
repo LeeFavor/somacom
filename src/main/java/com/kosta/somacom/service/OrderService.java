@@ -5,12 +5,15 @@ import com.kosta.somacom.domain.order.Order;
 import com.kosta.somacom.domain.order.OrderItem;
 import com.kosta.somacom.domain.order.OrderItemStatus;
 import com.kosta.somacom.domain.order.OrderStatus;
+import com.kosta.somacom.domain.product.Product;
 import com.kosta.somacom.domain.user.User;
+import com.kosta.somacom.order.dto.InstantOrderRequest;
 import com.kosta.somacom.order.dto.OrderDetailResponseDto;
 import com.kosta.somacom.order.dto.OrderListResponseDto;
 import com.kosta.somacom.order.dto.OrderRequest;
 import com.kosta.somacom.repository.CartItemRepository;
 import com.kosta.somacom.repository.OrderRepository;
+import com.kosta.somacom.repository.ProductRepository;
 import com.kosta.somacom.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +35,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
     public Long createOrder(Long userId, OrderRequest request) {
@@ -69,6 +74,48 @@ public class OrderService {
 
         // 7. 장바구니에서 주문된 아이템 삭제
         cartItemRepository.deleteAll(cartItems);
+
+        return order.getId();
+    }
+
+    /**
+     * 즉시 구매 로직 (단일 상품)
+     */
+    @Transactional
+    public Long createInstantOrder(Long userId, InstantOrderRequest request) {
+        // 1. 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // 2. 상품 조회
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        // 3. OrderItem 생성 (재고 차감)
+        product.removeStock(request.getQuantity());
+        OrderItem orderItem = OrderItem.builder()
+                .product(product)
+                .quantity(request.getQuantity())
+                .priceAtPurchase(product.getPrice())
+                .status(OrderItemStatus.PAID)
+                .build();
+
+        // 4. 총 주문 금액 계산
+        BigDecimal totalPrice = orderItem.getPriceAtPurchase().multiply(new BigDecimal(orderItem.getQuantity()));
+
+        // 5. Order 생성 및 OrderItem 연결
+        Order order = Order.builder()
+                .user(user)
+                .totalPrice(totalPrice)
+                .status(OrderStatus.PAID)
+                .recipientName(request.getRecipientName())
+                .shippingAddress(request.getShippingAddress())
+                .shippingPostcode(request.getShippingPostcode())
+                .build();
+        order.addOrderItem(orderItem);
+
+        // 6. Order 저장
+        orderRepository.save(order);
 
         return order.getId();
     }
