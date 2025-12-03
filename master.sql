@@ -244,8 +244,8 @@ CREATE TABLE product_compatibility_scores (
 
 -- SYS-102: 인기도(함께 구매) 점수 (U-401.1, U-204)
 CREATE TABLE product_popularity_scores (
-    spec_a_id VARCHAR(100) NOT NULL COMMENT 'base_spec_id',
-    spec_b_id VARCHAR(100) NOT NULL COMMENT 'base_spec_id',
+    specaid VARCHAR(100) NOT NULL COMMENT 'base_spec_id (ID가 더 작은 쪽)',
+    specbid VARCHAR(100) NOT NULL COMMENT 'base_spec_id (ID가 더 큰 쪽)',
     score BIGINT NOT NULL DEFAULT 0 COMMENT '함께 구매된 빈도수',
     
     last_calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

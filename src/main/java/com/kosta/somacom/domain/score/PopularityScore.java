@@ -1,6 +1,6 @@
 package com.kosta.somacom.domain.score;
 
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,30 +11,21 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "product_popularity_scores")
-@IdClass(PopularityScoreId.class)
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PopularityScore {
 
-    @Id
-    @Column(name = "spec_a_id", length = 100)
-    private String specAId;
+    @EmbeddedId
+    private PopularityScoreId id;
 
-    @Id
-    @Column(name = "spec_b_id", length = 100)
-    private String specBId;
-
-    @Column(nullable = false)
     private Long score;
 
     @UpdateTimestamp
-    @Column(name = "last_calculated_at")
     private LocalDateTime lastCalculatedAt;
 
-    @Builder
-    public PopularityScore(String specAId, String specBId, Long score) {
-        this.specAId = specAId;
-        this.specBId = specBId;
-        this.score = score;
+    public void addScore(long count) {
+        this.score += count;
     }
 }
