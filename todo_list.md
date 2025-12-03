@@ -50,7 +50,9 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Dependencies**: 행동별 가중치 테이블 (별도 설정 파일 또는 DB 테이블)
   - **Status**: 설계 완료, 개발 대기
   - **Tasks**:
+    - `[x]` Google Cloud Retail API 연동 및 `tag` 기반 필터링 기능 검증 완료.
     - `[ ]` `UserIntentLoggingService` 생성 (AOP 또는 인터셉터를 사용하여 Controller 호출 시 로그 수집)
+    
     - `[ ]` `user_intent_score` 테이블에 점수를 업데이트하는 `Upsert` 로직 구현
     - `[ ]` `RecommendationService` 생성 (`U-401` API 로직 담당)
     - `[ ]` `RecommendationService` 내에서 `SYS-1`, `SYS-2` 결과를 조합하는 로직 구현
@@ -123,6 +125,18 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `AdminController`에 엔드포인트 추가
     - `[x]` `AdminService`에 요청 목록 조회 및 상태 변경 메소드 추가
 
+- **[신규] `A-401`: 외부 부품 데이터 동기화**
+  - **Description**: `parts.txt` (또는 유사한 형식의 파일)에 정리된 대량의 부품 데이터를 읽어, 로컬 DB(`base_specs` 및 하위 테이블)와 Google Cloud Catalog에 동시에 등록/갱신합니다.
+  - **Logic**:
+    - 1. `parts.txt` 파일을 파싱하여 `BaseSpecCreateRequest` DTO 목록으로 변환합니다.
+    - 2. 각 DTO에 대해 `AdminPartService.createBaseSpec()`을 호출하여 로컬 DB에 저장합니다.
+    - 3. 모든 데이터가 DB에 저장된 후, `RecommendationService.importCatalog()`을 호출하여 Google Cloud Catalog와 동기화합니다.
+  - **Status**: 신규 제안
+  - **Tasks**:
+    - `[ ]` `DataSyncService` 또는 배치 작업(`DataSyncBatchJob`) 생성
+    - `[ ]` `parts.txt` 파일 파싱 로직 구현
+    - `[ ]` `AdminPartService`와 `RecommendationService`를 순차적으로 호출하는 동기화 로직 구현
+---
 ---
 
 ## ✅ Seller (판매자)

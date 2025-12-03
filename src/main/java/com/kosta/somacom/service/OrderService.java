@@ -38,7 +38,7 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public Long createOrder(Long userId, OrderRequest request) {
+    public List<OrderItem> createOrder(Long userId, OrderRequest request) {
         // 1. 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -75,14 +75,14 @@ public class OrderService {
         // 7. 장바구니에서 주문된 아이템 삭제
         cartItemRepository.deleteAll(cartItems);
 
-        return order.getId();
+        return orderItems;
     }
 
     /**
      * 즉시 구매 로직 (단일 상품)
      */
     @Transactional
-    public Long createInstantOrder(Long userId, InstantOrderRequest request) {
+    public OrderItem createInstantOrder(Long userId, InstantOrderRequest request) {
         // 1. 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -117,7 +117,7 @@ public class OrderService {
         // 6. Order 저장
         orderRepository.save(order);
 
-        return order.getId();
+        return orderItem;
     }
 
     public Page<OrderListResponseDto> findOrders(Long userId, Pageable pageable) {

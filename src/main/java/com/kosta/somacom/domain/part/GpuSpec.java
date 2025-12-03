@@ -35,7 +35,7 @@ public class GpuSpec {
     private BigDecimal pcieVersion;
 
     @Column(name = "pcie_lanes", nullable = false)
-    private int pcieLanes;
+    private Integer pcieLanes;
 
     @Column(name = "length_mm")
     private Integer lengthMm;

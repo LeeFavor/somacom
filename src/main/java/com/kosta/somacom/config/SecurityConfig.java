@@ -53,8 +53,10 @@ public class SecurityConfig {
 			// USER 전용 (장바구니, 주문 등)
 			.antMatchers("/api/cart/**").hasRole("USER")
 			.antMatchers("/api/orders/**").hasRole("USER")
+			.antMatchers("/api/logs/**").hasAnyRole("USER", "SELLER", "ADMIN")
 			// 그 외 모든 요청은 허용 (상품 조회, 회원가입, 로그인 등)
-			.anyRequest().permitAll();
+			.antMatchers("/api/recommendations/**").hasAnyRole("USER", "SELLER", "ADMIN")
+            .anyRequest().permitAll();
 		
 		return http.build();		
 	}
