@@ -41,7 +41,7 @@ public class UserIntentScoreRepositoryImpl implements UserIntentScoreRepositoryC
                 "ON DUPLICATE KEY UPDATE %s = %s + 1, last_updated = NOW()",
                 columnName, otherColumns, columnName, columnName
         );
-
+        if(id.getCategory() != null && !id.getAttributeTag().toString().equals("manufacturer"))
         jdbcTemplate.update(sql, id.getUserId(), id.getCategory(), id.getAttributeTag());
     }
 }
