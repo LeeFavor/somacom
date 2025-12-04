@@ -38,6 +38,7 @@ import com.kosta.somacom.domain.part.BaseSpec;
 import com.kosta.somacom.domain.part.CpuSpec;
 import com.kosta.somacom.domain.part.GpuSpec;
 import com.kosta.somacom.domain.part.MotherboardSpec;
+import com.kosta.somacom.domain.part.PartCategory;
 import com.kosta.somacom.domain.part.RamSpec;
 import com.kosta.somacom.domain.product.Product;
 import com.kosta.somacom.domain.score.UserActionWeight;
@@ -305,22 +306,24 @@ public class RecommendationService {
             String intentCategory = parts[0]; // e.g., "memory", "socket"
 
             // 의도 카테고리(memory)를 실제 부품 카테고리(RAM)로 변환
-            Optional<String> targetPartCategoryOpt = mapIntentToPartCategory(intentCategory);
-            if (targetPartCategoryOpt.isEmpty()) {
-                continue;
-            }
-            String targetPartCategory = targetPartCategoryOpt.get(); // e.g., "RAM"
-
-            // 해당 부품 카테고리가 이미 장바구니에 있다면 건너뜀 (다음 부품을 추천해야 하므로)
-            if (cartCategories.contains(targetPartCategory)) {
+            List<String> targetPartCategories = mapIntentToPartCategory(intentCategory);
+            if (targetPartCategories.isEmpty()) {
                 continue;
             }
 
-            // 장바구니에 없는 카테고리의 의도를 발견하면, 해당 의도 태그와 일치하는 상품을 대표 상품으로 탐색
-            Optional<BaseSpec> seed = findMatchingSeedItem(targetPartCategory, intentTag);
-            if (seed.isPresent()) {
-                log.info("Primary seed item found (Next part recommendation for {}).", targetPartCategory);
-                return seed;
+            // 매핑된 부품 카테고리 목록을 순회 (e.g., "socket" -> ["CPU", "MOTHERBOARD"])
+            for (String targetPartCategory : targetPartCategories) {
+                // 해당 부품 카테고리가 이미 장바구니에 있다면 건너뜀 (다음 부품을 추천해야 하므로)
+                if (cartCategories.contains(targetPartCategory)) {
+                    continue;
+                }
+
+                // 장바구니에 없는 카테고리의 의도를 발견하면, 해당 의도 태그와 일치하는 상품을 대표 상품으로 탐색
+                Optional<BaseSpec> seed = findMatchingSeedItem(targetPartCategory, intentTag);
+                if (seed.isPresent()) {
+                    log.info("Primary seed item found (Next part recommendation for {}).", targetPartCategory);
+                    return seed;
+                }
             }
         }
 
@@ -332,9 +335,10 @@ public class RecommendationService {
             if (parts.length >= 2) {
                 String intentCategory = parts[0];
 
-                Optional<String> targetPartCategoryOpt = mapIntentToPartCategory(intentCategory);
-                if (targetPartCategoryOpt.isPresent()) {
-                    String targetPartCategory = targetPartCategoryOpt.get();
+                List<String> targetPartCategories = mapIntentToPartCategory(intentCategory);
+                if (!targetPartCategories.isEmpty()) {
+                    // Fallback에서는 첫 번째 매핑된 카테고리만 사용
+                    String targetPartCategory = targetPartCategories.get(0);
                     Optional<BaseSpec> seed = findMatchingSeedItem(targetPartCategory, highestIntent);
                     if (seed.isPresent()) {
                         log.info("Fallback seed item found (Similar part recommendation for {}).", targetPartCategory);
@@ -350,19 +354,21 @@ public class RecommendationService {
     /**
      * [신규] 의도 카테고리를 실제 부품 카테고리(Enum) 이름으로 매핑합니다.
      */
-    private Optional<String> mapIntentToPartCategory(String intentCategory) {
+    private List<String> mapIntentToPartCategory(String intentCategory) {
         switch (intentCategory.toLowerCase()) {
             case "memory":
             case "speed":
-                return Optional.of("RAM");
+                return List.of("RAM");
             case "socket":
+                // 소켓은 CPU와 메인보드 모두와 관련이 있음
+                return List.of("CPU", "Motherboard");
             case "chipset":
-                return Optional.of("Motherboard"); // CPU와 연관있지만, 보통 보드를 먼저 찾으므로 MOTHERBOARD로 매핑
+                return List.of("Motherboard");
             case "pcie":
             case "pcie_lanes":
-                return Optional.of("GPU"); // GPU와 연관이 가장 큼
+                return List.of("GPU", "Motherboard"); // PCIe는 GPU와 메인보드 모두와 관련이 있음
             default:
-                return Optional.empty();
+                return List.of();
         }
     }
 
@@ -370,16 +376,25 @@ public class RecommendationService {
      * [신규] 카테고리와 속성 태그에 맞는 BaseSpec을 DB에서 찾습니다.
      */
     private Optional<BaseSpec> findMatchingSeedItem(String partCategory, String intentTag) {
-        // 가장 간단하게는 카테고리 내 첫번째 아이템을 가져와서 속성을 비교합니다.
-        // 향후 인기도 점수 등을 활용하여 고도화할 수 있습니다.
-        List<BaseSpec> candidates = baseSpecRepository.findAllByCategory(com.kosta.somacom.domain.part.PartCategory.valueOf(partCategory));
+        PartCategory categoryEnum = com.kosta.somacom.domain.part.PartCategory.valueOf(partCategory);
+        List<BaseSpec> candidates = baseSpecRepository.findAllByCategory(categoryEnum);
 
+        // 1. 먼저, 의도 태그와 정확히 일치하는 상품을 찾습니다.
         for (BaseSpec candidate : candidates) {
             Set<String> tags = getCompatibilityTagsFromCart(List.of(candidate));
             if (tags.contains(intentTag)) {
                 return Optional.of(candidate);
             }
         }
+
+        // 2. 정확히 일치하는 상품이 없으면, 카테고리 내에서 가장 최신(ID가 높은) 상품을 대표로 선정합니다.
+        //    이는 너무 오래되거나 비주류인 상품이 대표로 선정되는 것을 방지합니다.
+        log.warn("No exact match for seed item with tag '{}'. Finding the latest item in category '{}' as a fallback seed.", intentTag, partCategory);
+        Optional<BaseSpec> latestInCategory = baseSpecRepository.findFirstByCategoryAndNameContainingIgnoreCaseOrderByIdDesc(categoryEnum, ""); // 모든 상품 대상
+        if(latestInCategory.isPresent()){
+            return latestInCategory;
+        }
+
         return Optional.empty();
     }
 

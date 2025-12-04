@@ -30,4 +30,7 @@ public interface BaseSpecRepository extends JpaRepository<BaseSpec, String>, Bas
 	Optional<BaseSpec> findFirstByCategory(PartCategory category);
 
 	List<BaseSpec> findAllByCategory(PartCategory category);
+
+	// [신규] 카테고리와 이름으로 가장 최신 BaseSpec을 찾는 메소드
+	Optional<BaseSpec> findFirstByCategoryAndNameContainingIgnoreCaseOrderByIdDesc(PartCategory category, String name);
 }

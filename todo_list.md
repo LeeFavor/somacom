@@ -48,16 +48,16 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Logic (Recommendation)**: `U-401` API 요청 시, `user_intent_score`와 '행동별 가중치 테이블'을 이용해 사용자의 상위 점수 태그(의도)를 계산합니다. 이 태그들을 스마트 필터로 활용하고, `SYS-1`(호환성)과 `SYS-2`(인기도) 점수를 조합하여 최종 추천 상품 목록을 반환합니다.
   - **Tables**: `user_intent_score`, `base_specs`, `products`
   - **Dependencies**: 행동별 가중치 테이블 (별도 설정 파일 또는 DB 테이블)
-  - **Status**: 개발 중. Google Cloud Retail API 연동 완료. "유사 상품" 모델이 1개의 결과만 반환하는 문제 발생. 카탈로그 데이터 부족으로 잠정 결론.
+  - **Status**: 개발 중. Google Cloud Retail API 연동 및 대량 카탈로그 데이터 생성 완료. "유사 상품" 모델이 `UNAVAILABLE` 오류를 반환하는 문제 발생. **모델 학습을 위한 사용자 행동 로그 데이터가 부족**한 것이 원인으로 추측됨.
   - **Tasks**:
     - `[x]` Google Cloud Retail API 연동 및 "유사 상품" 모델 호출 로직 구현 완료.
     - `[x]` `UserIntentLoggingService` 및 AOP를 통한 사용자 행동 로깅 구현 완료.
     - `[x]` `RecommendationService`에 사용자 의도 분석 및 대표 상품(Seed Item) 선정 로직 구현 완료.
-    - `[보류]` Google AI가 1개의 상품만 추천하는 현상 분석 (카탈로그 데이터 부족으로 추정).
-    - `[➡️]` **(다음 작업)** 대량의 테스트 데이터 생성:
-      - 각 부품 카테고리(`CPU`, `RAM` 등)별로 100종류의 `BaseSpec`을 생성하는 스크립트 또는 서비스 구현.
-      - 특정 판매자가 각 `BaseSpec` 당 10개의 `Product`를 등록하도록 데이터 생성.
-    - `[ ]` 대량 데이터 생성 후, 카탈로그 재동기화(`POST /api/admin/sync/catalog`) 및 추천 API 재테스트.
+    - `[x]` 대량의 `BaseSpec` 및 `Product` 테스트 데이터 생성 및 DB 저장 완료.
+    - `[x]` 카탈로그 동기화(`POST /api/admin/sync/catalog`) 완료.
+    - `[➡️]` **(다음 작업)** 모델 학습을 위한 사용자 행동 로그(User Event) 생성 및 전송:
+      - `RecommendationTestService`에 구현된 `ingestUserEvent`를 활용하여, 여러 사용자가 다양한 상품을 조회하는 시나리오의 `detail-page-view` 이벤트를 대량으로 전송하는 테스트 API 구현.
+    - `[ ]` 사용자 이벤트 전송 후, 모델이 학습될 때까지 대기 (최소 4~8시간) 후 추천 API 재테스트.
 
 ---
 
@@ -127,17 +127,16 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `AdminController`에 엔드포인트 추가
     - `[x]` `AdminService`에 요청 목록 조회 및 상태 변경 메소드 추가
 
-- **[신규] `A-401`: 외부 부품 데이터 동기화**
-  - **Description**: `parts.txt` (또는 유사한 형식의 파일)에 정리된 대량의 부품 데이터를 읽어, 로컬 DB(`base_specs` 및 하위 테이블)와 Google Cloud Catalog에 동시에 등록/갱신합니다.
+✅ **[완료] `A-401`: 외부 부품 데이터 동기화**
+  - **Description**: `basespec.txt` 파일에 정리된 대량의 부품 데이터를 읽어, 로컬 DB(`base_specs` 및 하위 테이블)에 등록합니다.
   - **Logic**:
-    - 1. `parts.txt` 파일을 파싱하여 `BaseSpecCreateRequest` DTO 목록으로 변환합니다.
+    - 1. `basespec.txt` 파일을 파싱하여 `BaseSpecCreateRequest` DTO 목록으로 변환합니다.
     - 2. 각 DTO에 대해 `AdminPartService.createBaseSpec()`을 호출하여 로컬 DB에 저장합니다.
-    - 3. 모든 데이터가 DB에 저장된 후, `RecommendationService.importCatalog()`을 호출하여 Google Cloud Catalog와 동기화합니다.
-  - **Status**: 신규 제안
+  - **Status**: 구현 완료. (`DataInitializationService`를 통해 구현됨)
   - **Tasks**:
-    - `[ ]` `DataSyncService` 또는 배치 작업(`DataSyncBatchJob`) 생성
-    - `[ ]` `parts.txt` 파일 파싱 로직 구현
-    - `[ ]` `AdminPartService`와 `RecommendationService`를 순차적으로 호출하는 동기화 로직 구현
+    - `[x]` `DataInitializationService` 생성 및 `AdminPartController`에 `/initialize-from-file` API 엔드포인트 추가
+    - `[x]` `basespec.txt` 파일 파싱 로직 구현
+    - `[x]` `AdminPartService`를 호출하여 DB에 저장하는 로직 구현
 ---
 ---
 

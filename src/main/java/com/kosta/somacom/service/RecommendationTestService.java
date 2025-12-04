@@ -310,4 +310,29 @@ public class RecommendationTestService {
         
         return response.getResultsList();
     }
+
+    /**
+     * [신규] 모델 학습을 위해 여러 상품에 대한 "detail-page-view" 이벤트를 대량으로 전송합니다.
+     * @param userId 이벤트를 발생시키는 가상 사용자 ID
+     * @param productIds 조회한 것으로 기록할 상품(BaseSpec) ID 목록
+     * @return 처리 결과
+     */
+    public String ingestMultipleDetailViewEvents(String userId, List<String> productIds) {
+        int successCount = 0;
+        int failureCount = 0;
+        for (String productId : productIds) {
+            try {
+                // 기존 ingestUserEvent 메소드를 재활용하여 각 상품에 대한 조회 이벤트를 전송합니다.
+                ingestUserEvent(userId, "detail-page-view", productId);
+                successCount++;
+            } catch (Exception e) {
+                System.err.println("Failed to ingest event for product: " + productId + " - " + e.getMessage());
+                failureCount++;
+            }
+        }
+        String result = String.format("Finished ingesting detail-page-view events for user '%s'. Success: %d, Failure: %d",
+                userId, successCount, failureCount);
+        System.out.println(result);
+        return result;
+    }
 }
