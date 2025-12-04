@@ -24,7 +24,7 @@ public class RecommendationController {
     @GetMapping("/personal")
     public ResponseEntity<List<RecommendationResponseDto>> getPersonalRecommendations(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestParam(defaultValue = "home-page-view") String eventType,
+            @RequestParam(defaultValue = "detail-page-view") String eventType,
             @RequestParam(defaultValue = "5") int count) throws IOException {
 
         String userId = String.valueOf(principalDetails.getUser().getId());

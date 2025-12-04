@@ -8,6 +8,7 @@ import com.kosta.somacom.domain.score.UserActionType;
 import com.kosta.somacom.dto.request.ProductSearchCondition;
 import com.kosta.somacom.order.dto.InstantOrderRequest;
 import com.kosta.somacom.repository.CartItemRepository;
+import com.kosta.somacom.repository.BaseSpecRepository;
 import com.kosta.somacom.repository.ProductRepository;
 import com.kosta.somacom.service.UserIntentLoggingService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class UserActionLoggingAspect {
     private final UserIntentLoggingService userIntentLoggingService;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
+    private final BaseSpecRepository baseSpecRepository;
 
     /**
      * 상품 상세 페이지 조회 시 'VIEW' 액션을 로깅합니다. (P-202)
@@ -53,10 +55,10 @@ public class UserActionLoggingAspect {
     /**
      * 장바구니에 상품 추가 시 'CART' 액션을 로깅합니다. (P-301)
      */
-    @AfterReturning("execution(* com.kosta.somacom.controller.CartController.addItemToCart(..)) && args(request, ..)")
+    @AfterReturning("execution(* com.kosta.somacom.controller.CartController.addCartItem(..)) && args(request, ..)")
     public void logAddToCart(JoinPoint joinPoint, CartItemAddRequest request) {
         getPrincipalDetails().ifPresent(principal -> {
-            productRepository.findById(request.getProductId()).ifPresent(product -> { // 오타 수정: userIntentLogging-service -> userIntentLoggingService
+            productRepository.findById(request.getProductId()).ifPresent(product -> {
                 userIntentLoggingService.logAction(
                         String.valueOf(principal.getUser().getId()),
                         product.getBaseSpec().getId(),
@@ -76,7 +78,14 @@ public class UserActionLoggingAspect {
 
             // 검색어 로깅
             if (condition.getKeyword() != null && !condition.getKeyword().isBlank()) {
-                userIntentLoggingService.logTagAction(userId, "search_keyword", condition.getKeyword(), UserActionType.SEARCH);
+                // 키워드(모델명)로 BaseSpec을 찾아서, 해당 모델의 모든 호환성 태그에 대해 점수를 올립니다.
+                baseSpecRepository.findFirstByNameIgnoreCase(condition.getKeyword()).ifPresent(baseSpec -> {
+                    userIntentLoggingService.logAction(
+                            userId,
+                            baseSpec.getId(),
+                            UserActionType.SEARCH
+                    );
+                });
             }
 
             // 필터 로깅

@@ -1,6 +1,7 @@
 package com.kosta.somacom.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,6 @@ public interface BaseSpecRepository extends JpaRepository<BaseSpec, String>, Bas
 	 List<BaseSpec> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
 	 List<BaseSpec> findTop10ByNameContainingIgnoreCase(String name);
+	 
+	 Optional<BaseSpec> findFirstByNameIgnoreCase(String name);
 }

@@ -14,8 +14,6 @@ import com.kosta.somacom.dto.response.ProductSimpleResponse;
 import com.kosta.somacom.service.ProductSearchService;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -29,34 +27,13 @@ public class ProductSearchController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<ProductSimpleResponse>> searchProducts(
-            @RequestParam Map<String, String> allParams, Pageable pageable,
+            @ModelAttribute ProductSearchCondition condition, Pageable pageable,
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        System.out.println("===== Received Search Parameters =====");
-        allParams.forEach((key, value) -> System.out.println(key + " : " + value));
-        System.out.println("======================================");
-
-
-        ProductSearchCondition condition = new ProductSearchCondition();
         Long userId = (principalDetails != null) ? principalDetails.getUser().getId() : null;
         condition.setUserId(userId);
 
-        // 기본 파라미터 설정
-        condition.setKeyword(allParams.get("keyword"));
-        condition.setCategory(allParams.get("category"));
-        condition.setCompatFilter(Boolean.parseBoolean(allParams.get("compatFilter")));
-
-        // 나머지 파라미터를 동적 필터로 설정
-        Map<String, String> filters = new HashMap<>();
-        allParams.forEach((key, value) -> {
-            if (!key.equals("keyword") && !key.equals("category") && !key.equals("compatFilter") &&
-                !key.equals("page") && !key.equals("size") && !key.equals("sort")) {
-                if (StringUtils.hasText(value)) {
-                    filters.put(key, value);
-                }
-            }
-        });
-        condition.setFilters(filters);
+        // @ModelAttribute가 요청 파라미터를 condition 객체에 자동으로 바인딩해줍니다.
 
         Page<ProductSimpleResponse> results = productSearchService.searchProducts(condition, pageable, userId);
         return ResponseEntity.ok(results);

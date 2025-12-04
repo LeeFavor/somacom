@@ -1,6 +1,8 @@
 package com.kosta.somacom.service;
 
 import com.google.api.gax.longrunning.OperationFuture;
+import com.google.cloud.retail.v2.ProductDetail;
+import com.google.protobuf.Int32Value;
 import com.google.cloud.retail.v2.PredictRequest;
 import com.google.cloud.retail.v2.PredictResponse;
 import com.google.cloud.retail.v2.PredictionServiceClient;
@@ -139,6 +141,8 @@ public class RecommendationService {
      * @return 추천 상품 목록 (현재는 상위 의도 태그 목록을 반환)
      */
     public List<RecommendationResponseDto> getRecommendations(String userId, String eventType, int count) throws IOException {
+        log.info("==================== [Recommendation DEBUG START] ====================");
+        log.info("[0] userId: {}, eventType: {}, count: {}", userId, eventType, count);
         // 1. 사용자의 모든 의도 점수 조회
         List<UserIntentScore> userScores = userIntentScoreRepository.findById_UserId(userId);
         if (userScores.isEmpty()) {
@@ -149,10 +153,12 @@ public class RecommendationService {
 
         // 2. 가중치가 적용된 최종 의도 점수 계산
         Map<String, Double> weightedScores = calculateWeightedScores(userScores);
+        log.info("[1] Calculated Weighted Scores (top 5): {}", getTopIntentsWithScores(weightedScores, 5));
 
         // 3. [SYS-1 연동] 장바구니 기반 호환성 태그 추출
         List<BaseSpec> itemsInCart = cartRepository.findBaseSpecsInCartByUserId(Long.valueOf(userId));
         Set<String> cartCompatibilityTags = getCompatibilityTagsFromCart(itemsInCart);
+        log.info("[2] Extracted Compatibility Tags from Cart: {}", cartCompatibilityTags);
 
         Optional<String> highestIntentFilter;
         // 4. 장바구니 상태에 따라 필터링 전략 변경
@@ -174,20 +180,27 @@ public class RecommendationService {
         }
         log.info("Generated final filter string for Google API: {}", finalFilter);
 
-        // 5. Google Cloud Retail API 호출
-        List<String> recommendedBaseSpecIds = callPredictionAPI(userId, eventType, finalFilter, count);
+        // 6. Google Cloud Retail API 호출
+        List<String> recommendedBaseSpecIds = callPredictionAPI(userId, eventType, finalFilter, itemsInCart);
+        log.info("[4] Recommended BaseSpec IDs from Google AI: {}", recommendedBaseSpecIds);
 
-        // [SYS-2 연동] 6. 추천된 상품들을 인기도 점수에 따라 재정렬
+        // [SYS-2 연동] 7. 추천된 상품들을 인기도 점수에 따라 재정렬
         List<String> sortedBaseSpecIds = sortByPopularity(recommendedBaseSpecIds, itemsInCart);
+        log.info("[5] Sorted BaseSpec IDs by Popularity: {}", sortedBaseSpecIds);
 
-        // 7. 최종 상품 객체로 변환
+        // 8. 최종 상품 객체로 변환
         List<Product> finalProducts = convertBaseSpecsToProducts(sortedBaseSpecIds);
+        log.info("[6] Converted to Product objects (count: {}): {}", finalProducts.size(), finalProducts.stream().map(p -> p.getBaseSpec().getId()).collect(Collectors.toList()));
 
-        // 8. [신규] 호환성 검사 및 우선순위 정렬
+        // 9. [신규] 호환성 검사 및 우선순위 정렬
         List<RecommendationResponseDto> finalRecommendations = checkCompatibilityAndSort(finalProducts, itemsInCart);
+        log.info("[7] After Compatibility Check & Sort (count: {}): {}", finalRecommendations.size(), finalRecommendations.stream().map(r -> r.getProduct().getProductId() + ":" + r.getCompatibilityStatus()).collect(Collectors.toList()));
 
-        // 9. 최종 개수만큼 잘라서 반환
-        return finalRecommendations.stream().limit(count).collect(Collectors.toList());
+        // 10. 최종 개수만큼 잘라서 반환
+        List<RecommendationResponseDto> limitedRecommendations = finalRecommendations.stream().limit(count).collect(Collectors.toList());
+        log.info("[8] Final-Limited Recommendations (count: {}): {}", limitedRecommendations.size(), limitedRecommendations.stream().map(r -> r.getProduct().getProductId()).collect(Collectors.toList()));
+        log.info("==================== [Recommendation DEBUG END] ======================");
+        return limitedRecommendations;
     }
 
     /**
@@ -278,23 +291,47 @@ public class RecommendationService {
     }
 
     /**
+     * 디버깅용: 가중치가 적용된 점수 맵에서 상위 N개의 의도 태그와 점수를 추출합니다.
+     */
+    private List<String> getTopIntentsWithScores(Map<String, Double> weightedScores, int count) {
+        return weightedScores.entrySet().stream()
+                .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+                .limit(count)
+                .map(entry -> String.format("%s (Score: %.2f)", entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Google Cloud Retail API를 호출하여 추천 결과를 가져옵니다.
      */
-    private List<String> callPredictionAPI(String userId, String eventType, String filter, int count) throws IOException {
+    private List<String> callPredictionAPI(String userId, String eventType, String filter, List<BaseSpec> itemsInCart) throws IOException {
         // API 요청 생성
         String placement = String.format("projects/%s/locations/%s/catalogs/%s/servingConfigs/%s",
                 projectId, location, DEFAULT_CATALOG, "default-placement");
 
-        UserEvent userEvent = UserEvent.newBuilder()
+        UserEvent.Builder userEventBuilder = UserEvent.newBuilder()
                 .setVisitorId(userId)
-                .setEventType(eventType) // 프론트에서 전달받은 컨텍스트 사용
-                .build();
+                .setEventType(eventType); // 프론트에서 전달받은 컨텍스트 사용
+
+        // 장바구니에 아이템이 있으면 productDetails에 추가하여 컨텍스트를 제공합니다.
+        if (itemsInCart != null && !itemsInCart.isEmpty()) {
+            for (BaseSpec item : itemsInCart) {
+                ProductDetail productDetail = ProductDetail.newBuilder()
+                        .setProduct(com.google.cloud.retail.v2.Product.newBuilder().setId(item.getId()).build())
+                        .setQuantity(Int32Value.of(1)) // 기본 수량 1로 설정
+                        .build();
+                userEventBuilder.addProductDetails(productDetail);
+            }
+        }
+
+        UserEvent userEvent = userEventBuilder.build();
 
         PredictRequest predictRequest = PredictRequest.newBuilder()
                 .setPlacement(placement)
                 .setUserEvent(userEvent)
                 .setFilter(filter)
                 .setPageSize(RECOMMENDATION_CANDIDATE_POOL_SIZE) // 넉넉하게 후보군 요청
+                .putParams("priceRerankLevel", com.google.protobuf.Value.newBuilder().setStringValue("no-price-reranking").build())
                 .build();
 
         // API 호출 및 결과 처리
