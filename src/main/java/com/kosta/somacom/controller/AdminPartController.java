@@ -5,6 +5,8 @@ import com.kosta.somacom.dto.request.BaseSpecSearchCondition;
 import com.kosta.somacom.dto.request.BaseSpecUpdateRequest;
 import com.kosta.somacom.dto.response.BaseSpecDetailResponse;
 import com.kosta.somacom.dto.response.BaseSpecListResponse;
+import com.kosta.somacom.service.DataInitializationService;
+import com.kosta.somacom.service.ProductDataGenerationService;
 import com.kosta.somacom.service.AdminPartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,8 @@ import java.net.URI;
 public class AdminPartController {
 
     private final AdminPartService adminPartService;
+    private final DataInitializationService dataInitializationService;
+    private final ProductDataGenerationService productDataGenerationService;
 
     /**
      * A-201-ADD: 신규 기반 모델 등록
@@ -57,5 +61,29 @@ public class AdminPartController {
     public ResponseEntity<Void> updateBaseSpec(@PathVariable String baseSpecId, @Valid @RequestBody BaseSpecUpdateRequest request) {
         adminPartService.updateBaseSpec(baseSpecId, request);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * [신규] basespec.txt 파일로부터 데이터를 DB에 초기화하는 API
+     */
+    @PostMapping("/initialize-from-file")
+    public ResponseEntity<String> initializeDataFromFile() {
+        dataInitializationService.initializeData();
+        return ResponseEntity.ok("Data initialization from basespec.txt has been triggered.");
+    }
+    
+    /**
+     * [신규] 모든 BaseSpec에 대해 특정 판매자의 Product를 대량 생성하는 API
+     */
+    @PostMapping("/generate-products")
+    public ResponseEntity<String> generateBulkProducts(
+            @RequestParam Long sellerId,
+            @RequestParam(defaultValue = "10") int count,
+            @RequestParam String imageUrl) {
+
+        // 비동기 실행을 원할 경우 @Async 어노테이션과 함께 별도 스레드에서 실행 고려
+        productDataGenerationService.generateProductsForEachBaseSpec(sellerId, count, imageUrl);
+
+        return ResponseEntity.ok("Bulk product generation has been triggered for sellerId: " + sellerId);
     }
 }

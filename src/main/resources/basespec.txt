@@ -1,0 +1,563 @@
+# BaseSpec 데이터 (구분자: |)
+# 형식: 카테고리|제조사|모델명|이미지URL|상세스펙_JSON
+# 상세스펙_JSON 형식:
+# - CPU: {"socket":"LGA1700", "supportedMemoryTypes":["DDR5", "DDR4"], "hasIgpu":true}
+# - GPU: {"pcieVersion":5.0, "pcieLanes":16, "lengthMm":310}
+# - Motherboard: {"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+# - RAM: {"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":40}
+# ----------------------------------------------------------------------------------------------------
+CPU|AMD|AMD 3015Ce|null|{"socket":"FT5", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD 3015e|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD 3020e|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD 4700S|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD A10 Micro-6700T APU|null|{"socket":"FT3b", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10 PRO-7350B APU|null|{"socket":"FP3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10 PRO-7800B APU|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10 PRO-7850B APU|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-4600M APU|null|{"socket":"FS1r2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-4655M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-4657M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-5700 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-5745M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-5750M APU|null|{"socket":"FS1r2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-5757M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-5800B APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-5800K APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-6700 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-6700T APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-6790K APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-6800B APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-6800K APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-7300 APU|null|{"socket":"FP3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-7400P|null|{"socket":"FP3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-7700K APU|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-7800 APU|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-7850K APU|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-7860K|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-7870K|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-7890K|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-8700P|null|{"socket":"FP4", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-8750|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-8850|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A10-9600P|null|{"socket":"FP4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A10-9620P|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A10-9630P|null|{"socket":"FP4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A10-9700|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A10-9700E|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A12-9700P|null|{"socket":"FP4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A12-9720P|null|{"socket":"FP4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A12-9730P|null|{"socket":"FP4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A12-9800|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A12-9800E|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A4 Micro-6400T APU|null|{"socket":"FT3b", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4 PRO-3340B|null|{"socket":"BGA769 (FT3)", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4 PRO-7300B APU|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4 PRO-7350B|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-1200 APU|null|{"socket":"FT3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-1250 APU|null|{"socket":"FT3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-3300 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-3300M APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-3305M APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-3310MX APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-3320M APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-3330MX APU|null|{"socket":"FS1 uPGA", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-3400 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-3420 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-4000 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-4020 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-4300M APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-4355M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-5000 APU|null|{"socket":"FT3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-5050 APU|null|{"socket":"FT3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-5100 APU|null|{"socket":"FT3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-5150M APU|null|{"socket":"FS1r2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-5300 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-5300B APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-6210 APU|null|{"socket":"FT3b", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-6250J APU|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-6300 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-6300B APU|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-6320 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-7210 APU|null|{"socket":"BGA", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-7300 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A4-9120|null|{"socket":"BGA", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A4-9120C|null|{"socket":"FT4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A4-9120e|null|{"socket":"FT4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A4-9125|null|{"socket":"BGA (FT4)", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A4-9230|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-1450 APU|null|{"socket":"FT3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-3400M APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-3410MX APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-3420M APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-3430MX APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-3500 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-3600 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-3620 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-3650 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-3670 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-4400M APU|null|{"socket":"FS1r2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-4455M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-5200 APU|null|{"socket":"FT3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-5345M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-5350M APU|null|{"socket":"FS1r2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-5357M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-5400B APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-5400K APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-6310 APU|null|{"socket":"FT3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-6400B APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-6400K APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-6420B APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-6420K APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-7000|null|{"socket":"FP3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-7310 APU|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-7400K APU|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-7470K|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-7480|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-8500P|null|{"socket":"BGA (FP4)", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-8550|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A6-9200|null|{"socket":"BGA", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-9210|null|{"socket":"FP4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-9220|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-9220C|null|{"socket":"FT4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-9220e|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-9225|null|{"socket":"BGA (FT4)", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-9230|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-9400|null|{"socket":"FT4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-9500|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A6-9500E|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A8 PRO-7150B APU|null|{"socket":"FP3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8 PRO-7600B APU|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-3500M APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-3510MX APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-3520M APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-3530MX APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-3550MX APU|null|{"socket":"FS1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-3800 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-3820 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-3850 APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-3870K APU|null|{"socket":"FM1", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-4500M APU|null|{"socket":"FS1r2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-4555M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-5500 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-5500B APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-5545M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-5550M APU|null|{"socket":"FS1r2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-5557M APU|null|{"socket":"FP2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-5600K APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-6410 APU|null|{"socket":"BGA769 (FT3b)", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-6500 APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-6500B APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-6500T APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-6600K APU|null|{"socket":"FM2", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-7050|null|{"socket":"FP3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-7100 APU|null|{"socket":"FP3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-7200P|null|{"socket":"FP3", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-7410 APU|null|{"socket":"Unknown", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-7500|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-7600 APU|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-7650K|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-7670K|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-7680|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD A8-8600P|null|{"socket":"FP4", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-8650|null|{"socket":"FM2+", "supportedMemoryTypes":["DDR3"], "hasIgpu":true}
+CPU|AMD|AMD A8-9600|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i3-10100 @ 3.60GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i3-10100F @ 3.60GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i3-10320 @ 3.80GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i5-10400 @ 2.90GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i5-10400F @ 2.90GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i5-10600K @ 4.10GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i5-10600KF @ 4.10GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i7-10700 @ 2.90GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i7-10700F @ 2.90GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i7-10700K @ 3.80GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i7-10700KF @ 3.80GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i9-10850K @ 3.60GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i9-10900 @ 2.80GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i9-10900F @ 2.80GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i9-10900K @ 3.70GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i9-10900KF @ 3.70GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i3-1115G4 @ 3.00GHz|null|{"socket":"FCBGA1449", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i5-11400 @ 2.60GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i5-11400F @ 2.60GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i5-11600K @ 3.90GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i5-11600KF @ 3.90GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i7-11700 @ 2.50GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i7-11700F @ 2.50GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i7-11700K @ 3.60GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i7-11700KF @ 3.60GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i9-11900 @ 2.50GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i9-11900F @ 2.50GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i9-11900K @ 3.50GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i9-11900KF @ 3.50GHz|null|{"socket":"FCLGA1200", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i3-12100|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i3-12100F|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i5-12400|null|{"socket":"LGA 1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i5-12400F|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i5-12600K|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i5-12600KF|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i7-12700|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i7-12700F|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i7-12700K|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i7-12700KF|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i9-12900K|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":true}
+CPU|Intel|Intel Core i9-12900KF|null|{"socket":"FCLGA1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":false}
+CPU|Intel|Intel Core i9-12900KS|null|{"socket":"LGA 1700", "supportedMemoryTypes":["DDR5,DDR4"], "hasIgpu":true}
+CPU|AMD|AMD Ryzen 3 1200|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 3 1300X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 3 2200G|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD Ryzen 3 3100|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 3 3200G|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":true}
+CPU|AMD|AMD Ryzen 3 3300X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 3 4100|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 1400|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 1500X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 1600|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 1600X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 2600|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 2600X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 3500|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 3500X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 3600|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 3600X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 3600XT|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 4500|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 5500|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 5600|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 5600X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 1700|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 1700X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 1800X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 2700|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 2700X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 3700X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 3800X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 3800XT|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 5700X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 5800X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 7 5800X3D|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 9 3900X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 9 3900XT|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 9 3950X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 9 5900X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 9 5950X|null|{"socket":"AM4", "supportedMemoryTypes":["DDR4"], "hasIgpu":false}
+CPU|AMD|AMD Ryzen 5 7600X|null|{"socket":"AM5", "supportedMemoryTypes":["DDR5"], "hasIgpu":true}
+CPU|AMD|AMD Ryzen 7 7700X|null|{"socket":"AM5", "supportedMemoryTypes":["DDR5"], "hasIgpu":true}
+CPU|AMD|AMD Ryzen 9 7900X|null|{"socket":"AM5", "supportedMemoryTypes":["DDR5"], "hasIgpu":true}
+CPU|AMD|AMD Ryzen 9 7950X|null|{"socket":"AM5", "supportedMemoryTypes":["DDR5"], "hasIgpu":true}
+GPU|NVIDIA|GeForce RTX 4050|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":240}
+GPU|Intel|Arc A350M|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":180}
+GPU|Intel|Arc A370M|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":180}
+GPU|Intel|Arc A380|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":180}
+GPU|Intel|Arc A550M|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":240}
+GPU|Intel|Arc A730M|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|Intel|Arc A770|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|Intel|Arc A770M|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|Intel|Arc A780|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|Intel|Arctic Sound-M|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce MX550|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":180}
+GPU|NVIDIA|GeForce MX570|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":180}
+GPU|NVIDIA|GeForce RTX 3050 4 GB|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":220}
+GPU|NVIDIA|GeForce RTX 3050 8 GB|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|NVIDIA|GeForce RTX 3050 8 GB GA107|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|NVIDIA|GeForce RTX 3050 OEM|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|NVIDIA|GeForce RTX 3060 Ti GA103|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3070 Ti Mobile|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3080 12 GB|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":300}
+GPU|NVIDIA|GeForce RTX 3080 Ti 20 GB|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":310}
+GPU|NVIDIA|GeForce RTX 3080 Ti Max-Q|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3080 Ti Mobile|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3090 Ti|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":320}
+GPU|NVIDIA|GeForce RTX 4060|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 4070|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":300}
+GPU|NVIDIA|GeForce RTX 4080|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":320}
+GPU|NVIDIA|GeForce RTX 4080 Ti|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":320}
+GPU|NVIDIA|GeForce RTX 4090|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":330}
+GPU|NVIDIA|H100 PCIe|null|{"pcieVersion":5.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|H100 SXM5|null|{"pcieVersion":5.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon Pro W6400|null|{"pcieVersion":4.0, "pcieLanes":4, "lengthMm":180}
+GPU|AMD|Radeon RX 6300M|null|{"pcieVersion":4.0, "pcieLanes":4, "lengthMm":180}
+GPU|AMD|Radeon RX 6400|null|{"pcieVersion":4.0, "pcieLanes":4, "lengthMm":180}
+GPU|AMD|Radeon RX 6500 XT|null|{"pcieVersion":4.0, "pcieLanes":4, "lengthMm":200}
+GPU|AMD|Radeon RX 6500M|null|{"pcieVersion":4.0, "pcieLanes":4, "lengthMm":200}
+GPU|AMD|Radeon RX 6600S|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|AMD|Radeon RX 6650 XT|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":260}
+GPU|AMD|Radeon RX 6650M|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|AMD|Radeon RX 6650M XT|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":260}
+GPU|AMD|Radeon RX 6700S|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|AMD|Radeon RX 6750 XT|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon RX 6800S|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|AMD|Radeon RX 6850M XT|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon RX 6950 XT|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":300}
+GPU|AMD|Radeon RX 7700 XT|null|{"pcieVersion":5.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon RX 7800 XT|null|{"pcieVersion":5.0, "pcieLanes":16, "lengthMm":300}
+GPU|AMD|Radeon RX 7900 XT|null|{"pcieVersion":5.0, "pcieLanes":16, "lengthMm":320}
+GPU|NVIDIA|RTX A5500|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|RTX A5500 Mobile|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|A10 PCIe|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|A100 PCIe 80 GB|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|A10G|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|A16 PCIe|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|NVIDIA|A2|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":200}
+GPU|NVIDIA|A30 PCIe|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|CMP 170HX|null|{"pcieVersion":4.0, "pcieLanes":4, "lengthMm":240}
+GPU|NVIDIA|CMP 30HX|null|{"pcieVersion":3.0, "pcieLanes":4, "lengthMm":220}
+GPU|NVIDIA|CMP 40HX|null|{"pcieVersion":3.0, "pcieLanes":16, "lengthMm":260}
+GPU|NVIDIA|CMP 50HX|null|{"pcieVersion":3.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|CMP 70HX|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|CMP 90HX|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce GT 1010|null|{"pcieVersion":3.0, "pcieLanes":4, "lengthMm":160}
+GPU|NVIDIA|GeForce GT 1010 DDR4|null|{"pcieVersion":3.0, "pcieLanes":4, "lengthMm":160}
+GPU|NVIDIA|GeForce RTX 2050 Mobile|null|{"pcieVersion":3.0, "pcieLanes":8, "lengthMm":220}
+GPU|NVIDIA|GeForce RTX 2060 12 GB|null|{"pcieVersion":3.0, "pcieLanes":16, "lengthMm":260}
+GPU|NVIDIA|GeForce RTX 3050 Mobile|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":220}
+GPU|NVIDIA|GeForce RTX 3050 Ti Mobile|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":220}
+GPU|NVIDIA|GeForce RTX 3060|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3060 GA104|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3060 Max-Q|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3060 Mobile|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3070 Max-Q|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3070 Mobile|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3070 Ti|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":300}
+GPU|NVIDIA|GeForce RTX 3080 Max-Q|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3080 Mobile|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|NVIDIA|GeForce RTX 3080 Ti|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":310}
+GPU|AMD|Radeon Graphics 448SP|null|{"pcieVersion":3.0, "pcieLanes":8, "lengthMm":200}
+GPU|AMD|Radeon Instinct MI210|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon Instinct MI250|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon Instinct MI250X|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon Pro V620|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon Pro W6600|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":240}
+GPU|AMD|Radeon Pro W6600M|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":240}
+GPU|AMD|Radeon Pro W6800|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon Pro W6800X|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon Pro W6800X Duo|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":300}
+GPU|AMD|Radeon Pro W6900X|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":300}
+GPU|AMD|Radeon RX 6600|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|AMD|Radeon RX 6600 XT|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":260}
+GPU|AMD|Radeon RX 6600M|null|{"pcieVersion":4.0, "pcieLanes":8, "lengthMm":240}
+GPU|AMD|Radeon RX 6700|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon RX 6700 XT|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon RX 6700M|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+GPU|AMD|Radeon RX 6800M|null|{"pcieVersion":4.0, "pcieLanes":16, "lengthMm":280}
+Motherboard|ASUS|ROG STRIX Z790-E GAMING|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|MSI|MPG Z790 CARBON WIFI|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|Z790 AORUS ELITE AX|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASRock|Z790 Taichi|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASUS|TUF GAMING B760M-PLUS WIFI D4|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MAG B760M MORTAR WIFI DDR4|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|B760M AORUS ELITE AX DDR4|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG STRIX X670E-F GAMING WIFI|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|MSI|MPG X670E CARBON WIFI|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|X670 AORUS ELITE AX|null|{"socket":"AM5", "chipset":"X670", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|X670E PG Lightning|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASUS|TUF GAMING B650-PLUS WIFI|null|{"socket":"AM5", "chipset":"B650", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MAG B650 TOMAHAWK WIFI|null|{"socket":"AM5", "chipset":"B650", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|B650M AORUS ELITE AX|null|{"socket":"AM5", "chipset":"B650", "memoryType":"DDR5", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+RAM|G.Skill|Trident Z5 RGB 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":44}
+RAM|Corsair|Vengeance 32GB (2x16GB) DDR5 5600|null|{"memoryType":"DDR5", "speedMhz":5600, "capacityGb":16, "kitQuantity":2, "heightMm":35}
+Motherboard|ASUS|ProArt Z790-CREATOR WIFI|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|Z790 AORUS XTREME|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|MSI|MEG Z790 GODLIKE|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASRock|Z790 Steel Legend WiFi|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASUS|PRIME Z790-A WIFI|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|Z790 AERO G|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|MSI|PRO Z790-A WIFI|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASUS|ROG STRIX Z790-I GAMING WIFI|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":2, "formFactor":"ITX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|Z790I AORUS ULTRA|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":2, "formFactor":"ITX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASRock|Z790 PG-ITX/TB4|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":2, "formFactor":"ITX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASUS|PRIME Z790M-PLUS D4|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|Z790M AORUS ELITE|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"mATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|MSI|MAG B760 TOMAHAWK WIFI|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|B760 Pro RS|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|PRIME B760-PLUS D4|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|B760 GAMING X AX DDR4|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|B760M Steel Legend WiFi|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR5", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|PRO B760M-A WIFI DDR4|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG STRIX B760-I GAMING WIFI|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR5", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|B760I AORUS PRO DDR4|null|{"socket":"LGA1700", "chipset":"B760", "memoryType":"DDR4", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG MAXIMUS Z690 HERO|null|{"socket":"LGA1700", "chipset":"Z690", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|MSI|MEG Z690 ACE|null|{"socket":"LGA1700", "chipset":"Z690", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|Z690 AORUS MASTER|null|{"socket":"LGA1700", "chipset":"Z690", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASRock|Z690 Taichi Razer Edition|null|{"socket":"LGA1700", "chipset":"Z690", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASUS|TUF GAMING Z690-PLUS WIFI D4|null|{"socket":"LGA1700", "chipset":"Z690", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|MSI|MPG Z690 EDGE WIFI DDR4|null|{"socket":"LGA1700", "chipset":"Z690", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|Z690 UD AX DDR4|null|{"socket":"LGA1700", "chipset":"Z690", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASUS|ROG STRIX B660-F GAMING WIFI|null|{"socket":"LGA1700", "chipset":"B660", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MAG B660 TOMAHAWK WIFI DDR4|null|{"socket":"LGA1700", "chipset":"B660", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|B660M DS3H AX DDR4|null|{"socket":"LGA1700", "chipset":"B660", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|B660M-HDV|null|{"socket":"LGA1700", "chipset":"B660", "memoryType":"DDR4", "memorySlots":2, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|PRIME H610M-E D4|null|{"socket":"LGA1700", "chipset":"H610", "memoryType":"DDR4", "memorySlots":2, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|H610M S2H DDR4|null|{"socket":"LGA1700", "chipset":"H610", "memoryType":"DDR4", "memorySlots":2, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|PRO H610M-G DDR4|null|{"socket":"LGA1700", "chipset":"H610", "memoryType":"DDR4", "memorySlots":2, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG CROSSHAIR X670E HERO|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|X670E AORUS XTREME|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|MSI|MEG X670E ACE|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASRock|X670E Taichi|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|ASUS|ProArt X670E-CREATOR WIFI|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|X670 AORUS MASTER|null|{"socket":"AM5", "chipset":"X670", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|PRO X670-P WIFI|null|{"socket":"AM5", "chipset":"X670", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG STRIX B650E-F GAMING WIFI|null|{"socket":"AM5", "chipset":"B650E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|B650 AORUS PRO AX|null|{"socket":"AM5", "chipset":"B650", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|B650 PG Lightning|null|{"socket":"AM5", "chipset":"B650", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG STRIX B650E-I GAMING WIFI|null|{"socket":"AM5", "chipset":"B650E", "memoryType":"DDR5", "memorySlots":2, "formFactor":"ITX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Gigabyte|B650I AORUS ULTRA|null|{"socket":"AM5", "chipset":"B650", "memoryType":"DDR5", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG CROSSHAIR VIII DARK HERO|null|{"socket":"AM4", "chipset":"X570", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MEG X570S ACE MAX|null|{"socket":"AM4", "chipset":"X570S", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|X570S AORUS MASTER|null|{"socket":"AM4", "chipset":"X570S", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|X570S PG Riptide|null|{"socket":"AM4", "chipset":"X570S", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|TUF GAMING X570-PRO WIFI II|null|{"socket":"AM4", "chipset":"X570", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MAG X570S TOMAHAWK MAX WIFI|null|{"socket":"AM4", "chipset":"X570S", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG STRIX B550-F GAMING|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|B550 AORUS ELITE AX V2|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MPG B550 GAMING EDGE WIFI|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|B550 Steel Legend|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|TUF GAMING B550M-PLUS|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|B550M AORUS PRO-P|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MAG B550M MORTAR|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|B550M-ITX/ac|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG STRIX X570-I GAMING|null|{"socket":"AM4", "chipset":"X570", "memoryType":"DDR4", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|A520M S2H|null|{"socket":"AM4", "chipset":"A520", "memoryType":"DDR4", "memorySlots":2, "formFactor":"mATX", "pcieVersion":3.0, "pcieLanes":16}
+Motherboard|MSI|A520M-A PRO|null|{"socket":"AM4", "chipset":"A520", "memoryType":"DDR4", "memorySlots":2, "formFactor":"mATX", "pcieVersion":3.0, "pcieLanes":16}
+Motherboard|ASRock|A520M-HDV|null|{"socket":"AM4", "chipset":"A520", "memoryType":"DDR4", "memorySlots":2, "formFactor":"mATX", "pcieVersion":3.0, "pcieLanes":16}
+Motherboard|ASUS|PRIME A520M-K|null|{"socket":"AM4", "chipset":"A520", "memoryType":"DDR4", "memorySlots":2, "formFactor":"mATX", "pcieVersion":3.0, "pcieLanes":16}
+Motherboard|Gigabyte|X570S AERO G|null|{"socket":"AM4", "chipset":"X570S", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|X570S Riptide|null|{"socket":"AM4", "chipset":"X570S", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MAG B550M BAZOOKA|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|PRIME B550M-A WIFI II|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|B550M DS3H AC|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|B550M Pro4|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|ROG STRIX B550-I GAMING|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|B550I AORUS PRO AX|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MPG B550I GAMING EDGE WIFI|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|B550 Phantom Gaming-ITX/ax|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|PRIME X570-P|null|{"socket":"AM4", "chipset":"X570", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Gigabyte|X570 GAMING X|null|{"socket":"AM4", "chipset":"X570", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|MSI|MPG X570 GAMING PLUS|null|{"socket":"AM4", "chipset":"X570", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASRock|X570 Phantom Gaming 4|null|{"socket":"AM4", "chipset":"X570", "memoryType":"DDR4", "memorySlots":4, "formFactor":"ATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|ASUS|PRIME B450M-A II|null|{"socket":"AM4", "chipset":"B450", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":3.0, "pcieLanes":16}
+Motherboard|Gigabyte|B450M DS3H WIFI|null|{"socket":"AM4", "chipset":"B450", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":3.0, "pcieLanes":16}
+Motherboard|MSI|B450M PRO-VDH MAX|null|{"socket":"AM4", "chipset":"B450", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":3.0, "pcieLanes":16}
+Motherboard|ASRock|B450M/ac|null|{"socket":"AM4", "chipset":"B450", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":3.0, "pcieLanes":16}
+Motherboard|EVGA|Z790 DARK K|NGP|N|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":2, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Biostar|Z790A-SILVER|null|{"socket":"LGA1700", "chipset":"Z790", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|EVGA|Z690 CLASSIFIED|null|{"socket":"LGA1700", "chipset":"Z690", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Biostar|B660GTN|null|{"socket":"LGA1700", "chipset":"B660", "memoryType":"DDR4", "memorySlots":2, "formFactor":"ITX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|EVGA|X670E CLASSIFIED|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"EATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|Biostar|X670E VALKYRIE|null|{"socket":"AM5", "chipset":"X670E", "memoryType":"DDR5", "memorySlots":4, "formFactor":"ATX", "pcieVersion":5.0, "pcieLanes":16}
+Motherboard|EVGA|X570 DARK|null|{"socket":"AM4", "chipset":"X570", "memoryType":"DDR4", "memorySlots":2, "formFactor":"EATX", "pcieVersion":4.0, "pcieLanes":16}
+Motherboard|Biostar|B550M-SILVER|null|{"socket":"AM4", "chipset":"B550", "memoryType":"DDR4", "memorySlots":4, "formFactor":"mATX", "pcieVersion":4.0, "pcieLanes":16}
+RAM|Kingston|Fury Beast 32GB (2x16GB) DDR5 5200|null|{"memoryType":"DDR5", "speedMhz":5200, "capacityGb":16, "kitQuantity":2, "heightMm":35}
+RAM|Crucial|Pro 32GB (2x16GB) DDR5 5600|null|{"memoryType":"DDR5", "speedMhz":5600, "capacityGb":16, "kitQuantity":2, "heightMm":35}
+RAM|Teamgroup|T-Force Delta RGB 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":49}
+RAM|G.Skill|Ripjaws S5 32GB (2x16GB) DDR5 5200|null|{"memoryType":"DDR5", "speedMhz":5200, "capacityGb":16, "kitQuantity":2, "heightMm":33}
+RAM|Corsair|Vengeance LPX 32GB (2x16GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":2, "heightMm":34}
+RAM|Kingston|Fury Renegade 32GB (2x16GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":16, "kitQuantity":2, "heightMm":42}
+RAM|Crucial|Ballistix 32GB (2x16GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":2, "heightMm":39}
+RAM|Teamgroup|T-Force Vulcan Z 32GB (2x16GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":2, "heightMm":32}
+RAM|Patriot|Viper Steel 16GB (2x8GB) DDR4 4400|null|{"memoryType":"DDR4", "speedMhz":4400, "capacityGb":8, "kitQuantity":2, "heightMm":45}
+RAM|Samsung|16GB DDR4 3200MHz|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":1, "heightMm":31}
+RAM|SK Hynix|16GB DDR5 4800MHz|null|{"memoryType":"DDR5", "speedMhz":4800, "capacityGb":16, "kitQuantity":1, "heightMm":31}
+RAM|ADATA|XPG Lancer 32GB (2x16GB) DDR5 5200|null|{"memoryType":"DDR5", "speedMhz":5200, "capacityGb":16, "kitQuantity":2, "heightMm":38}
+RAM|Mushkin|Redline 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":40}
+RAM|G.Skill|Flare X5 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":33}
+RAM|Corsair|Dominator Platinum RGB 32GB (2x16GB) DDR5 6200|null|{"memoryType":"DDR5", "speedMhz":6200, "capacityGb":16, "kitQuantity":2, "heightMm":56}
+RAM|Kingston|Fury Beast RGB 16GB (2x8GB) DDR5 5600|null|{"memoryType":"DDR5", "speedMhz":5600, "capacityGb":8, "kitQuantity":2, "heightMm":42}
+RAM|Crucial|16GB DDR5 4800|null|{"memoryType":"DDR5", "speedMhz":4800, "capacityGb":16, "kitQuantity":1, "heightMm":31}
+RAM|Teamgroup|Elite 16GB (1x16GB) DDR5 4800|null|{"memoryType":"DDR5", "speedMhz":4800, "capacityGb":16, "kitQuantity":1, "heightMm":32}
+RAM|Patriot|Signature Line 16GB (1x16GB) DDR5 4800|null|{"memoryType":"DDR5", "speedMhz":4800, "capacityGb":16, "kitQuantity":1, "heightMm":31}
+RAM|ADATA|Premier 16GB (1x16GB) DDR5 4800|null|{"memoryType":"DDR5", "speedMhz":4800, "capacityGb":16, "kitQuantity":1, "heightMm":31}
+RAM|G.Skill|Trident Z5 64GB (2x32GB) DDR5 6400|null|{"memoryType":"DDR5", "speedMhz":6400, "capacityGb":32, "kitQuantity":2, "heightMm":44}
+RAM|Corsair|Vengeance 64GB (2x32GB) DDR5 5200|null|{"memoryType":"DDR5", "speedMhz":5200, "capacityGb":32, "kitQuantity":2, "heightMm":35}
+RAM|Kingston|Fury Renegade 64GB (2x32GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":32, "kitQuantity":2, "heightMm":39}
+RAM|Crucial|Pro 64GB (2x32GB) DDR5 5600|null|{"memoryType":"DDR5", "speedMhz":5600, "capacityGb":32, "kitQuantity":2, "heightMm":35}
+RAM|Teamgroup|T-Create Expert 64GB (2x32GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":32, "kitQuantity":2, "heightMm":32}
+RAM|ADATA|XPG Caster 32GB (2x16GB) DDR5 6400|null|{"memoryType":"DDR5", "speedMhz":6400, "capacityGb":16, "kitQuantity":2, "heightMm":43}
+RAM|G.Skill|Ripjaws V 16GB (2x8GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":8, "kitQuantity":2, "heightMm":42}
+RAM|Corsair|Vengeance RGB Pro 16GB (2x8GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":8, "kitQuantity":2, "heightMm":51}
+RAM|Kingston|Fury Beast 16GB (2x8GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":8, "kitQuantity":2, "heightMm":34}
+RAM|Crucial|Ballistix RGB 16GB (2x8GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":8, "kitQuantity":2, "heightMm":39}
+RAM|Teamgroup|T-Force Night Hawk RGB 16GB (2x8GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":8, "kitQuantity":2, "heightMm":53}
+RAM|Patriot|Viper 4 Blackout 16GB (2x8GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":8, "kitQuantity":2, "heightMm":42}
+RAM|ADATA|XPG Spectrix D60G 16GB (2x8GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":8, "kitQuantity":2, "heightMm":46}
+RAM|Mushkin|Redline Lumina 16GB (2x8GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":8, "kitQuantity":2, "heightMm":43}
+RAM|G.Skill|Trident Z Royal 32GB (2x16GB) DDR4 4000|null|{"memoryType":"DDR4", "speedMhz":4000, "capacityGb":16, "kitQuantity":2, "heightMm":44}
+RAM|Corsair|Dominator Platinum RGB 32GB (2x16GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":16, "kitQuantity":2, "heightMm":55}
+RAM|Kingston|HyperX Predator 32GB (2x16GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":2, "heightMm":42}
+RAM|Teamgroup|T-Force Xtreem ARGB 32GB (2x16GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":16, "kitQuantity":2, "heightMm":49}
+RAM|Patriot|Viper RGB 32GB (2x16GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":2, "heightMm":45}
+RAM|Samsung|8GB DDR4 2666MHz|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|SK Hynix|8GB DDR4 2666MHz|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|Crucial|8GB DDR4 2666|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|G.Skill|Aegis 16GB (1x16GB) DDR4 3000|null|{"memoryType":"DDR4", "speedMhz":3000, "capacityGb":16, "kitQuantity":1, "heightMm":31}
+RAM|Corsair|Vengeance LPX 16GB (1x16GB) DDR4 3000|null|{"memoryType":"DDR4", "speedMhz":3000, "capacityGb":16, "kitQuantity":1, "heightMm":34}
+RAM|Kingston|ValueRAM 16GB (1x16GB) DDR4 2666|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":16, "kitQuantity":1, "heightMm":31}
+RAM|G.Skill|Trident Z5 RGB 64GB (2x32GB) DDR5 5600|null|{"memoryType":"DDR5", "speedMhz":5600, "capacityGb":32, "kitQuantity":2, "heightMm":44}
+RAM|Corsair|Vengeance RGB 64GB (2x32GB) DDR5 5200|null|{"memoryType":"DDR5", "speedMhz":5200, "capacityGb":32, "kitQuantity":2, "heightMm":45}
+RAM|Kingston|Fury Beast 64GB (2x32GB) DDR5 5200|null|{"memoryType":"DDR5", "speedMhz":5200, "capacityGb":32, "kitQuantity":2, "heightMm":35}
+RAM|Crucial|Pro 64GB (2x32GB) DDR5 5200|null|{"memoryType":"DDR5", "speedMhz":5200, "capacityGb":32, "kitQuantity":2, "heightMm":35}
+RAM|Teamgroup|T-Force Vulcan 64GB (2x32GB) DDR5 5600|null|{"memoryType":"DDR5", "speedMhz":5600, "capacityGb":32, "kitQuantity":2, "heightMm":33}
+RAM|ADATA|XPG Lancer RGB 64GB (2x32GB) DDR5 5600|null|{"memoryType":"DDR5", "speedMhz":5600, "capacityGb":32, "kitQuantity":2, "heightMm":40}
+RAM|G.Skill|Ripjaws V 64GB (2x32GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":32, "kitQuantity":2, "heightMm":42}
+RAM|Corsair|Vengeance LPX 64GB (2x32GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":32, "kitQuantity":2, "heightMm":34}
+RAM|Kingston|Fury Renegade 64GB (2x32GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":32, "kitQuantity":2, "heightMm":42}
+RAM|Crucial|Ballistix 64GB (2x32GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":32, "kitQuantity":2, "heightMm":39}
+RAM|Teamgroup|T-Force Vulcan Z 64GB (2x32GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":32, "kitQuantity":2, "heightMm":32}
+RAM|Patriot|Viper Steel 64GB (2x32GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":32, "kitQuantity":2, "heightMm":45}
+RAM|G.Skill|Trident Z RGB 16GB (2x8GB) DDR4 3000|null|{"memoryType":"DDR4", "speedMhz":3000, "capacityGb":8, "kitQuantity":2, "heightMm":44}
+RAM|Corsair|Vengeance RGB Pro SL 32GB (2x16GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":16, "kitQuantity":2, "heightMm":44}
+RAM|Kingston|Fury Impact 32GB (2x16GB) DDR5 4800 SODIMM|null|{"memoryType":"DDR5", "speedMhz":4800, "capacityGb":16, "kitQuantity":2, "heightMm":30}
+RAM|Crucial|32GB (2x16GB) DDR5 4800 SODIMM|null|{"memoryType":"DDR5", "speedMhz":4800, "capacityGb":16, "kitQuantity":2, "heightMm":30}
+RAM|Samsung|32GB (2x16GB) DDR5 4800 SODIMM|null|{"memoryType":"DDR5", "speedMhz":4800, "capacityGb":16, "kitQuantity":2, "heightMm":30}
+RAM|G.Skill|Ripjaws 32GB (2x16GB) DDR4 3200 SODIMM|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":2, "heightMm":30}
+RAM|Corsair|Vengeance 32GB (2x16GB) DDR4 2666 SODIMM|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":16, "kitQuantity":2, "heightMm":30}
+RAM|Kingston|Fury Impact 16GB (2x8GB) DDR4 3200 SODIMM|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":8, "kitQuantity":2, "heightMm":30}
+RAM|Crucial|16GB (2x8GB) DDR4 3200 SODIMM|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":8, "kitQuantity":2, "heightMm":30}
+RAM|Teamgroup|Elite 16GB (2x8GB) DDR4 2666 SODIMM|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":8, "kitQuantity":2, "heightMm":30}
+RAM|G.Skill|Trident Z5 RGB 32GB (2x16GB) DDR5 6800|null|{"memoryType":"DDR5", "speedMhz":6800, "capacityGb":16, "kitQuantity":2, "heightMm":44}
+RAM|Corsair|Dominator Platinum RGB 32GB (2x16GB) DDR5 7200|null|{"memoryType":"DDR5", "speedMhz":7200, "capacityGb":16, "kitQuantity":2, "heightMm":56}
+RAM|Teamgroup|T-Force Delta RGB 32GB (2x16GB) DDR5 7200|null|{"memoryType":"DDR5", "speedMhz":7200, "capacityGb":16, "kitQuantity":2, "heightMm":49}
+RAM|ADATA|XPG Lancer 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":38}
+RAM|Patriot|Viper Venom 32GB (2x16GB) DDR5 6200|null|{"memoryType":"DDR5", "speedMhz":6200, "capacityGb":16, "kitQuantity":2, "heightMm":43}
+RAM|G.Skill|Trident Z5 Neo RGB 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":42}
+RAM|Corsair|Vengeance 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":35}
+RAM|Kingston|Fury Beast RGB 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":42}
+RAM|Crucial|Pro 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":35}
+RAM|Teamgroup|T-Create Expert 32GB (2x16GB) DDR5 6400|null|{"memoryType":"DDR5", "speedMhz":6400, "capacityGb":16, "kitQuantity":2, "heightMm":32}
+RAM|ADATA|XPG Caster RGB 32GB (2x16GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":16, "kitQuantity":2, "heightMm":43}
+RAM|G.Skill|Ripjaws V 32GB (2x16GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":16, "kitQuantity":2, "heightMm":42}
+RAM|Corsair|Vengeance RGB Pro 32GB (2x16GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":2, "heightMm":51}
+RAM|Kingston|Fury Renegade RGB 32GB (2x16GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":16, "kitQuantity":2, "heightMm":42}
+RAM|Crucial|Ballistix MAX 16GB (2x8GB) DDR4 4000|null|{"memoryType":"DDR4", "speedMhz":4000, "capacityGb":8, "kitQuantity":2, "heightMm":40}
+RAM|Teamgroup|T-Force Xtreem 16GB (2x8GB) DDR4 4000|null|{"memoryType":"DDR4", "speedMhz":4000, "capacityGb":8, "kitQuantity":2, "heightMm":49}
+RAM|Patriot|Viper Elite II 32GB (2x16GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":16, "kitQuantity":2, "heightMm":40}
+RAM|ADATA|XPG Gammix D10 32GB (2x16GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":2, "heightMm":36}
+RAM|Mushkin|Redline 32GB (2x16GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":2, "heightMm":38}
+RAM|G.Skill|Sniper X 16GB (2x8GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":8, "kitQuantity":2, "heightMm":43}
+RAM|Corsair|Vengeance LPX 16GB (2x8GB) DDR4 3600|null|{"memoryType":"DDR4", "speedMhz":3600, "capacityGb":8, "kitQuantity":2, "heightMm":34}
+RAM|Kingston|Fury Beast 16GB (1x16GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":16, "kitQuantity":1, "heightMm":34}
+RAM|Crucial|8GB DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|Teamgroup|Elite Plus 16GB (2x8GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":8, "kitQuantity":2, "heightMm":32}
+RAM|Patriot|Signature Line 8GB (1x8GB) DDR4 2666|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|ADATA|Premier 8GB (1x8GB) DDR4 3200|null|{"memoryType":"DDR4", "speedMhz":3200, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|Mushkin|Essentials 16GB (2x8GB) DDR4 2666|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":8, "kitQuantity":2, "heightMm":31}
+RAM|G.Skill|Value 8GB (1x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|Corsair|ValueSelect 8GB (1x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|Kingston|ValueRAM 8GB (1x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|Crucial|Basics 8GB (1x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":1, "heightMm":31}
+RAM|Teamgroup|Elite 8GB (1x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":1, "heightMm":32}
+RAM|Patriot|Signature Line Premium 16GB (2x8GB) DDR4 2666|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":8, "kitQuantity":2, "heightMm":37}
+RAM|ADATA|Premier 16GB (2x8GB) DDR4 2666|null|{"memoryType":"DDR4", "speedMhz":2666, "capacityGb":8, "kitQuantity":2, "heightMm":31}
+RAM|G.Skill|Fortis 16GB (2x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":2, "heightMm":33}
+RAM|Corsair|Vengeance 16GB (2x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":2, "heightMm":32}
+RAM|Kingston|ValueRAM 16GB (2x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":2, "heightMm":31}
+RAM|Crucial|16GB Kit (2x8GB) DDR4-2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":2, "heightMm":31}
+RAM|Teamgroup|Vulcan 16GB (2x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":2, "heightMm":32}
+RAM|Patriot|Signature Line 16GB (2x8GB) DDR4 2400|null|{"memoryType":"DDR4", "speedMhz":2400, "capacityGb":8, "kitQuantity":2, "heightMm":31}
+RAM|G.Skill|Trident Z5 RGB 48GB (2x24GB) DDR5 7200|null|{"memoryType":"DDR5", "speedMhz":7200, "capacityGb":24, "kitQuantity":2, "heightMm":44}
+RAM|Corsair|Vengeance 48GB (2x24GB) DDR5 7000|null|{"memoryType":"DDR5", "speedMhz":7000, "capacityGb":24, "kitQuantity":2, "heightMm":35}
+RAM|Teamgroup|T-Force Delta RGB 48GB (2x24GB) DDR5 6800|null|{"memoryType":"DDR5", "speedMhz":6800, "capacityGb":24, "kitQuantity":2, "heightMm":49}
+RAM|ADATA|XPG Lancer Blade 48GB (2x24GB) DDR5 6400|null|{"memoryType":"DDR5", "speedMhz":6400, "capacityGb":24, "kitQuantity":2, "heightMm":34}
+RAM|G.Skill|Ripjaws S5 48GB (2x24GB) DDR5 6000|null|{"memoryType":"DDR5", "speedMhz":6000, "capacityGb":24, "kitQuantity":2, "heightMm":33}
+RAM|Crucial|Pro 48GB (2x24GB) DDR5 5600|null|{"memoryType":"DDR5", "speedMhz":5600, "capacityGb":24, "kitQuantity":2, "heightMm":35}
+RAM|Kingston|Fury Beast 48GB (2x24GB) DDR5 5200|null|{"memoryType":"DDR5", "speedMhz":5200, "capacityGb":24, "kitQuantity":2, "heightMm":35}

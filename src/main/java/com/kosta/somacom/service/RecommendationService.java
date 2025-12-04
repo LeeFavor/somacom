@@ -1,41 +1,7 @@
 package com.kosta.somacom.service;
 
-import com.google.api.gax.longrunning.OperationFuture;
-import com.google.cloud.retail.v2.ProductDetail;
-import com.google.protobuf.Int32Value;
-import com.google.cloud.retail.v2.PredictRequest;
-import com.google.cloud.retail.v2.PredictResponse;
-import com.google.cloud.retail.v2.PredictionServiceClient;
-import com.google.cloud.retail.v2.UserEvent;
-import com.google.cloud.retail.v2.*;
-import com.kosta.somacom.domain.part.BaseSpec;
-import com.kosta.somacom.domain.part.CpuSpec;
-import com.kosta.somacom.domain.part.GpuSpec;
-import com.kosta.somacom.domain.part.MotherboardSpec;
-import com.kosta.somacom.domain.part.RamSpec;
-import com.kosta.somacom.domain.product.Product;
-import com.kosta.somacom.domain.score.CompatibilityStatus;
-import com.kosta.somacom.domain.score.UserActionType;
-import com.kosta.somacom.domain.score.UserActionWeight;
-import com.kosta.somacom.domain.score.UserIntentScore;
-import com.kosta.somacom.engine.RuleEngineService;
-import com.kosta.somacom.engine.rule.CompatibilityResult;
-import com.kosta.somacom.repository.BaseSpecRepository;
-import com.kosta.somacom.repository.CartRepository;
-import com.kosta.somacom.repository.ProductRepository;
-import com.kosta.somacom.repository.PopularityScoreRepository;
-import com.kosta.somacom.repository.UserIntentScoreRepository;
-import com.kosta.somacom.dto.response.RecommendationResponseDto;
-import com.kosta.somacom.dto.response.ProductSimpleResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,8 +9,51 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.google.api.gax.longrunning.OperationFuture;
+import com.google.cloud.retail.v2.BranchName;
+import com.google.cloud.retail.v2.ImportMetadata;
+import com.google.cloud.retail.v2.ImportProductsRequest;
+import com.google.cloud.retail.v2.ImportProductsResponse;
+import com.google.cloud.retail.v2.PredictRequest;
+import com.google.cloud.retail.v2.PredictResponse;
+import com.google.cloud.retail.v2.PredictionServiceClient;
+import com.google.cloud.retail.v2.ProductDetail;
+import com.google.cloud.retail.v2.ProductInlineSource;
+import com.google.cloud.retail.v2.ProductInputConfig;
+import com.google.cloud.retail.v2.ProductServiceClient;
+import com.google.cloud.retail.v2.UserEvent;
+import com.google.cloud.retail.v2alpha.PurgeProductsMetadata;
+import com.google.cloud.retail.v2alpha.PurgeProductsRequest;
+import com.google.cloud.retail.v2alpha.PurgeProductsResponse;
+import com.google.protobuf.Int32Value;
+import com.kosta.somacom.domain.part.BaseSpec;
+import com.kosta.somacom.domain.part.CpuSpec;
+import com.kosta.somacom.domain.part.GpuSpec;
+import com.kosta.somacom.domain.part.MotherboardSpec;
+import com.kosta.somacom.domain.part.RamSpec;
+import com.kosta.somacom.domain.product.Product;
+import com.kosta.somacom.domain.score.UserActionWeight;
+import com.kosta.somacom.domain.score.UserIntentScore;
+import com.kosta.somacom.dto.response.ProductSimpleResponse;
+import com.kosta.somacom.dto.response.RecommendationResponseDto;
+import com.kosta.somacom.engine.RuleEngineService;
+import com.kosta.somacom.engine.rule.CompatibilityResult;
+import com.kosta.somacom.repository.BaseSpecRepository;
+import com.kosta.somacom.repository.CartRepository;
+import com.kosta.somacom.repository.PopularityScoreRepository;
+import com.kosta.somacom.repository.ProductRepository;
+
+import com.kosta.somacom.repository.UserIntentScoreRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -160,43 +169,49 @@ public class RecommendationService {
         Set<String> cartCompatibilityTags = getCompatibilityTagsFromCart(itemsInCart);
         log.info("[2] Extracted Compatibility Tags from Cart: {}", cartCompatibilityTags);
 
-        Optional<String> highestIntentFilter;
-        // 4. 장바구니 상태에 따라 필터링 전략 변경
-        if (itemsInCart.isEmpty()) {
-            // 장바구니가 비어있으면, 전체 의도 중 가장 점수가 높은 태그를 필터로 사용
-            log.info("Cart is empty. Finding the highest intent from all user scores.");
-            highestIntentFilter = findHighestIntentFilter(weightedScores, weightedScores.keySet());
-        } else {
-            // 장바구니에 상품이 있으면, 호환성 태그 내에서 가장 점수가 높은 태그를 필터로 사용
-            log.info("Cart has items. Finding the highest intent within cart compatibility tags.");
-            highestIntentFilter = findHighestIntentFilter(weightedScores, cartCompatibilityTags);
-        }
-
-        // 5. 최종 필터 문자열 생성
-        String finalFilter = highestIntentFilter.map(tag -> "tag=\"" + tag + "\"").orElse("");
-        if (finalFilter.isEmpty()) {
-            log.info("No specific intent filter for user: {}. Returning broad recommendations.", userId);
+        // 4. [신규] 추천할 대상 카테고리 및 대표 상품(Seed Item) 결정
+        Optional<BaseSpec> seedItemOpt = findSeedItem(weightedScores, itemsInCart);
+        if (seedItemOpt.isEmpty()) {
+            log.warn("Could not determine a seed item for recommendation. Aborting.");
             return List.of();
         }
-        log.info("Generated final filter string for Google API: {}", finalFilter);
+        BaseSpec seedItem = seedItemOpt.get();
+        log.info("[3] Seed item for 'Similar Items' model determined: {} ({})", seedItem.getName(), seedItem.getId());
 
-        // 6. Google Cloud Retail API 호출
-        List<String> recommendedBaseSpecIds = callPredictionAPI(userId, eventType, finalFilter, itemsInCart);
+        // 5. 대표 상품을 컨텍스트로 사용하여 Google AI 호출 (필터 없음)
+        List<String> recommendedBaseSpecIds = callPredictionAPI(userId, eventType, "", List.of(seedItem));
         log.info("[4] Recommended BaseSpec IDs from Google AI: {}", recommendedBaseSpecIds);
 
-        // [SYS-2 연동] 7. 추천된 상품들을 인기도 점수에 따라 재정렬
+        // 6. 자기 자신은 추천에서 제외
+        recommendedBaseSpecIds.remove(seedItem.getId());
+        log.info("[4-1] Removed self from recommendations. Current candidates: {}", recommendedBaseSpecIds);
+
+        // 7. 백엔드에서 직접 의도 필터링 수행 (선택적: AI가 이미 유사한 아이템을 반환했으므로 생략 가능)
+        // Set<String> userTopIntents = getTopIntents(weightedScores, 5).stream().collect(Collectors.toSet());
+        // List<String> filteredBaseSpecIds = recommendedBaseSpecIds.stream()
+        //         .filter(baseSpecId -> {
+        //             BaseSpec spec = baseSpecRepository.findById(baseSpecId).orElse(null);
+        //             if (spec == null) return false;
+        //             Set<String> specTags = getCompatibilityTagsFromCart(List.of(spec));
+        //             // 사용자의 상위 의도 태그와 상품의 태그 중 하나라도 일치하면 통과
+        //             return !java.util.Collections.disjoint(userTopIntents, specTags);
+        //         })
+        //         .collect(Collectors.toList());
+        // log.info("[4-1] After Backend Intent Filtering (Top 5 Intents: {}): {}", userTopIntents, filteredBaseSpecIds);
+
+        // 8. [SYS-2 연동] 추천된 상품들을 인기도 점수에 따라 재정렬
         List<String> sortedBaseSpecIds = sortByPopularity(recommendedBaseSpecIds, itemsInCart);
         log.info("[5] Sorted BaseSpec IDs by Popularity: {}", sortedBaseSpecIds);
 
-        // 8. 최종 상품 객체로 변환
+        // 9. 최종 상품 객체로 변환
         List<Product> finalProducts = convertBaseSpecsToProducts(sortedBaseSpecIds);
         log.info("[6] Converted to Product objects (count: {}): {}", finalProducts.size(), finalProducts.stream().map(p -> p.getBaseSpec().getId()).collect(Collectors.toList()));
 
-        // 9. [신규] 호환성 검사 및 우선순위 정렬
+        // 10. [신규] 호환성 검사 및 우선순위 정렬
         List<RecommendationResponseDto> finalRecommendations = checkCompatibilityAndSort(finalProducts, itemsInCart);
         log.info("[7] After Compatibility Check & Sort (count: {}): {}", finalRecommendations.size(), finalRecommendations.stream().map(r -> r.getProduct().getProductId() + ":" + r.getCompatibilityStatus()).collect(Collectors.toList()));
 
-        // 10. 최종 개수만큼 잘라서 반환
+        // 11. 최종 개수만큼 잘라서 반환
         List<RecommendationResponseDto> limitedRecommendations = finalRecommendations.stream().limit(count).collect(Collectors.toList());
         log.info("[8] Final-Limited Recommendations (count: {}): {}", limitedRecommendations.size(), limitedRecommendations.stream().map(r -> r.getProduct().getProductId()).collect(Collectors.toList()));
         log.info("==================== [Recommendation DEBUG END] ======================");
@@ -270,6 +285,104 @@ public class RecommendationService {
         return tags;
     }
 
+    /**
+     * [신규] 사용자의 의도와 장바구니 상태를 분석하여 추천의 기준이 될 '대표 상품(Seed Item)'을 찾습니다.
+     */
+    private Optional<BaseSpec> findSeedItem(Map<String, Double> weightedScores, List<BaseSpec> itemsInCart) {
+        // 1. 장바구니에 있는 상품들의 부품 카테고리(CPU, RAM 등)를 수집
+        Set<String> cartCategories = itemsInCart.stream()
+                .map(item -> item.getCategory().name())
+                .collect(Collectors.toSet());
+
+        // 2. 사용자의 의도 점수가 높은 순으로 정렬된 태그 목록
+        List<String> topIntents = getTopIntents(weightedScores, 10);
+
+        // 3. 1차 시도: 장바구니에 없는 카테고리의 "다음 부품"을 추천하기 위한 대표 상품 찾기
+        for (String intentTag : topIntents) {
+            String[] parts = intentTag.split("_");
+            if (parts.length < 2) continue;
+
+            String intentCategory = parts[0]; // e.g., "memory", "socket"
+
+            // 의도 카테고리(memory)를 실제 부품 카테고리(RAM)로 변환
+            Optional<String> targetPartCategoryOpt = mapIntentToPartCategory(intentCategory);
+            if (targetPartCategoryOpt.isEmpty()) {
+                continue;
+            }
+            String targetPartCategory = targetPartCategoryOpt.get(); // e.g., "RAM"
+
+            // 해당 부품 카테고리가 이미 장바구니에 있다면 건너뜀 (다음 부품을 추천해야 하므로)
+            if (cartCategories.contains(targetPartCategory)) {
+                continue;
+            }
+
+            // 장바구니에 없는 카테고리의 의도를 발견하면, 해당 의도 태그와 일치하는 상품을 대표 상품으로 탐색
+            Optional<BaseSpec> seed = findMatchingSeedItem(targetPartCategory, intentTag);
+            if (seed.isPresent()) {
+                log.info("Primary seed item found (Next part recommendation for {}).", targetPartCategory);
+                return seed;
+            }
+        }
+
+        // 4. 2차 시도(Fallback): 1차에서 대표 상품을 못찾았다면, 최상위 의도를 기준으로 "유사 부품" 추천
+        if (!topIntents.isEmpty()) {
+            log.warn("Could not find a 'next part' seed item. Falling back to highest intent.");
+            String highestIntent = topIntents.get(0);
+            String[] parts = highestIntent.split("_");
+            if (parts.length >= 2) {
+                String intentCategory = parts[0];
+
+                Optional<String> targetPartCategoryOpt = mapIntentToPartCategory(intentCategory);
+                if (targetPartCategoryOpt.isPresent()) {
+                    String targetPartCategory = targetPartCategoryOpt.get();
+                    Optional<BaseSpec> seed = findMatchingSeedItem(targetPartCategory, highestIntent);
+                    if (seed.isPresent()) {
+                        log.info("Fallback seed item found (Similar part recommendation for {}).", targetPartCategory);
+                        return seed;
+                    }
+                }
+            }
+        }
+
+        return Optional.empty(); // 적절한 대표 상품을 찾지 못함
+    }
+
+    /**
+     * [신규] 의도 카테고리를 실제 부품 카테고리(Enum) 이름으로 매핑합니다.
+     */
+    private Optional<String> mapIntentToPartCategory(String intentCategory) {
+        switch (intentCategory.toLowerCase()) {
+            case "memory":
+            case "speed":
+                return Optional.of("RAM");
+            case "socket":
+            case "chipset":
+                return Optional.of("Motherboard"); // CPU와 연관있지만, 보통 보드를 먼저 찾으므로 MOTHERBOARD로 매핑
+            case "pcie":
+            case "pcie_lanes":
+                return Optional.of("GPU"); // GPU와 연관이 가장 큼
+            default:
+                return Optional.empty();
+        }
+    }
+
+    /**
+     * [신규] 카테고리와 속성 태그에 맞는 BaseSpec을 DB에서 찾습니다.
+     */
+    private Optional<BaseSpec> findMatchingSeedItem(String partCategory, String intentTag) {
+        // 가장 간단하게는 카테고리 내 첫번째 아이템을 가져와서 속성을 비교합니다.
+        // 향후 인기도 점수 등을 활용하여 고도화할 수 있습니다.
+        List<BaseSpec> candidates = baseSpecRepository.findAllByCategory(com.kosta.somacom.domain.part.PartCategory.valueOf(partCategory));
+
+        for (BaseSpec candidate : candidates) {
+            Set<String> tags = getCompatibilityTagsFromCart(List.of(candidate));
+            if (tags.contains(intentTag)) {
+                return Optional.of(candidate);
+            }
+        }
+        return Optional.empty();
+    }
+
     private Optional<String> findHighestIntentFilter(Map<String, Double> weightedScores, Set<String> cartCompatibilityTags) {
         if (cartCompatibilityTags.isEmpty()) {
             return Optional.empty();
@@ -308,6 +421,11 @@ public class RecommendationService {
         // API 요청 생성
         String placement = String.format("projects/%s/locations/%s/catalogs/%s/servingConfigs/%s",
                 projectId, location, DEFAULT_CATALOG, "default-placement");
+        // [수정] "유사 상품" 모델 대신 "함께 구매한 상품(FBT)" 모델이 배포된 서빙 구성을 사용합니다.
+        // Google Cloud 콘솔에서 생성한 FBT용 서빙 구성 ID로 변경해야 합니다. (예: "fbt-placement")
+        // String placementId = "frequently-bought-together"; // 실제 서빙 구성 ID로 교체 필요
+        // String placement = String.format("projects/%s/locations/%s/catalogs/%s/servingConfigs/%s",
+        //         projectId, location, DEFAULT_CATALOG, placementId);
 
         UserEvent.Builder userEventBuilder = UserEvent.newBuilder()
                 .setVisitorId(userId)
@@ -332,6 +450,8 @@ public class RecommendationService {
                 .setFilter(filter)
                 .setPageSize(RECOMMENDATION_CANDIDATE_POOL_SIZE) // 넉넉하게 후보군 요청
                 .putParams("priceRerankLevel", com.google.protobuf.Value.newBuilder().setStringValue("no-price-reranking").build())
+                // [신규] 추천된 상품의 전체 데이터를 함께 반환하도록 요청 (디버깅에 유용)
+                .putParams("returnProduct", com.google.protobuf.Value.newBuilder().setBoolValue(true).build())
                 .build();
 
         // API 호출 및 결과 처리

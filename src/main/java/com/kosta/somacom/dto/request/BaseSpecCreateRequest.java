@@ -6,12 +6,17 @@ import com.kosta.somacom.domain.part.GpuSpec;
 import com.kosta.somacom.domain.part.MotherboardSpec;
 import com.kosta.somacom.domain.part.PartCategory;
 import com.kosta.somacom.domain.part.RamSpec;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -88,5 +93,39 @@ public class BaseSpecCreateRequest {
         }
 
         return baseSpecEntity;
+    }
+    
+    @Data
+    public static class CpuSpecRequest {
+        private String socket;
+        private List<String> supportedMemoryTypes;
+        private Boolean hasIgpu;
+    }
+
+    @Data
+    public static class MotherboardSpecRequest {
+        private String socket;
+        private String chipset;
+        private String memoryType;
+        private int memorySlots;
+        private String formFactor;
+        private BigDecimal pcieVersion;
+        private Integer pcieLanes;
+    }
+
+    @Data
+    public static class RamSpecRequest {
+        private String memoryType;
+        private int speedMhz;
+        private int capacityGb;
+        private int kitQuantity;
+        private Integer heightMm;
+    }
+
+    @Data
+    public static class GpuSpecRequest {
+        private BigDecimal pcieVersion;
+        private int pcieLanes;
+        private Integer lengthMm;
     }
 }

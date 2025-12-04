@@ -42,20 +42,22 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `PopularityScoreRepository`에 `Upsert` 로직을 위한 커스텀 메소드 추가
     - `[x]` `PopularityEngineService` 생성 (배치 작업의 핵심 로직 담당)
 
-- **[예정] `SYS-3`: 하이브리드 추천 엔진 (Intent Engine)**
+➡️ **[진행중] `SYS-3`: 하이브리드 추천 엔진 (Intent Engine)**
   - **Description**: 사용자의 다양한 행동(조회, 검색, 필터링 등)에서 '호환 조건 태그'를 추출하여 의도 점수를 누적합니다. 이 점수를 '행동별 가중치 테이블'과 조합하여 사용자의 숨은 의도(예: "LGA1700 소켓과 DDR5를 지원하는 부품을 찾고 있음")를 추론하고, 이를 기반으로 스마트 필터 및 추천을 제공합니다.
   - **Logic (Logging)**: 사용자가 특정 부품과 상호작용할 때, 해당 부품의 주요 사양(예: `socket_LGA1700`, `mem_DDR5`)을 태그로 추출하여 `user_intent_score` 테이블의 점수(`viewCount`, `cartCount` 등)를 증가시키는 로직 구현.
   - **Logic (Recommendation)**: `U-401` API 요청 시, `user_intent_score`와 '행동별 가중치 테이블'을 이용해 사용자의 상위 점수 태그(의도)를 계산합니다. 이 태그들을 스마트 필터로 활용하고, `SYS-1`(호환성)과 `SYS-2`(인기도) 점수를 조합하여 최종 추천 상품 목록을 반환합니다.
   - **Tables**: `user_intent_score`, `base_specs`, `products`
   - **Dependencies**: 행동별 가중치 테이블 (별도 설정 파일 또는 DB 테이블)
-  - **Status**: 설계 완료, 개발 대기
+  - **Status**: 개발 중. Google Cloud Retail API 연동 완료. "유사 상품" 모델이 1개의 결과만 반환하는 문제 발생. 카탈로그 데이터 부족으로 잠정 결론.
   - **Tasks**:
-    - `[x]` Google Cloud Retail API 연동 및 `tag` 기반 필터링 기능 검증 완료.
-    - `[ ]` `UserIntentLoggingService` 생성 (AOP 또는 인터셉터를 사용하여 Controller 호출 시 로그 수집)
-    
-    - `[ ]` `user_intent_score` 테이블에 점수를 업데이트하는 `Upsert` 로직 구현
-    - `[ ]` `RecommendationService` 생성 (`U-401` API 로직 담당)
-    - `[ ]` `RecommendationService` 내에서 `SYS-1`, `SYS-2` 결과를 조합하는 로직 구현
+    - `[x]` Google Cloud Retail API 연동 및 "유사 상품" 모델 호출 로직 구현 완료.
+    - `[x]` `UserIntentLoggingService` 및 AOP를 통한 사용자 행동 로깅 구현 완료.
+    - `[x]` `RecommendationService`에 사용자 의도 분석 및 대표 상품(Seed Item) 선정 로직 구현 완료.
+    - `[보류]` Google AI가 1개의 상품만 추천하는 현상 분석 (카탈로그 데이터 부족으로 추정).
+    - `[➡️]` **(다음 작업)** 대량의 테스트 데이터 생성:
+      - 각 부품 카테고리(`CPU`, `RAM` 등)별로 100종류의 `BaseSpec`을 생성하는 스크립트 또는 서비스 구현.
+      - 특정 판매자가 각 `BaseSpec` 당 10개의 `Product`를 등록하도록 데이터 생성.
+    - `[ ]` 대량 데이터 생성 후, 카탈로그 재동기화(`POST /api/admin/sync/catalog`) 및 추천 API 재테스트.
 
 ---
 
