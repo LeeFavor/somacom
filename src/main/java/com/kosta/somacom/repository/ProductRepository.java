@@ -33,4 +33,14 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
     // 상세 조회를 위한 페치 조인: Product, BaseSpec, Seller, SellerInfo를 모두 함께 조회
     @Query("SELECT p FROM Product p JOIN FETCH p.baseSpec WHERE p.id = :productId AND p.isVisible = true")
     Optional<Product> findDetailById(@Param("productId") Long productId);
+    
+    @Query("SELECT p FROM Product p " +
+            "JOIN FETCH p.baseSpec bs " +
+            "LEFT JOIN FETCH bs.cpuSpec " +
+            "LEFT JOIN FETCH bs.motherboardSpec " +
+            "LEFT JOIN FETCH bs.ramSpec " +
+            "LEFT JOIN FETCH bs.gpuSpec " +
+            "WHERE p.id = :productId AND p.isVisible = true")
+     Optional<Product> findWithAllDetailsById(@Param("productId") Long productId);
+
 }
