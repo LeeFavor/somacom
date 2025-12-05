@@ -15,6 +15,8 @@ import com.kosta.somacom.service.ProductSearchService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,5 +49,23 @@ public class ProductSearchController {
         }
         List<AutocompleteResponse> suggestions = productSearchService.getAutocompleteSuggestions(keyword);
         return ResponseEntity.ok(suggestions);
+    }
+
+    /**
+     * [신규] 모든 부품 카테고리 목록을 반환합니다.
+     */
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> getCategories() {
+        List<String> categories = productSearchService.getAllCategories();
+        return ResponseEntity.ok(categories);
+    }
+
+    /**
+     * [신규] 특정 카테고리에 대한 동적 필터 옵션을 반환합니다.
+     */
+    @GetMapping("/filters")
+    public ResponseEntity<Map<String, Set<String>>> getFilterOptions(@RequestParam String category) {
+        Map<String, Set<String>> filters = productSearchService.getFilterOptionsForCategory(category);
+        return ResponseEntity.ok(filters);
     }
 }
