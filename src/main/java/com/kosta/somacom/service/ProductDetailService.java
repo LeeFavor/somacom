@@ -20,8 +20,9 @@ public class ProductDetailService {
     private final ProductRepository productRepository;
 
     public ProductDetailResponse getProductDetail(Long productId) {
-        // 1. Product와 BaseSpec을 페치 조인으로 조회
-        Product product = productRepository.findDetailById(productId)
+        // 1. Product와 BaseSpec, 그리고 모든 하위 Spec(CpuSpec 등)을 페치 조인으로 한번에 조회
+        // ProductRepository에 findWithAllDetailsById 쿼리 추가 필요
+        Product product = productRepository.findWithAllDetailsById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found: " + productId));
 
         // 2. 가격 비교 목록 조회를 위한 페치 조인 쿼리 실행
