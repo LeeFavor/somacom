@@ -8,6 +8,7 @@ import com.kosta.somacom.domain.score.UserActionType;
 import com.kosta.somacom.dto.request.ProductSearchCondition;
 import com.kosta.somacom.order.dto.InstantOrderRequest;
 import com.kosta.somacom.repository.CartItemRepository;
+import com.kosta.somacom.service.RecommendationService;
 import com.kosta.somacom.repository.BaseSpecRepository;
 import com.kosta.somacom.repository.ProductRepository;
 import com.kosta.somacom.service.UserIntentLoggingService;
@@ -16,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 @Aspect
@@ -32,24 +36,60 @@ import java.util.List;
 public class UserActionLoggingAspect {
 
     private final UserIntentLoggingService userIntentLoggingService;
+    private final RecommendationService recommendationService; // Google Cloud 로그 전송을 위해 추가
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
     private final BaseSpecRepository baseSpecRepository;
+    private final CacheManager cacheManager; // 사용자 조회 기록 캐시를 위해 추가
 
     /**
-     * 상품 상세 페이지 조회 시 'VIEW' 액션을 로깅합니다. (P-202)
+     * 상품 상세 페이지 조회 시 'VIEW' 액션을 로깅하고, Google Cloud에 최근 조회 기록을 전송합니다. (P-202)
      */
     @AfterReturning(pointcut = "execution(* com.kosta.somacom.controller.ProductDetailController.getProductDetail(..)) && args(productId)", returning = "response")
     public void logProductView(JoinPoint joinPoint, Long productId, ResponseEntity<?> response) {
         getPrincipalDetails().ifPresent(principal -> {
             productRepository.findById(productId).ifPresent(product -> {
+                String userId = String.valueOf(principal.getUser().getId());
+                String baseSpecId = product.getBaseSpec().getId();
+
+                log.info("Logging 'VIEW' action for user '{}' on baseSpec '{}'", userId, baseSpecId);
+
+                // 1. 로컬 DB에 의도 점수 로깅
                 userIntentLoggingService.logAction(
-                        String.valueOf(principal.getUser().getId()),
-                        product.getBaseSpec().getId(),
+                        userId,
+                        baseSpecId,
                         UserActionType.VIEW
                 );
+
+                // 2. [신규] 사용자 조회 기록 캐시 및 Google Cloud 로그 전송
+                updateAndIngestViewHistory(userId, baseSpecId);
             });
         });
+    }
+
+    private void updateAndIngestViewHistory(String userId, String newBaseSpecId) {
+        Cache cache = cacheManager.getCache("userViewHistory");
+        if (cache == null) {
+            log.warn("Cache 'userViewHistory' not found. Skipping Google Cloud event ingestion.");
+            return;
+        }
+
+        // 캐시에서 사용자의 조회 기록을 가져옴 (LinkedList로 타입 캐스팅)
+        LinkedList<String> history = cache.get(userId, LinkedList.class);
+        if (history == null) {
+            history = new LinkedList<>();
+        }
+
+        history.remove(newBaseSpecId); // 중복 제거
+        history.addFirst(newBaseSpecId); // 가장 최근에 본 상품을 맨 앞에 추가
+        while (history.size() > 5) { history.removeLast(); } // 5개 초과 시 가장 오래된 기록 삭제
+
+        cache.put(userId, history); // 캐시 업데이트
+
+        log.info("Preparing to ingest user view history to Google Cloud. User: {}, History: {}", userId, history);
+
+        // Google Cloud에 최근 조회 기록 5개를 "detail-page-view" 이벤트로 전송
+        recommendationService.ingestUserEventsToGoogleCloud(userId, "detail-page-view", history);
     }
 
     /**

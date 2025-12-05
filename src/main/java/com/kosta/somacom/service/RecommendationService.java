@@ -26,13 +26,12 @@ import com.google.cloud.retail.v2.PredictRequest;
 import com.google.cloud.retail.v2.PredictResponse;
 import com.google.cloud.retail.v2.PredictionServiceClient;
 import com.google.cloud.retail.v2.ProductDetail;
+import com.google.cloud.retail.v2.UserEventServiceClient;
+import com.google.cloud.retail.v2.WriteUserEventRequest;
 import com.google.cloud.retail.v2.ProductInlineSource;
 import com.google.cloud.retail.v2.ProductInputConfig;
 import com.google.cloud.retail.v2.ProductServiceClient;
 import com.google.cloud.retail.v2.UserEvent;
-import com.google.cloud.retail.v2alpha.PurgeProductsMetadata;
-import com.google.cloud.retail.v2alpha.PurgeProductsRequest;
-import com.google.cloud.retail.v2alpha.PurgeProductsResponse;
 import com.google.protobuf.Int32Value;
 import com.kosta.somacom.domain.part.BaseSpec;
 import com.kosta.somacom.domain.part.CpuSpec;
@@ -63,6 +62,7 @@ public class RecommendationService {
 
     private final PredictionServiceClient predictionServiceClient;
     private final ProductServiceClient productServiceClient; // 카탈로그 동기화를 위해 추가
+    private final UserEventServiceClient userEventServiceClient; // Google UserEvent 전송을 위해 추가
     private final UserIntentScoreRepository userIntentScoreRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
@@ -77,6 +77,7 @@ public class RecommendationService {
 
     private static final String DEFAULT_CATALOG = "default_catalog";
     private static final String DEFAULT_BRANCH = "default_branch";
+    private static final String DEFAULT_PLACEMENT = "default-placement";
 
     // Google AI로부터 추천 후보를 넉넉하게 받아오기 위한 풀 사이즈
     private static final int RECOMMENDATION_CANDIDATE_POOL_SIZE = 20;
@@ -528,22 +529,13 @@ public class RecommendationService {
             return List.of();
         }
 
-        // 추천된 모든 BaseSpec에 해당하는 Product들을 한 번에 조회
+        // 추천된 모든 BaseSpec ID에 해당하는, 재고가 있고 판매 중인 모든 Product를 조회합니다.
+        // 이 방식은 AI가 추천한 BaseSpec에 해당하는 다양한 판매자들의 상품을 모두 후보로 만듭니다.
         List<Product> products = productRepository.findProductsByBaseSpecIds(sortedBaseSpecIds);
 
-        // BaseSpec ID를 기준으로 가장 저렴한 Product를 맵으로 만듭니다.
-        Map<String, Product> cheapestProducts = products.stream()
-                .collect(Collectors.toMap(
-                        p -> p.getBaseSpec().getId(),
-                        p -> p,
-                        (p1, p2) -> p1.getPrice().compareTo(p2.getPrice()) < 0 ? p1 : p2
-                ));
-
-        // 원래의 인기도 순서를 유지하면서 Product 객체 목록을 생성합니다.
-        return sortedBaseSpecIds.stream()
-                .map(cheapestProducts::get)
-                .filter(p -> p != null)
-                .collect(Collectors.toList());
+        // 인기도 순서(sortedBaseSpecIds)를 유지하면서 Product 목록을 재정렬할 필요는 없습니다.
+        // 호환성 및 최종 정렬 단계에서 순서가 다시 결정되기 때문입니다.
+        return products;
     }
 
     /**
@@ -575,5 +567,48 @@ public class RecommendationService {
         results.sort(Comparator.comparing(dto -> dto.getCompatibilityStatus().ordinal()));
 
         return results;
+    }
+
+    /**
+     * [신규] Google Cloud에 사용자 행동 로그(User Events)를 전송합니다.
+     * @param userId 사용자 ID
+     * @param eventType 이벤트 유형 (e.g., "detail-page-view")
+     * @param productIds 이벤트와 관련된 상품(BaseSpec) ID 목록
+     */
+    public void ingestUserEventsToGoogleCloud(String userId, String eventType, List<String> productIds) {
+        if (userId == null || eventType == null || productIds == null || productIds.isEmpty()) {
+            return;
+        }
+
+        try {
+            String parentCatalog = String.format("projects/%s/locations/%s/catalogs/%s", projectId, location, DEFAULT_CATALOG);
+
+            for (String productId : productIds) {
+                UserEvent.Builder userEventBuilder = UserEvent.newBuilder()
+                        .setEventType(eventType)
+                        .setVisitorId(userId);
+
+                ProductDetail productDetail = ProductDetail.newBuilder()
+                        .setProduct(
+                                com.google.cloud.retail.v2.Product.newBuilder().setId(productId).build()
+                        )
+                        .build();
+
+                userEventBuilder.addProductDetails(productDetail);
+
+                WriteUserEventRequest writeUserEventRequest = WriteUserEventRequest.newBuilder()
+                        .setParent(parentCatalog)
+                        .setUserEvent(userEventBuilder.build())
+                        .build();
+
+                userEventServiceClient.writeUserEvent(writeUserEventRequest);
+            }
+            log.info("Successfully ingested {} events to Google Cloud for user '{}'. Product IDs: {}",
+                    productIds.size(), userId, productIds);
+
+        } catch (Exception e) {
+            log.error("Failed to ingest user events to Google Cloud for user '{}'. Product IDs: {}. Error: {}",
+                    userId, productIds, e.getMessage());
+        }
     }
 }

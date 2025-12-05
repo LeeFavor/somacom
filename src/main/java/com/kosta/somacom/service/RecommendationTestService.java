@@ -335,4 +335,12 @@ public class RecommendationTestService {
         System.out.println(result);
         return result;
     }
+
+    public String ingestScenarios(List<List<String>> scenarios) {
+        for (int i = 0; i < scenarios.size(); i++) {
+            String userId = "scenario-user-" + (i + 1);
+            ingestMultipleDetailViewEvents(userId, scenarios.get(i));
+        }
+        return String.format("Successfully processed %d scenarios.", scenarios.size());
+    }
 }
