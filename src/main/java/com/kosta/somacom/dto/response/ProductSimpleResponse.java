@@ -1,6 +1,8 @@
 package com.kosta.somacom.dto.response;
 
 import java.math.BigDecimal;
+
+import com.kosta.somacom.domain.product.Product;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,5 +23,13 @@ public class ProductSimpleResponse {
         this.companyName = companyName;
         this.price = price;
         this.imageUrl = imageUrl;
+    }
+    
+    public ProductSimpleResponse(Product p) {
+        this.productId = p.getId();
+        this.productName = p.getName();
+        this.companyName = p.getSeller().getSellerInfo().getCompanyName();
+        this.price = p.getPrice();
+        this.imageUrl = p.getImage_url();
     }
 }

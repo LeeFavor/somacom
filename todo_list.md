@@ -42,18 +42,22 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `PopularityScoreRepository`에 `Upsert` 로직을 위한 커스텀 메소드 추가
     - `[x]` `PopularityEngineService` 생성 (배치 작업의 핵심 로직 담당)
 
-- **[예정] `SYS-3`: 하이브리드 추천 엔진 (Intent Engine)**
+➡️ **[진행중] `SYS-3`: 하이브리드 추천 엔진 (Intent Engine)**
   - **Description**: 사용자의 다양한 행동(조회, 검색, 필터링 등)에서 '호환 조건 태그'를 추출하여 의도 점수를 누적합니다. 이 점수를 '행동별 가중치 테이블'과 조합하여 사용자의 숨은 의도(예: "LGA1700 소켓과 DDR5를 지원하는 부품을 찾고 있음")를 추론하고, 이를 기반으로 스마트 필터 및 추천을 제공합니다.
   - **Logic (Logging)**: 사용자가 특정 부품과 상호작용할 때, 해당 부품의 주요 사양(예: `socket_LGA1700`, `mem_DDR5`)을 태그로 추출하여 `user_intent_score` 테이블의 점수(`viewCount`, `cartCount` 등)를 증가시키는 로직 구현.
   - **Logic (Recommendation)**: `U-401` API 요청 시, `user_intent_score`와 '행동별 가중치 테이블'을 이용해 사용자의 상위 점수 태그(의도)를 계산합니다. 이 태그들을 스마트 필터로 활용하고, `SYS-1`(호환성)과 `SYS-2`(인기도) 점수를 조합하여 최종 추천 상품 목록을 반환합니다.
   - **Tables**: `user_intent_score`, `base_specs`, `products`
   - **Dependencies**: 행동별 가중치 테이블 (별도 설정 파일 또는 DB 테이블)
-  - **Status**: 설계 완료, 개발 대기
+  - **Status**: 핵심 기능 구현 완료. AI 모델 학습 및 결과 모니터링 단계.
   - **Tasks**:
-    - `[ ]` `UserIntentLoggingService` 생성 (AOP 또는 인터셉터를 사용하여 Controller 호출 시 로그 수집)
-    - `[ ]` `user_intent_score` 테이블에 점수를 업데이트하는 `Upsert` 로직 구현
-    - `[ ]` `RecommendationService` 생성 (`U-401` API 로직 담당)
-    - `[ ]` `RecommendationService` 내에서 `SYS-1`, `SYS-2` 결과를 조합하는 로직 구현
+    - `[x]` Google Cloud Retail API 연동 및 "유사 상품" 모델 호출 로직 구현 완료.
+    - `[x]` `UserIntentLoggingService` 및 AOP를 통한 사용자 행동 로깅 구현 완료.
+    - `[x]` `RecommendationService`에 사용자 의도 분석 및 대표 상품(Seed Item) 선정 로직 구현 완료.
+    - `[x]` 대량의 `BaseSpec` 및 `Product` 테스트 데이터 생성 및 DB 저장 완료.
+    - `[x]` 카탈로그 동기화(`POST /api/admin/sync/catalog`) 완료.
+    - `[x]` **(신규)** 사용자가 상품 상세 페이지 조회 시, 최근 조회 상품 5개를 캐싱하고 Google Cloud에 `detail-page-view` 로그를 자동으로 전송하는 로직 구현 완료. (`UserActionLoggingAspect` 수정)
+    - `[➡️]` **(다음 작업)** 여러 가상 사용자로 다양한 상품 조회 시나리오를 테스트하여, AI 모델이 충분한 행동 로그를 학습하도록 데이터 축적.
+    - `[ ]` 일정 시간 경과 후, 추천 API(`GET /api/recommendations/personal`)가 다양한 카테고리의 상품을 2개 이상 반환하는지 검증 및 모니터링.
 
 ---
 
@@ -123,6 +127,17 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `AdminController`에 엔드포인트 추가
     - `[x]` `AdminService`에 요청 목록 조회 및 상태 변경 메소드 추가
 
+✅ **[완료] `A-401`: 외부 부품 데이터 동기화**
+  - **Description**: `basespec.txt` 파일에 정리된 대량의 부품 데이터를 읽어, 로컬 DB(`base_specs` 및 하위 테이블)에 등록합니다.
+  - **Logic**:
+    - 1. `basespec.txt` 파일을 파싱하여 `BaseSpecCreateRequest` DTO 목록으로 변환합니다.
+    - 2. 각 DTO에 대해 `AdminPartService.createBaseSpec()`을 호출하여 로컬 DB에 저장합니다.
+  - **Status**: 구현 완료. (`DataInitializationService`를 통해 구현됨)
+  - **Tasks**:
+    - `[x]` `DataInitializationService` 생성 및 `AdminPartController`에 `/initialize-from-file` API 엔드포인트 추가
+    - `[x]` `basespec.txt` 파일 파싱 로직 구현
+    - `[x]` `AdminPartService`를 호출하여 DB에 저장하는 로직 구현
+---
 ---
 
 ## ✅ Seller (판매자)
@@ -240,12 +255,12 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Logic**: QueryDSL을 사용하여 `products`와 `base_specs`를 조인하고, 카테고리별 동적 필터 조건을 적용. 검색 이벤트는 `SYS-3` 엔진에 로깅.
   - **Logging**: 키워드 검색 시 `user_intent_score.searchCount` 증가, 호환성 관련 상세 필터(소켓, 칩셋 등) 적용 시 `user_intent_score.filterCount` 증가.
   - **Tables**: `products`, `base_specs`, `cpu_specs`, `...`
-  - **Status**: 핵심 기능 구현 완료. 로깅 기능 연동 대기.
+  - **Status**: 핵심 기능 및 로깅 연동 완료.
   - **Tasks**:
     - `[x]` `ProductRepository`에 동적 검색 기능 구현
     - `[x]` `ProductSearchController` 및 `ProductSearchService` 생성
     - `[x]` `ProductSearchRequest` DTO (동적 필터 파라미터용) 및 `ProductSearchResponse` DTO 생성
-    - `[ ]` `UserIntentLoggingService`를 호출하여 검색 및 필터 이벤트 로깅 (`SYS-3` 구현 시 연결)
+    - `[x]` `UserActionLoggingAOP`를 통해 `searchProducts` 메소드 실행 후 `SEARCH`, `FILTER` 이벤트 로깅 완료.
 
 - ✅ [완료] `P-201.1`: 검색 자동완성
   - **Page**: `common-header`
@@ -265,12 +280,13 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Logic**: 상품 정보, 기반 사양, 판매자 정보와 함께 '가격 비교 목록(동일 `base_spec_id`의 다른 상품)' 및 'AI 추천 상품(`SYS-3` 호출)'을 함께 반환.
   - **Logging**: 상품 조회 시 `viewCount` 증가. 15초 이상 체류 시 `longViewCount` 증가. 상품 이미지 클릭 시 `imageViewCount` 증가.
   - **Tables**: `products`, `base_specs`, `seller_info`
-  - **Status**: 핵심 기능 구현 완료. 로깅 및 AI 추천 연동 대기.
+  - **Status**: 핵심 기능 및 `VIEW` 이벤트 로깅 구현 완료. 프론트엔드 연동 대기.
   - **Tasks**:
     - `[x]` `ProductDetailController` 및 `ProductDetailService` 생성
     - `[x]` `ProductDetailService` 내에서 가격 비교 목록을 조합하는 로직 구현
     - `[x]` `ProductDetailResponse` DTO 생성 (여러 정보를 담는 복합 DTO)
-    - `[ ]` `UserIntentLoggingService`를 호출하여 조회 이벤트 로깅 (`SYS-3` 구현 시 연결)
+    - `[x]` `UserActionLoggingAspect`를 통해 `getProductDetail` 호출 시 `VIEW` 이벤트 로깅 및 AI 학습 데이터 전송 완료.
+    - `[➡️]` **(다음 작업)** 프론트엔드에서 특정 조건(15초 이상 체류, 이미지 클릭 등) 만족 시, `POST /api/logs/action` API를 호출하여 `LONG_VIEW`, `IMAGE_VIEW` 이벤트를 전송하도록 연동.
     - `[x]` **(즉시 구매)** `OrderService`에 단일 상품으로 주문을 생성하는 로직 추가 완료
 
 ✅ **[완료] `P-203`: 호환성 필터 적용 검색**
@@ -293,13 +309,13 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Logic**: 장바구니 조회 시 `SYS-1` 엔진을 실시간 호출하여 전체 견적의 호환성 상태를 계산하고 응답에 포함.
   - **Logging**: 장바구니에 상품 추가 시 `user_intent_score.cartCount` 증가.
   - **Tables**: `carts`, `cart_items`, `products`
-  - **Status**: 핵심 기능 구현 완료. 호환성 검사 및 로깅 연동 대기.
+  - **Status**: 핵심 기능 및 로깅 연동 완료.
   - **Tasks**:
     - `[x]` `Cart`, `CartItem` Entity 및 Repository 생성
     - `[x]` `CartController` 및 `CartService` 생성
     - `[x]` `CartService`에 추가/조회/수정/삭제 로직 구현
     - `[~]` `CartResponse` DTO (호환성 결과 포함) 생성
-    - `[ ]` `UserIntentLoggingService`를 호출하여 장바구니 추가 이벤트 로깅
+    - `[x]` `UserActionLoggingAspect`를 통해 `addCartItem` 메소드 실행 후 `CART` 이벤트 로깅 완료.
 
 ✅ **[완료] `U-301.5`: 장바구니 선택 삭제**
   - **Page**: `P-301`
@@ -318,13 +334,13 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
   - **Logic**: `orders` 및 `order_items` 생성, `products.stock_quantity` 재고 차감, `carts`에서 주문된 아이템 삭제. (트랜잭션 처리 필수)
   - **Logging**: 주문 완료 시 주문된 상품에 대해 `user_intent_score.purchaseCount` 증가.
   - **Tables**: `orders`, `order_items`, `carts`, `cart_items`
-  - **Status**: 핵심 기능 구현 완료. 로깅 연동 대기.
+  - **Status**: 핵심 기능 및 로깅 연동 완료.
   - **Tasks**:
     - `[x]` `Order`, `OrderItem` Entity 및 Repository 생성
     - `[x]` `OrderController` 및 `OrderService` 생성
     - `[x]` `OrderService`에 주문 생성 트랜잭션 로직 구현 (재고 차감, 장바구니 비우기 포함)
     - `[x]` `OrderCreateRequest` DTO 생성
-    - `[ ]` `UserIntentLoggingService`를 호출하여 구매 이벤트 로깅
+    - `[x]` `UserActionLoggingAspect`를 통해 `createOrder`, `createInstantOrder` 메소드 실행 후 `PURCHASE` 이벤트 로깅 완료.
 
 - **[예정] `P-502`: 결제 시스템 연동**
   - **Page**: `P-302`

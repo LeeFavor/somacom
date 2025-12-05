@@ -1,6 +1,6 @@
 package com.kosta.somacom.controller;
 
-import com.kosta.somacom.service.RecommendationService;
+import com.kosta.somacom.service.RecommendationTestService;
 import com.google.cloud.retail.v2.PredictResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors; // Collectors 임포트
 public class RecommendationTestController {
 
     @Autowired
-    private RecommendationService recommendationService;
+    private RecommendationTestService recommendationService;
 
     /**
      * [1단계] 카탈로그 저장 (101개 항목)

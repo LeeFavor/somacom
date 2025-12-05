@@ -1,6 +1,7 @@
 package com.kosta.somacom.controller;
 
 import com.kosta.somacom.auth.PrincipalDetails;
+import com.kosta.somacom.domain.order.OrderItem;
 import com.kosta.somacom.order.dto.InstantOrderRequest;
 import com.kosta.somacom.order.dto.OrderDetailResponseDto;
 import com.kosta.somacom.order.dto.OrderListResponseDto;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
@@ -24,8 +27,9 @@ public class OrderController {
     public ResponseEntity<Long> createOrder(@RequestBody OrderRequest request,
                                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = principalDetails.getUser().getId();
-        Long orderId = orderService.createOrder(userId, request);
-        return ResponseEntity.ok(orderId);
+        List<OrderItem> createdItems = orderService.createOrder(userId, request);
+        // 생성된 아이템이 있다면, 첫 번째 아이템의 orderId를 반환
+        return ResponseEntity.ok(createdItems.isEmpty() ? null : createdItems.get(0).getOrder().getId());
     }
 
     /**
@@ -35,8 +39,8 @@ public class OrderController {
     public ResponseEntity<Long> createInstantOrder(@RequestBody InstantOrderRequest request,
                                                    @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = principalDetails.getUser().getId();
-        Long orderId = orderService.createInstantOrder(userId, request);
-        return ResponseEntity.ok(orderId);
+        OrderItem createdItem = orderService.createInstantOrder(userId, request);
+        return ResponseEntity.ok(createdItem.getOrder().getId());
     }
 
 

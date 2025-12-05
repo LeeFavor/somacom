@@ -104,6 +104,8 @@ dependencies {
 
 	// --- [Google Cloud Vertex AI 의존성 추가] ---
 	// (버전은 위 BOM에서 자동으로 관리됩니다)
+	// Spring AOP for logging
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	
 	// 1. Google Cloud Starter (인증 자동 설정)
 	implementation 'com.google.cloud:spring-cloud-gcp-starter'
