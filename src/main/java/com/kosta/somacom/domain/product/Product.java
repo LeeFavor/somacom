@@ -66,6 +66,9 @@ public class Product {
     
     @Column(name = "image_url")
     private String image_url;
+    
+    @Transient
+    private long popularity = 0L;
 
     @Builder
     public Product(BaseSpec baseSpec, User seller, String name, BigDecimal price, int stockQuantity, ProductCondition condition, BigDecimal shippingFee, String description, String img_url) {
