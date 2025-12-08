@@ -1,0 +1,150 @@
+
+안녕하세요, 백엔드 개발자님.
+React 프론트엔드와 토스 페이먼츠 연동을 위해 아래와 같이 서버 API 수정 및 개발을 요청드립니다.
+
+#### **목표**
+
+현재는 주문 생성 시 바로 '결제 완료' 상태가 되지만, 이를 **'결제 대기' 주문 생성 → 토스 페이먼츠 연동 → 백엔드에서 최종 승인 및 검증**의 표준적인 결제 플로우로 변경합니다.
+
+#### **핵심 로직: `orderId` 처리 방안**
+
+-   **문제**: 우리 시스템의 `orderId` (예: `10`)는 토스 페이먼츠의 `orderId` 요구사항(6~64자, 고유성)을 충족하지 못합니다.
+-   **해결**:
+    1.  주문 생성 시, 우리 시스템의 `orderId`와 고유한 해시(e.g., UUID)를 조합하여 **토스 전용 `paymentOrderId`**를 생성합니다. (예: `10-a1b2c3d4-e5f6...`)
+    2.  이 `paymentOrderId`를 프론트엔드로 전달하여 결제 요청에 사용하게 합니다.
+    3.  결제 성공 후, 백엔드는 `paymentOrderId`를 받아 토스에 결제 승인을 요청합니다.
+    4.  모든 검증이 완료되면, 주문 상태를 `PAID`로 변경합니다. `paymentOrderId`는 결제 기록으로 남겨둘 수 있습니다.
+
+---
+
+### **개발 및 수정 사항**
+
+#### **1. 데이터베이스 스키마 변경**
+
+`orders` 테이블에 토스 페이먼츠 연동을 위한 컬럼을 추가해야 합니다.
+
+-   `payment_order_id` (VARCHAR(100), UNIQUE): 토스 페이먼츠와 통신할 고유 주문 ID. (예: `10-a1b2c3d4...`)
+-   `payment_key` (VARCHAR(255)): 결제 승인 후 토스로부터 받은 결제 식별 키. 나중에 결제 조회/취소에 사용됩니다.
+-   `payment_method` (VARCHAR(50)): 결제 수단. (예: '카드', '토스페이')
+
+**[참고] `master.sql` 수정 제안:**
+```sql
+-- U-501: 주문 마스터
+CREATE TABLE orders (
+    order_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL COMMENT '총 결제 금액',
+    
+    -- 배송지 정보
+    recipient_name VARCHAR(100) NOT NULL,
+    shipping_address TEXT NOT NULL,
+    shipping_postcode VARCHAR(20),
+    
+    `status` VARCHAR(20) NOT NULL COMMENT '주문 상태 (PENDING, PAID, FAILED, CANCELED 등)',
+    
+    -- 결제 정보 (신규 추가)
+    payment_order_id VARCHAR(100) UNIQUE COMMENT 'PG사 연동용 고유 주문 ID',
+    payment_key VARCHAR(255) COMMENT 'PG사 결제 키',
+    payment_method VARCHAR(50) COMMENT '결제 수단',
+
+    ordered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+) COMMENT '주문 마스터 테이블';
+```
+
+#### **2. 주문 생성 API 수정 (`POST /api/orders`, `POST /api/orders/instant`)**
+
+기존 주문 생성 로직을 '결제 대기' 상태의 주문을 생성하도록 변경합니다.
+
+**요구사항:**
+
+1.  요청(`request body`)을 받으면, `order_items`을 기반으로 `totalPrice`를 **서버에서 직접 계산**합니다. (클라이언트가 보낸 금액을 신뢰하지 않음)
+2.  `orders` 테이블에 새로운 레코드를 생성합니다.
+    -   `status`: **`PENDING`** 으로 설정
+    -   `total_price`: 서버에서 계산한 금액
+    -   `payment_order_id`: `AUTO_INCREMENT`로 생성된 `order_id`와 `UUID.randomUUID()`를 조합하여 생성 (예: `"{order_id}-{uuid}"`)
+3.  **응답**: 생성된 `payment_order_id` 값을 `String` 형태로 프론트엔드에 반환합니다.
+
+**[Java (Spring) 컨트롤러 예시]**
+```java
+@PostMapping("/orders")
+public ResponseEntity<String> createCartOrder(@RequestBody CartOrderRequest request, @AuthenticationPrincipal User user) {
+    // 1. 주문 생성 및 'PENDING' 상태로 저장
+    // 2. 내부적으로 orderId와 UUID를 조합하여 paymentOrderId 생성
+    String paymentOrderId = orderService.createPendingOrderFromCart(request, user);
+    
+    // 3. 프론트엔드에 토스 연동용 ID 반환
+    return ResponseEntity.ok(paymentOrderId);
+}
+
+@PostMapping("/orders/instant")
+public ResponseEntity<String> createInstantOrder(@RequestBody InstantOrderRequest request, @AuthenticationPrincipal User user) {
+    String paymentOrderId = orderService.createPendingOrderFromInstant(request, user);
+    return ResponseEntity.ok(paymentOrderId);
+}
+```
+
+#### **3. 결제 승인 API 신규 개발 (`POST /api/payments/toss/confirm`)**
+
+프론트엔드에서 결제 성공 후 받은 정보를 검증하고 최종 승인하는 핵심 API입니다.
+
+**요구사항:**
+
+-   **Endpoint**: `POST /api/payments/toss/confirm`
+-   **Request Body**:
+    ```json
+    {
+      "paymentKey": "tgen_...",
+      "orderId": "10-a1b2c3d4-e5f6...",
+      "amount": 190.81
+    }
+    ```
+-   **처리 로직**:
+    1.  Request Body로 받은 `orderId` (즉, `payment_order_id`)를 사용해 DB에서 `PENDING` 상태의 주문을 조회합니다. 주문이 없거나 상태가 `PENDING`이 아니면, 비정상 접근이므로 즉시 에러(400 Bad Request)를 반환합니다.
+    2.  **금액 위변조 검증**: DB에서 조회한 주문의 `total_price`와 Request Body로 받은 `amount`가 **정확히 일치하는지 확인**합니다. 일치하지 않으면, 결제 사기 시도일 수 있으므로 **절대 승인해서는 안 됩니다.** 즉시 에러(400 Bad Request)를 반환하고, 해당 주문을 `FAILED` 상태로 변경하거나 관리자에게 알림을 보내는 등의 후속 조치를 고려합니다.
+    3.  **토스 페이먼츠 API 호출**: 위 검증을 통과하면, 토스 페이먼츠의 결제 승인 API를 호출합니다.
+        -   **URL**: `POST https://api.tosspayments.com/v1/payments/confirm`
+        -   **Headers**:
+            -   `Authorization`: `Basic {BASE64_ENCODED_SECRET_KEY}` (시크릿 키를 Base64 인코딩)
+            -   `Content-Type`: `application/json`
+        -   **Body**: 프론트에서 받은 `paymentKey`, `orderId`, `amount`를 그대로 담아 전송합니다.
+    4.  **DB 업데이트**: 토스 API 호출이 성공하면, 응답받은 데이터를 `orders` 테이블에 업데이트합니다.
+        -   `status`: **`PAID`** 로 변경
+        -   `payment_key`: 토스 응답에 포함된 `paymentKey` 저장
+        -   `payment_method`: 토스 응답에 포함된 `method` (e.g., "카드") 저장
+    5.  **성공 응답**: 프론트엔드에 성공 상태(200 OK)와 함께 최종 주문 정보를 응답합니다.
+    6.  **실패 처리**: 토스 API 호출이 실패하면, 해당 주문의 `status`를 `FAILED`로 변경하고 프론트엔드에 에러(e.g., 500 Internal Server Error)를 반환합니다.
+
+**[Java (Spring) 서비스 로직 예시]**
+```java
+@Transactional
+public OrderDetailResponse confirmTossPayment(PaymentConfirmRequest request) {
+    // 1. DB에서 주문 조회 (payment_order_id 기준)
+    Order order = orderRepository.findByPaymentOrderIdAndStatus(request.getOrderId(), "PENDING")
+        .orElseThrow(() -> new IllegalArgumentException("결제 대기 중인 주문을 찾을 수 없습니다."));
+
+    // 2. 금액 위변조 검증
+    if (!order.getTotalPrice().equals(request.getAmount())) {
+        order.updateStatus("FAILED"); // or a new status like 'TAMPERED'
+        throw new IllegalStateException("주문 금액이 일치하지 않습니다.");
+    }
+
+    // 3. 토스 페이먼츠 결제 승인 API 호출
+    // (RestTemplate or WebClient 사용)
+    TossPaymentResponse tossResponse = tossPaymentsClient.confirmPayment(
+        request.getPaymentKey(), 
+        request.getOrderId(), 
+        request.getAmount()
+    );
+
+    // 4. DB 업데이트
+    order.updateStatus("PAID");
+    order.setPaymentKey(tossResponse.getPaymentKey());
+    order.setPaymentMethod(tossResponse.getMethod());
+    
+    // 재고 차감 등 추가 비즈니스 로직 수행...
+
+    return OrderDetailResponse.from(order); // 프론트에 최종 주문 정보 반환
+}
+```

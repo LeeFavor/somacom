@@ -141,13 +141,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
             // (A, B) 와 (B, A) 양방향으로 체크
             BooleanExpression pair1 = compatibilityScore.specAId.eq(baseSpec.id).and(compatibilityScore.specBId.eq(itemInCart.getId()));
-            BooleanExpression pair2 = compatibilityScore.specAId.eq(itemInCart.getId()).and(compatibilityScore.specBId.eq(baseSpec.id));
+            //BooleanExpression pair2 = compatibilityScore.specAId.eq(itemInCart.getId()).and(compatibilityScore.specBId.eq(baseSpec.id));
 
             // 장바구니의 각 아이템에 대해, 호환성 점수 테이블에 FAIL이 아닌 레코드가 존재하는지 확인
             compatibilityBuilder.and(
                 queryFactory.selectFrom(compatibilityScore)
                     .where(
-                        (pair1.or(pair2)).and(isNotFail)
+                        (pair1).and(isNotFail)
                     ).exists()
             );
         }

@@ -51,6 +51,16 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
+    
+    @Column
+    private String payment_order_id;
+    
+    @Column
+    private String payment_key;
+    
+    @Column
+    private String payment_method;
+    
 
     @Builder
     public Order(User user, BigDecimal totalPrice, String recipientName, String shippingAddress, String shippingPostcode, OrderStatus status) {
@@ -67,4 +77,21 @@ public class Order {
         orderItems.add(orderItem);
         orderItem.setOrder(this);
     }
+
+    public void setPaymentOrderId(String paymentOrderId) {
+        this.payment_order_id = paymentOrderId;
+    }
+
+    public void updateOnPaymentSuccess(String paymentKey, String paymentMethod) {
+        this.status = OrderStatus.PAID;
+        this.payment_key = paymentKey;
+        this.payment_method = paymentMethod;
+        this.orderItems.forEach(item -> item.updateStatus(OrderItemStatus.PAID));
+    }
+
+	public void setStatus(OrderStatus failed) {
+		// TODO Auto-generated method stub
+		this.status = failed;
+	}
+
 }

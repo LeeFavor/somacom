@@ -41,7 +41,7 @@ out/
 
 # Google Cloud Credentials
 src/main/resources/gcp-credentials.json
-
+src/main/resources/secret.properties
 # (선택 사항) Spring Boot 프로젝트를 위한 일반적인 항목들
 # 이미 있다면 추가하지 않아도 됩니다.
 .DS_Store

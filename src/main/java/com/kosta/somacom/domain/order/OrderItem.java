@@ -57,4 +57,8 @@ public class OrderItem {
         this.status = status;
         this.trackingNumber = trackingNumber;
     }
+
+    public void updateStatus(OrderItemStatus status) {
+        this.status = status;
+    }
 }
