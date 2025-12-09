@@ -24,23 +24,22 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Long> createOrder(@RequestBody OrderRequest request,
+    public ResponseEntity<String> createOrder(@RequestBody OrderRequest request,
                                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = principalDetails.getUser().getId();
-        List<OrderItem> createdItems = orderService.createOrder(userId, request);
-        // 생성된 아이템이 있다면, 첫 번째 아이템의 orderId를 반환
-        return ResponseEntity.ok(createdItems.isEmpty() ? null : createdItems.get(0).getOrder().getId());
+        String paymentOrderId = orderService.createOrder(userId, request);
+        return ResponseEntity.ok(paymentOrderId);
     }
 
     /**
      * P-202: 즉시 구매 API
      */
     @PostMapping("/instant")
-    public ResponseEntity<Long> createInstantOrder(@RequestBody InstantOrderRequest request,
+    public ResponseEntity<String> createInstantOrder(@RequestBody InstantOrderRequest request,
                                                    @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long userId = principalDetails.getUser().getId();
-        OrderItem createdItem = orderService.createInstantOrder(userId, request);
-        return ResponseEntity.ok(createdItem.getOrder().getId());
+        String paymentOrderId = orderService.createInstantOrder(userId, request);
+        return ResponseEntity.ok(paymentOrderId);
     }
 
 

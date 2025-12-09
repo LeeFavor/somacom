@@ -6,6 +6,7 @@ import static com.kosta.somacom.domain.part.QGpuSpec.gpuSpec;
 import static com.kosta.somacom.domain.part.QMotherboardSpec.motherboardSpec;
 import static com.kosta.somacom.domain.part.QRamSpec.ramSpec;
 import static com.kosta.somacom.domain.product.QProduct.product;
+import static com.kosta.somacom.domain.score.QPopularityScore.popularityScore;
 import static com.kosta.somacom.domain.score.QCompatibilityScore.compatibilityScore;
 import static com.kosta.somacom.domain.user.QSellerInfo.sellerInfo;
 
@@ -28,7 +29,11 @@ import com.kosta.somacom.dto.response.ProductSimpleResponse;
 import com.kosta.somacom.repository.CartRepository;
 import com.kosta.somacom.repository.ProductRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -141,13 +146,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
             // (A, B) 와 (B, A) 양방향으로 체크
             BooleanExpression pair1 = compatibilityScore.specAId.eq(baseSpec.id).and(compatibilityScore.specBId.eq(itemInCart.getId()));
-            BooleanExpression pair2 = compatibilityScore.specAId.eq(itemInCart.getId()).and(compatibilityScore.specBId.eq(baseSpec.id));
+            //BooleanExpression pair2 = compatibilityScore.specAId.eq(itemInCart.getId()).and(compatibilityScore.specBId.eq(baseSpec.id));
 
             // 장바구니의 각 아이템에 대해, 호환성 점수 테이블에 FAIL이 아닌 레코드가 존재하는지 확인
             compatibilityBuilder.and(
                 queryFactory.selectFrom(compatibilityScore)
                     .where(
-                        (pair1.or(pair2)).and(isNotFail)
+                        (pair1).and(isNotFail)
                     ).exists()
             );
         }
@@ -269,5 +274,39 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public List<ProductSimpleResponse> findTopPopularProducts(int limit) {
+        // 인기도 점수 합계를 계산하는 Expression
+        Expression<Long> popularitySum = popularityScore.score.sum().coalesce(0L);
+
+        return queryFactory
+                .select(Projections.constructor(ProductSimpleResponse.class,
+                        product.id,
+                        product.name,
+                        sellerInfo.companyName,
+                        product.price,
+                        product.image_url))
+                .from(product)
+                .join(product.baseSpec, baseSpec)
+                .join(product.seller.sellerInfo, sellerInfo)
+                .leftJoin(popularityScore)
+                .on(baseSpec.id.eq(popularityScore.id.specAId).or(baseSpec.id.eq(popularityScore.id.specBId)))
+                .where(
+                        product.isVisible.isTrue(),
+                        product.stockQuantity.gt(0) // 재고가 있는 상품만 대상
+                )
+                .groupBy(
+                        product.id,
+                        product.name,
+                        sellerInfo.companyName,
+                        product.price,
+                        product.image_url,
+                        product.createdAt // GROUP BY 절에 정렬과 무관한 created_at 추가
+                )
+                .orderBy(new OrderSpecifier<>(Order.DESC, popularitySum), product.price.asc()) // 1. 인기도순, 2. 가격순
+                .limit(limit)
+                .fetch();
     }
 }

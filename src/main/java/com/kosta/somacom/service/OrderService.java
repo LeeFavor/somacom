@@ -22,9 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +38,7 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public List<OrderItem> createOrder(Long userId, OrderRequest request) {
+    public String createOrder(Long userId, OrderRequest request) {
         // 1. 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -48,41 +48,44 @@ public class OrderService {
 
         // 3. OrderItem 리스트 생성 (이 과정에서 재고 차감)
         List<OrderItem> orderItems = cartItems.stream().map(cartItem -> {
-            cartItem.getProduct().removeStock(cartItem.getQuantity()); // 재고 차감
             return OrderItem.builder()
                     .product(cartItem.getProduct())
                     .quantity(cartItem.getQuantity())
                     .priceAtPurchase(cartItem.getProduct().getPrice()) // 주문 시점 가격 기록
-                    .status(OrderItemStatus.PAID)
+                    .status(OrderItemStatus.PENDING)
                     .build();
         }).collect(Collectors.toList());
 
         // 4. 총 주문 금액 계산
-        BigDecimal totalPrice = orderItems.stream()
-                .map(item -> item.getPriceAtPurchase().multiply(new BigDecimal(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        java.math.BigDecimal totalPrice = orderItems.stream()
+                .map(item -> item.getPriceAtPurchase().multiply(new java.math.BigDecimal(item.getQuantity())))
+                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
 
         // 5. Order 생성 및 OrderItem 연결
         Order order = Order.builder()
-                .user(user).totalPrice(totalPrice).status(OrderStatus.PAID)
+                .user(user).totalPrice(totalPrice).status(OrderStatus.PENDING)
                 .recipientName(request.getRecipientName()).shippingAddress(request.getShippingAddress()).shippingPostcode(request.getShippingPostcode())
                 .build();
         orderItems.forEach(order::addOrderItem);
 
-        // 6. Order 저장 (Cascade 설정으로 OrderItem도 함께 저장됨)
+        // 6. Order 저장 (ID 생성을 위해)
         orderRepository.save(order);
 
-        // 7. 장바구니에서 주문된 아이템 삭제
+        // 7. payment_order_id 생성 및 저장
+        String paymentOrderId = order.getId() + "-" + UUID.randomUUID();
+        order.setPaymentOrderId(paymentOrderId);
+
+        // 8. 장바구니에서 주문된 아이템 삭제
         cartItemRepository.deleteAll(cartItems);
 
-        return orderItems;
+        return paymentOrderId;
     }
 
     /**
      * 즉시 구매 로직 (단일 상품)
      */
     @Transactional
-    public OrderItem createInstantOrder(Long userId, InstantOrderRequest request) {
+    public String createInstantOrder(Long userId, InstantOrderRequest request) {
         // 1. 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -91,23 +94,22 @@ public class OrderService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
-        // 3. OrderItem 생성 (재고 차감)
-        product.removeStock(request.getQuantity());
+        // 3. OrderItem 생성
         OrderItem orderItem = OrderItem.builder()
                 .product(product)
                 .quantity(request.getQuantity())
                 .priceAtPurchase(product.getPrice())
-                .status(OrderItemStatus.PAID)
+                .status(OrderItemStatus.PENDING)
                 .build();
 
         // 4. 총 주문 금액 계산
-        BigDecimal totalPrice = orderItem.getPriceAtPurchase().multiply(new BigDecimal(orderItem.getQuantity()));
+        java.math.BigDecimal totalPrice = orderItem.getPriceAtPurchase().multiply(new java.math.BigDecimal(orderItem.getQuantity()));
 
         // 5. Order 생성 및 OrderItem 연결
         Order order = Order.builder()
                 .user(user)
                 .totalPrice(totalPrice)
-                .status(OrderStatus.PAID)
+                .status(OrderStatus.PENDING)
                 .recipientName(request.getRecipientName())
                 .shippingAddress(request.getShippingAddress())
                 .shippingPostcode(request.getShippingPostcode())
@@ -116,8 +118,12 @@ public class OrderService {
 
         // 6. Order 저장
         orderRepository.save(order);
+        
+        // 7. payment_order_id 생성 및 저장
+        String paymentOrderId = order.getId() + "-" + UUID.randomUUID();
+        order.setPaymentOrderId(paymentOrderId);
 
-        return orderItem;
+        return paymentOrderId;
     }
 
     public Page<OrderListResponseDto> findOrders(Long userId, Pageable pageable) {
