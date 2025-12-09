@@ -50,6 +50,14 @@ public class ProductSearchService {
     }
     
     /**
+     * [신규] 인기도가 가장 높은 상품을 지정된 개수만큼 조회합니다.
+     * @param limit 조회할 상품 개수
+     * @return 인기도 순으로 정렬된 상품 목록
+     */
+    public List<ProductSimpleResponse> getTopPopularProducts(int limit) {
+        return productRepository.findTopPopularProducts(limit);
+    }
+    /**
      * [신규] 모든 카테고리 이름을 문자열 리스트로 반환합니다.
      */
     public List<String> getAllCategories() {

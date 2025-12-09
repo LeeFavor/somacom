@@ -1,5 +1,6 @@
 package com.kosta.somacom.repository;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,4 +13,5 @@ import com.kosta.somacom.dto.response.ProductSimpleResponse;
  */
 public interface ProductRepositoryCustom {
     Page<ProductSimpleResponse> search(ProductSearchCondition condition, Pageable pageable);
+    List<ProductSimpleResponse> findTopPopularProducts(int limit);
 }

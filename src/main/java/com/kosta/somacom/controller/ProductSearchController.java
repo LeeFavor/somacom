@@ -68,4 +68,13 @@ public class ProductSearchController {
         Map<String, Set<String>> filters = productSearchService.getFilterOptionsForCategory(category);
         return ResponseEntity.ok(filters);
     }
+
+    /**
+     * [신규] 메인 페이지용 인기 상품 목록을 반환합니다.
+     */
+    @GetMapping("/popular")
+    public ResponseEntity<List<ProductSimpleResponse>> getPopularProducts() {
+        List<ProductSimpleResponse> popularProducts = productSearchService.getTopPopularProducts(4);
+        return ResponseEntity.ok(popularProducts);
+    }
 }
