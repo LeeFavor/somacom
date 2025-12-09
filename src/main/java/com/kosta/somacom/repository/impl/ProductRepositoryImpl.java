@@ -6,7 +6,6 @@ import static com.kosta.somacom.domain.part.QGpuSpec.gpuSpec;
 import static com.kosta.somacom.domain.part.QMotherboardSpec.motherboardSpec;
 import static com.kosta.somacom.domain.part.QRamSpec.ramSpec;
 import static com.kosta.somacom.domain.product.QProduct.product;
-import static com.kosta.somacom.domain.score.QPopularityScore.popularityScore;
 import static com.kosta.somacom.domain.score.QCompatibilityScore.compatibilityScore;
 import static com.kosta.somacom.domain.user.QSellerInfo.sellerInfo;
 
@@ -29,9 +28,6 @@ import com.kosta.somacom.dto.response.ProductSimpleResponse;
 import com.kosta.somacom.repository.CartRepository;
 import com.kosta.somacom.repository.ProductRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -229,23 +225,15 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
     @Override
     public Page<ProductSimpleResponse> search(ProductSearchCondition condition, Pageable pageable) {
-        // 인기도 점수 계산을 위한 Expression
-        Expression<Long> popularitySum = popularityScore.score.sum().coalesce(0L);
-
         List<ProductSimpleResponse> content = queryFactory
                 .select(Projections.constructor(ProductSimpleResponse.class,
                         product.id,
                         product.name,
                         sellerInfo.companyName,
                         product.price,
-                        product.image_url,
-                        popularitySum // 인기도 점수 DTO에 전달
+                        product.image_url
                 ))
                 .from(baseSpec)
-                // 인기도 점수 계산을 위한 LEFT JOIN
-                .leftJoin(popularityScore).on(
-                        baseSpec.id.eq(popularityScore.id.specAId).or(baseSpec.id.eq(popularityScore.id.specBId))
-                )
                 .leftJoin(product).on(baseSpec.id.eq(product.baseSpec.id))
                 .leftJoin(sellerInfo).on(product.seller.id.eq(sellerInfo.user.id))
                 .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.baseSpec.id))
@@ -259,22 +247,15 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         compatibilityFilter(condition.isCompatFilter(), condition.getUserId()), // 리팩토링된 호환성 필터 적용
                         dynamicFilters(condition.getFilters(), condition.getCategory())
                 )
-                .groupBy(baseSpec.id) // baseSpec 기준으로 그룹화하여 인기도 점수 합산
-                .orderBy(new OrderSpecifier<>(Order.DESC, popularitySum)) // 인기도 점수가 높은 순으로 정렬
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        // Count 쿼리는 그룹화나 정렬이 필요 없으므로 별도로 최적화하여 실행합니다.
         JPAQuery<Long> countQuery = queryFactory
-                .select(baseSpec.countDistinct()) // 중복 제거를 위해 countDistinct 사용
+                .select(baseSpec.count()) // product.count() -> baseSpec.count()로 수정
                 .from(baseSpec)
-                // JOIN은 WHERE 조건에 필요한 최소한만 포함합니다.
-                // 인기도 점수 테이블은 count에 영향을 주지 않으므로 제외합니다.
-                // product 테이블은 isVisible 조건 때문에 필요합니다.
                 .leftJoin(product).on(baseSpec.id.eq(product.baseSpec.id))
-                // sellerInfo는 WHERE 조건에 없으므로 count 쿼리에서 제외 가능
-                // .leftJoin(sellerInfo).on(product.seller.id.eq(sellerInfo.user.id))
+                .leftJoin(sellerInfo).on(product.seller.id.eq(sellerInfo.user.id))
                 .leftJoin(cpuSpec).on(baseSpec.id.eq(cpuSpec.baseSpec.id))
                 .leftJoin(motherboardSpec).on(baseSpec.id.eq(motherboardSpec.baseSpec.id))
                 .leftJoin(ramSpec).on(baseSpec.id.eq(ramSpec.baseSpec.id))

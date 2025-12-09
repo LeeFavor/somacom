@@ -1,7 +1,6 @@
 package com.kosta.somacom.dto.response;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import com.kosta.somacom.domain.product.Product;
 import com.querydsl.core.annotations.QueryProjection;
@@ -16,16 +15,14 @@ public class ProductSimpleResponse {
     private String companyName; // 판매자 상호명
     private BigDecimal price;
     private String imageUrl;
-    private Long popularityScore; // 인기도 점수 필드 추가
 
     @QueryProjection
-    public ProductSimpleResponse(Long productId, String productName, String companyName, BigDecimal price, String imageUrl, Long popularityScore) {
+    public ProductSimpleResponse(Long productId, String productName, String companyName, BigDecimal price, String imageUrl) {
         this.productId = productId;
         this.productName = productName;
         this.companyName = companyName;
         this.price = price;
         this.imageUrl = imageUrl;
-        this.popularityScore = Optional.ofNullable(popularityScore).orElse(0L);
     }
     
     public ProductSimpleResponse(Product p) {
@@ -34,6 +31,5 @@ public class ProductSimpleResponse {
         this.companyName = p.getSeller().getSellerInfo().getCompanyName();
         this.price = p.getPrice();
         this.imageUrl = p.getImage_url();
-        this.popularityScore = Optional.ofNullable(p.getPopularity()).orElse(0L);
     }
 }
