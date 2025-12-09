@@ -10,13 +10,18 @@ import com.kosta.somacom.dto.request.BaseSpecSearchCondition;
 import com.kosta.somacom.dto.request.BaseSpecUpdateRequest;
 import com.kosta.somacom.dto.response.BaseSpecDetailResponse;
 import com.kosta.somacom.dto.response.BaseSpecListResponse;
+import com.kosta.somacom.domain.product.Product;
 import com.kosta.somacom.repository.BaseSpecRepository;
+import com.kosta.somacom.repository.CompatibilityScoreRepository;
+import com.kosta.somacom.repository.PopularityScoreRepository;
+import com.kosta.somacom.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
@@ -26,6 +31,9 @@ import java.util.UUID;
 public class AdminPartService {
 
     private final BaseSpecRepository baseSpecRepository;
+    private final ProductRepository productRepository;
+    private final CompatibilityScoreRepository compatibilityScoreRepository;
+    private final PopularityScoreRepository popularityScoreRepository;
 
     @Transactional
     public String createBaseSpec(BaseSpecCreateRequest request) {
@@ -55,6 +63,29 @@ public class AdminPartService {
         BaseSpec baseSpec = baseSpecRepository.findById(baseSpecId)
                 .orElseThrow(() -> new EntityNotFoundException("BaseSpec not found with id: " + baseSpecId));
         return new BaseSpecDetailResponse(baseSpec);
+    }
+    
+    @Transactional
+    public void deleteBaseSpec(String baseSpecId) {
+        // 1. BaseSpec 조회
+        BaseSpec baseSpec = baseSpecRepository.findById(baseSpecId)
+                .orElseThrow(() -> new EntityNotFoundException("BaseSpec not found with id: " + baseSpecId));
+
+        // 2. BaseSpec 소프트 삭제
+        baseSpec.softDelete();
+
+        // 3. 연관된 Product들 소프트 삭제
+        List<Product> productsToDelete = productRepository.findProductsByBaseSpecIds(List.of(baseSpecId));
+        for (Product product : productsToDelete) {
+            product.softDelete();
+        }
+
+        // 4. 연관된 CompatibilityScore 삭제
+        compatibilityScoreRepository.deleteAllBySpecId(baseSpecId);
+
+        // 5. 연관된 PopularityScore 삭제
+        popularityScoreRepository.deleteAllBySpecId(baseSpecId);
+
     }
 
     @Transactional

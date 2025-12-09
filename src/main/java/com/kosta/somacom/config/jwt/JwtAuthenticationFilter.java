@@ -1,5 +1,6 @@
 package com.kosta.somacom.config.jwt;
 
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,17 +10,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kosta.somacom.auth.PrincipalDetails;
 import com.kosta.somacom.auth.dto.LoginRequestDto;
-import com.kosta.somacom.domain.user.User;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final JwtToken jwtToken;
@@ -82,5 +90,33 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		response.getWriter().write(objectMapper.writeValueAsString(userInfo));
 	}
+	@Override
+	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+											  AuthenticationException failed) throws IOException, ServletException {
+		
+		log.error("Login failed: {}", failed.getMessage());
 
+		HttpStatus status = HttpStatus.UNAUTHORIZED; // 401
+		String errorMessage = "아이디나 비밀번호를 확인하세요.";
+
+		if (failed instanceof LockedException) {
+			status = HttpStatus.FORBIDDEN; // 403
+			errorMessage = "관리자에 의해 정지된 계정입니다.";
+		} else if (failed instanceof DisabledException) {
+			status = HttpStatus.FORBIDDEN; // 403
+			errorMessage = "탈퇴 처리된 계정입니다.";
+		}
+		// 다른 종류의 AuthenticationException에 대한 처리를 추가할 수 있습니다.
+
+		response.setStatus(status.value());
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setCharacterEncoding("UTF-8");
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode json = objectMapper.createObjectNode();
+		json.put("status", status.value());
+		json.put("error", status.getReasonPhrase());
+		json.put("message", errorMessage);
+		response.getWriter().write(objectMapper.writeValueAsString(json));
+	}
 }

@@ -43,7 +43,7 @@ public class ProductSearchService {
     }
 
     public List<AutocompleteResponse> getAutocompleteSuggestions(String query) {
-        List<BaseSpec> results = baseSpecRepository.findTop10ByNameContainingIgnoreCase(query);
+        List<BaseSpec> results = baseSpecRepository.findTop10ByNameContainingIgnoreCaseAndIsDeletedFalse(query);
         return results.stream()
                 .map(baseSpec -> new AutocompleteResponse(baseSpec.getName()))
                 .collect(Collectors.toList());

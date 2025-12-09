@@ -28,6 +28,7 @@ public class BaseSpecRepositoryImpl implements BaseSpecRepositoryCustom {
                 .select(baseSpec)
                 .from(baseSpec)
                 .where(
+                        baseSpec.isDeleted.isFalse(), // 소프트 삭제된 데이터 제외
                         keywordContains(condition.getQuery()),
                         categoryEq(condition.getCategory())
                 )
@@ -40,6 +41,7 @@ public class BaseSpecRepositoryImpl implements BaseSpecRepositoryCustom {
                 .select(baseSpec.count())
                 .from(baseSpec)
                 .where(
+                        baseSpec.isDeleted.isFalse(), // 소프트 삭제된 데이터 제외
                         keywordContains(condition.getQuery()),
                         categoryEq(condition.getCategory())
                 );

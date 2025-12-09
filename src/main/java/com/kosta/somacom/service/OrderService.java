@@ -130,6 +130,11 @@ public class OrderService {
         Page<Order> orders = orderRepository.findOrdersByUserId(userId, pageable);
         return orders.map(OrderListResponseDto::new);
     }
+    
+    public Long findOrdersCounter() {
+        Long orders = orderRepository.count();
+        return orders;
+    }
 
     public OrderDetailResponseDto findOrder(Long orderId, Long userId) {
         Order order = orderRepository.findOrderDetails(orderId, userId)

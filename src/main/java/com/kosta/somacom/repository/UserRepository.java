@@ -6,15 +6,19 @@ import com.kosta.somacom.domain.user.UserRole;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+	Page<User> findByEmailLike(String keyword, Pageable pageable);
 	Optional<User> findByEmail(String email);
 	Optional<User> findByUsername(String username);
-	@Query("SELECT u FROM User u JOIN FETCH u.sellerInfo WHERE u.role = :role")
-    List<User> findByRoleWithSellerInfo(@Param("role") UserRole role);
+	@Query(value = "SELECT u FROM User u JOIN FETCH u.sellerInfo WHERE u.role = :role AND u.status = com.kosta.somacom.domain.user.UserStatus.ACTIVE",
+		   countQuery = "SELECT count(u) FROM User u WHERE u.role = :role AND u.status = com.kosta.somacom.domain.user.UserStatus.ACTIVE")
+    Page<User> findByRoleWithSellerInfo(@Param("role") UserRole role, Pageable pageable);
 	
 	@Query("SELECT u FROM User u JOIN FETCH u.sellerInfo WHERE u IN :users")
     List<User> findWithSellerInfoIn(@Param("users") List<User> users);
