@@ -246,6 +246,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .leftJoin(ramSpec).on(baseSpec.id.eq(ramSpec.baseSpec.id))
                 .leftJoin(gpuSpec).on(baseSpec.id.eq(gpuSpec.baseSpec.id))
                 .where(
+                        baseSpec.isDeleted.isFalse(), // 소프트 삭제된 BaseSpec 제외
                         product.isVisible.isTrue(),
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
@@ -266,6 +267,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .leftJoin(ramSpec).on(baseSpec.id.eq(ramSpec.baseSpec.id))
                 .leftJoin(gpuSpec).on(baseSpec.id.eq(gpuSpec.baseSpec.id))
                 .where(
+                        baseSpec.isDeleted.isFalse(), // 소프트 삭제된 BaseSpec 제외
                         product.isVisible.isTrue(),
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
@@ -294,6 +296,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .leftJoin(popularityScore)
                 .on(baseSpec.id.eq(popularityScore.id.specAId).or(baseSpec.id.eq(popularityScore.id.specBId)))
                 .where(
+                        baseSpec.isDeleted.isFalse(), // 소프트 삭제된 BaseSpec 제외
                         product.isVisible.isTrue(),
                         product.stockQuantity.gt(0) // 재고가 있는 상품만 대상
                 )

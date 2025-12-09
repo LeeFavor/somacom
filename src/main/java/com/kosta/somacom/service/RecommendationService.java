@@ -378,7 +378,7 @@ public class RecommendationService {
      */
     private Optional<BaseSpec> findMatchingSeedItem(String partCategory, String intentTag) {
         PartCategory categoryEnum = com.kosta.somacom.domain.part.PartCategory.valueOf(partCategory);
-        List<BaseSpec> candidates = baseSpecRepository.findAllByCategory(categoryEnum);
+        List<BaseSpec> candidates = baseSpecRepository.findAllByCategoryAndIsDeletedFalse(categoryEnum);
 
         // 1. 먼저, 의도 태그와 정확히 일치하는 상품을 찾습니다.
         for (BaseSpec candidate : candidates) {
@@ -391,7 +391,7 @@ public class RecommendationService {
         // 2. 정확히 일치하는 상품이 없으면, 카테고리 내에서 가장 최신(ID가 높은) 상품을 대표로 선정합니다.
         //    이는 너무 오래되거나 비주류인 상품이 대표로 선정되는 것을 방지합니다.
         log.warn("No exact match for seed item with tag '{}'. Finding the latest item in category '{}' as a fallback seed.", intentTag, partCategory);
-        Optional<BaseSpec> latestInCategory = baseSpecRepository.findFirstByCategoryAndNameContainingIgnoreCaseOrderByIdDesc(categoryEnum, ""); // 모든 상품 대상
+        Optional<BaseSpec> latestInCategory = baseSpecRepository.findFirstByCategoryAndNameContainingIgnoreCaseAndIsDeletedFalseOrderByIdDesc(categoryEnum, ""); // 모든 상품 대상
         if(latestInCategory.isPresent()){
             return latestInCategory;
         }

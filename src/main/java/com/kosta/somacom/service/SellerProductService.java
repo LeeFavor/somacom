@@ -45,7 +45,7 @@ public class SellerProductService {
     public List<BaseSpecSearchResponse> searchBaseSpecs(String query) {
         // 검색 결과는 최대 10개로 제한
         PageRequest pageable = PageRequest.of(0, 10);
-        List<BaseSpec> baseSpecs = baseSpecRepository.findByNameContainingIgnoreCase(query, pageable);
+        List<BaseSpec> baseSpecs = baseSpecRepository.findByNameContainingIgnoreCaseAndIsDeletedFalse(query, pageable);
         return baseSpecs.stream()
                 .map(BaseSpecSearchResponse::new)
                 .collect(Collectors.toList());

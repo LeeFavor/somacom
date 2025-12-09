@@ -50,6 +50,9 @@ public class BaseSpec {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @Column(nullable = false)
+    private boolean isDeleted = false;
 
     // 양방향 OneToOne 관계 설정
     @OneToOne(mappedBy = "baseSpec", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -124,5 +127,9 @@ public class BaseSpec {
         if (StringUtils.hasText(imageUrl)) {
             this.imageUrl = imageUrl;
         }
+    }
+    
+    public void softDelete() {
+        this.isDeleted = true;
     }
 }

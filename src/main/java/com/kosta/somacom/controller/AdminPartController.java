@@ -62,6 +62,15 @@ public class AdminPartController {
         adminPartService.updateBaseSpec(baseSpecId, request);
         return ResponseEntity.ok().build();
     }
+    
+    /**
+     * A-202: 기반 모델 정보 삭제
+     */
+    @DeleteMapping("/{baseSpecId}")
+    public ResponseEntity<Void> deleteBaseSpec(@PathVariable String baseSpecId) {
+        adminPartService.deleteBaseSpec(baseSpecId);
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * [신규] basespec.txt 파일로부터 데이터를 DB에 초기화하는 API

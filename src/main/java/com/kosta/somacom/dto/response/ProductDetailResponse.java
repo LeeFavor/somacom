@@ -30,6 +30,7 @@ public class ProductDetailResponse {
     private String companyName;
 
     // 기반 모델 정보
+    private String baseSpecId;
     private String baseSpecName;
     private String manufacturer;
     private PartCategory category;
@@ -54,6 +55,7 @@ public class ProductDetailResponse {
         this.companyName = product.getSeller().getSellerInfo().getCompanyName();
 
         BaseSpec baseSpec = product.getBaseSpec();
+        this.baseSpecId = baseSpec.getId();
         this.baseSpecName = baseSpec.getName();
         this.manufacturer = baseSpec.getManufacturer();
         this.category = baseSpec.getCategory();

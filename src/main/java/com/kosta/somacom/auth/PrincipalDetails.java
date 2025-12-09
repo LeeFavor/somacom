@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.kosta.somacom.domain.user.User;
+import com.kosta.somacom.domain.user.UserStatus;
 
 import lombok.Data;
 // security가 /loginProc 주소를 낚아채서 로그인 한다.
@@ -61,7 +62,7 @@ public class PrincipalDetails implements UserDetails {
 	public boolean isEnabled() {
 		//우리 사이트에서 1년동안 로그인을 안하면 휴먼 계정으로 변하기로 했다면
 		//현재시간 - 마지막 로그인한 시간을 계산하여 1년 초과하면 return false;
-		return true;
+		return user.getStatus() == UserStatus.ACTIVE;
 	}
 
 }

@@ -6,24 +6,33 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.somacom.admin.dto.SellerRequestDto;
 import com.kosta.somacom.admin.dto.UserManagementResponse;
 import com.kosta.somacom.admin.dto.UserStatusUpdateRequest;
+import com.kosta.somacom.auth.PrincipalDetails;
 import com.kosta.somacom.dto.request.BaseSpecRequestProcessDto;
 import com.kosta.somacom.dto.response.BaseSpecRequestResponseDto;
+import com.kosta.somacom.order.dto.OrderListResponseDto;
 import com.kosta.somacom.service.AdminService;
+import com.kosta.somacom.service.LogService;
+import com.kosta.somacom.service.OrderService;
 import com.kosta.somacom.service.RecommendationService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,10 +49,12 @@ public class AdminController {
     private final JobLauncher jobLauncher;
     private final Job compatibilityBatchJob;
     private final Job popularityBatchJob;
+    private final OrderService orderService;
+    private final LogService logService;
 
     @GetMapping("/seller-requests")
-    public ResponseEntity<List<SellerRequestDto>> getSellerRequests() {
-        List<SellerRequestDto> requests = adminService.getSellerRequests();
+    public ResponseEntity<Page<SellerRequestDto>> getSellerRequests(Pageable pageable) {
+        Page<SellerRequestDto> requests = adminService.getSellerRequests(pageable);
         return ResponseEntity.ok(requests);
     }
 
@@ -52,12 +63,18 @@ public class AdminController {
         adminService.approveSellerRequest(userId);
         return ResponseEntity.ok().build();
     }
+    
+    @PutMapping("/seller-requests/{userId}/suspended")
+    public ResponseEntity<Void> suspendSellerRequest(@PathVariable Long userId) {
+        adminService.suspendSellerRequest(userId);
+        return ResponseEntity.ok().build();
+    }
     /**
      * A-203: PENDING 상태의 모델 등록 요청 목록 조회 API
      */
     @GetMapping("/base-spec-requests")
-    public ResponseEntity<List<BaseSpecRequestResponseDto>> getPendingBaseSpecRequests() {
-        List<BaseSpecRequestResponseDto> requests = adminService.getPendingBaseSpecRequests();
+    public ResponseEntity<Page<BaseSpecRequestResponseDto>> getPendingBaseSpecRequests(Pageable pageable) {
+        Page<BaseSpecRequestResponseDto> requests = adminService.getPendingBaseSpecRequests(pageable);
         return ResponseEntity.ok(requests);
     }
 
@@ -76,9 +93,28 @@ public class AdminController {
      * A-102: 회원/판매자 목록 조회 API
      */
     @GetMapping("/users")
-    public ResponseEntity<List<UserManagementResponse>> getAllUsers() {
-        List<UserManagementResponse> users = adminService.getAllUsers();
+    public ResponseEntity<Page<UserManagementResponse>> getAllUsers(@RequestParam(value = "keyword", required = false) String keyword, Pageable pageable) {
+        Page<UserManagementResponse> users = adminService.getAllUsers(keyword, pageable);
         return ResponseEntity.ok(users);
+    }
+    /**
+     * A-101: 회원 주문 수 조회 API
+     */
+    @GetMapping("/ordercounts")
+    public ResponseEntity<Long> getOrders(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        
+        Long orders = orderService.findOrdersCounter();
+        return ResponseEntity.ok(orders);
+    }
+    
+    /**
+     * A-101: 회원 주문 수 조회 API
+     */
+    @GetMapping("/usercounts")
+    public ResponseEntity<Long> getUserCounts(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        
+        Long orders = adminService.findUsersCounts();
+        return ResponseEntity.ok(orders);
     }
 
     /**
@@ -139,5 +175,16 @@ public class AdminController {
             log.error("Failed to run popularity batch job manually", e);
             return ResponseEntity.internalServerError().body("Failed to start popularity batch job: " + e.getMessage());
         }
+    }
+    
+    /**
+     * 시스템 로그를 조회하는 API
+     * @return 최신 로그 텍스트
+     */
+    @GetMapping("/logs")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> getSystemLogs() {
+        String logs = logService.getLatestLogs();
+        return ResponseEntity.ok(logs);
     }
 }

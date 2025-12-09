@@ -12,6 +12,8 @@ import com.kosta.somacom.dto.response.BaseSpecRequestResponseDto;
 import com.kosta.somacom.repository.BaseSpecRequestRepository;
 import com.kosta.somacom.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,25 +34,11 @@ public class AdminService {
      * A-203: PENDING 상태의 모델 등록 요청 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<BaseSpecRequestResponseDto> getPendingBaseSpecRequests() {
-        // 1. BaseSpecRequest와 Seller를 먼저 조회
-        List<BaseSpecRequest> requests = baseSpecRequestRepository.findPendingRequestsWithSeller();
-
-        if (requests.isEmpty()) {
-            return List.of();
-        }
-
-        // 2. 위에서 조회한 Seller들의 SellerInfo를 별도로 조회 (N+1 방지)
-        List<User> sellersToFetch = requests.stream().map(BaseSpecRequest::getSeller).distinct().collect(Collectors.toList());
-        List<User> sellersWithInfo = userRepository.findWithSellerInfoIn(sellersToFetch);
-
-        // 3. Seller ID를 키로 하는 Map을 생성하여 쉽게 찾을 수 있도록 함
-        Map<Long, User> sellerInfoMap = sellersWithInfo.stream()
-                .collect(Collectors.toMap(User::getId, user -> user));
-
-        return requests.stream()
-                .map(BaseSpecRequestResponseDto::new)
-                .collect(Collectors.toList());
+    public Page<BaseSpecRequestResponseDto> getPendingBaseSpecRequests(Pageable pageable) {
+        // BaseSpecRequest와 Seller를 JOIN FETCH로 조회하며 페이징 처리
+        Page<BaseSpecRequest> requests = baseSpecRequestRepository.findPendingRequestsWithSeller(pageable);
+        // Page<BaseSpecRequest>를 Page<BaseSpecRequestResponseDto>로 변환
+        return requests.map(BaseSpecRequestResponseDto::new);
     }
 
     /**
@@ -68,11 +56,9 @@ public class AdminService {
         request.process(dto.getStatus(), dto.getAdminNotes(), LocalDateTime.now());
     }
     @Transactional(readOnly = true)
-    public List<SellerRequestDto> getSellerRequests() {
-        List<User> pendingSellers = userRepository.findByRoleWithSellerInfo(UserRole.SELLER_PENDING);
-        return pendingSellers.stream()
-                .map(SellerRequestDto::new)
-                .collect(Collectors.toList());
+    public Page<SellerRequestDto> getSellerRequests(Pageable pageable) {
+        Page<User> pendingSellers = userRepository.findByRoleWithSellerInfo(UserRole.SELLER_PENDING, pageable);
+        return pendingSellers.map(SellerRequestDto::new);
     }
 
     @Transactional
@@ -87,15 +73,32 @@ public class AdminService {
         user.setRole(UserRole.SELLER);
         // userRepository.save(user)는 @Transactional에 의해 더티 체킹(dirty checking)되므로 명시적으로 호출할 필요가 없습니다.
     }
+    
+    @Transactional
+    public void suspendSellerRequest(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        if (user.getRole() != UserRole.SELLER_PENDING) {
+            throw new IllegalStateException("User is not a pending seller.");
+        }
+
+        user.updateStatus(UserStatus.SUSPENDED);
+        // userRepository.save(user)는 @Transactional에 의해 더티 체킹(dirty checking)되므로 명시적으로 호출할 필요가 없습니다.
+    }
 
     /**
      * A-102: 모든 회원/판매자 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<UserManagementResponse> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(UserManagementResponse::new)
-                .collect(Collectors.toList());
+    public Page<UserManagementResponse> getAllUsers(String keyword, Pageable pageable) {
+        Page<User> users;
+        if (keyword == null || keyword.trim().isEmpty()) {
+            users = userRepository.findAll(pageable);
+        } else {
+            users = userRepository.findByEmailLike("%" + keyword.trim() + "%", pageable);
+        }
+        return users.map(UserManagementResponse::new);
     }
 
     /**
@@ -107,5 +110,9 @@ public class AdminService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
         user.updateStatus(status);
+    }
+    
+    public Long findUsersCounts() {
+    	return userRepository.count();
     }
 }

@@ -119,7 +119,7 @@ public class UserActionLoggingAspect {
             // 검색어 로깅
             if (condition.getKeyword() != null && !condition.getKeyword().isBlank()) {
                 // 키워드(모델명)로 BaseSpec을 찾아서, 해당 모델의 모든 호환성 태그에 대해 점수를 올립니다.
-                baseSpecRepository.findFirstByNameIgnoreCase(condition.getKeyword()).ifPresent(baseSpec -> {
+                baseSpecRepository.findFirstByNameIgnoreCaseAndIsDeletedFalse(condition.getKeyword()).ifPresent(baseSpec -> {
                     userIntentLoggingService.logAction(
                             userId,
                             baseSpec.getId(),

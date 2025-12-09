@@ -27,6 +27,7 @@ public class UserIntentLogController {
     @PostMapping("/action")
     public ResponseEntity<Void> logFrontendAction(@RequestBody Map<String, String> payload,
                                                   @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    	System.out.println("action: " +payload);
         String baseSpecId = payload.get("baseSpecId");
         UserActionType actionType = UserActionType.valueOf(payload.get("actionType").toUpperCase());
         userIntentLoggingService.logAction(String.valueOf(principalDetails.getUser().getId()), baseSpecId, actionType);
