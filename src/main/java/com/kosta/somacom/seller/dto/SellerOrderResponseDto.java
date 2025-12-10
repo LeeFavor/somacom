@@ -15,6 +15,7 @@ public class SellerOrderResponseDto {
     private int quantity;
     private String recipientName;
     private OrderItemStatus status;
+    private String trackingNumber;
 
     public SellerOrderResponseDto(OrderItem orderItem) {
         this.orderItemId = orderItem.getId();
@@ -24,5 +25,7 @@ public class SellerOrderResponseDto {
         this.quantity = orderItem.getQuantity();
         this.recipientName = orderItem.getOrder().getRecipientName();
         this.status = orderItem.getStatus();
+        
+        this.trackingNumber = orderItem.getTrackingNumber();
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/files")
@@ -51,9 +52,10 @@ public class FileController {
      * @return 이미지 리소스
      * @throws IOException 파일 접근 오류
      */
-    @GetMapping("/images/{filename:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename, javax.servlet.http.HttpServletRequest request) throws IOException {
-        Resource resource = fileService.loadFile(filename);
+    @GetMapping(value = {"/images", "/images/{filename:.+}"})
+    public ResponseEntity<Resource> serveFile(@PathVariable(required = false) Optional<String> filename, javax.servlet.http.HttpServletRequest request) throws IOException {
+        String requestedFilename = filename.orElse("defaultImage.jpg");
+        Resource resource = fileService.loadFile(requestedFilename);
 
         String contentType = null;
         try {

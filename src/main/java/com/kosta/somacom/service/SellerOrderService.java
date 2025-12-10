@@ -22,7 +22,7 @@ public class SellerOrderService {
     private final OrderItemRepository orderItemRepository;
 
     public Page<SellerOrderResponseDto> getOrdersForSeller(Long sellerId, Pageable pageable) {
-        return orderItemRepository.findBySellerId(sellerId, pageable)
+        return orderItemRepository.findBySellerIdDesc(sellerId, pageable)
                 .map(SellerOrderResponseDto::new);
     }
     

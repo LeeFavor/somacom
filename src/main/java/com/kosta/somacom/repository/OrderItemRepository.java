@@ -13,9 +13,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-    @Query(value = "SELECT oi FROM OrderItem oi JOIN FETCH oi.product p JOIN FETCH oi.order o WHERE p.seller.id = :sellerId",
+    @Query(value = "SELECT oi FROM OrderItem oi JOIN FETCH oi.product p JOIN FETCH oi.order o WHERE p.seller.id = :sellerId ORDER BY oi.order DESC",
            countQuery = "SELECT count(oi) FROM OrderItem oi JOIN oi.product p WHERE p.seller.id = :sellerId")
-    Page<OrderItem> findBySellerId(@Param("sellerId") Long sellerId, Pageable pageable);
+    Page<OrderItem> findBySellerIdDesc(@Param("sellerId") Long sellerId, Pageable pageable);
     List<OrderItem> findByOrder_OrderedAtAfter(LocalDateTime orderedAt);
 
 }
