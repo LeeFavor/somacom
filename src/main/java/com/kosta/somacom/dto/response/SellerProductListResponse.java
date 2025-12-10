@@ -14,6 +14,7 @@ public class SellerProductListResponse {
     private ProductCondition condition;
     private BigDecimal price;
     private Integer stockQuantity;
+    private String imageUrl;
 
     public SellerProductListResponse(Product product) {
         this.productId = product.getId();
@@ -22,5 +23,6 @@ public class SellerProductListResponse {
         this.condition = product.getCondition();
         this.price = product.getPrice();
         this.stockQuantity = product.getStockQuantity();
+        this.imageUrl = product.getImage_url();
     }
 }

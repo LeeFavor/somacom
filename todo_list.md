@@ -115,6 +115,20 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `AdminPartService`에 `BaseSpec` 조회 및 수정 메소드 추가
     - `[x]` `BaseSpecUpdateRequest`, `BaseSpecDetailResponse` DTO 생성 및 관련 DTO 수정 완료
 
+- **[수정] `A-204`: 기반 모델 삭제 (Soft Delete)**
+  - **Page**: `A-201` (목록에서 삭제)
+  - **API**: `DELETE /api/admin/parts/{baseSpecId}`
+  - **Logic**:
+    - 1. `BaseSpec`의 `isDeleted` 플래그를 `true`로 설정합니다. (`Product`의 `isVisible` 플래그는 변경하지 않습니다.)
+    - 2. **중요**: 모든 상품 조회(`Product`) 로직은 `BaseSpec`과 JOIN하여 `baseSpec.isDeleted = false` 조건을 반드시 포함해야 합니다. 이를 통해 삭제된 기반 모델을 참조하는 모든 상품이 자연스럽게 노출되지 않도록 합니다.
+    - 3. 기존 `OrderItem`에 기록된 상품 정보는 그대로 유지하여, 과거 주문 내역 조회 시 문제가 발생하지 않도록 합니다.
+  - **Tables**: `base_specs`
+  - **Status**: 신규 추가
+  - **Tasks**:
+    - `[ ]` `AdminPartController`에 `DELETE /api/admin/parts/{baseSpecId}` 엔드포인트 추가
+    - `[ ]` `AdminPartService`에 `BaseSpec`을 논리적으로 삭제하는 메소드 구현
+    - `[ ]` 모든 `Product` 관련 조회 로직(특히 QueryDSL)에 `baseSpec.isDeleted = false` 필터 조건이 잘 적용되었는지 재검증
+
 - ✅ [완료] `A-203`: 판매자의 기반 모델 등록 요청 처리
   - **Page**: `A-203`
   - **API**: `GET /api/admin/base-spec-requests`, `PUT /api/admin/base-spec-requests/{requestId}`
@@ -342,17 +356,22 @@ Gemini, 이 파일은 SOMACOM 프로젝트의 전체 아키텍처와 개발 진�
     - `[x]` `OrderCreateRequest` DTO 생성
     - `[x]` `UserActionLoggingAspect`를 통해 `createOrder`, `createInstantOrder` 메소드 실행 후 `PURCHASE` 이벤트 로깅 완료.
 
-- **[예정] `P-502`: 결제 시스템 연동**
+- **[진행중] `P-502`: 결제 시스템 연동 (토스 페이먼츠)**
   - **Page**: `P-302`
-  - **API**: `POST /api/payments/prepare`, `POST /api/payments/complete` (예시)
-  - **Logic**: 주문 생성(`P-501`) 전에 PG사(카카오페이, 토스 등)에 결제 정보를 등록하고, 결제가 완료되면 PG사로부터 받은 정보를 검증한 후 주문을 최종 생성.
-  - **Tables**: `orders` (결제 정보 필드 추가 가능)
+  - **API**: `POST /api/orders`, `POST /api/orders/instant`, `POST /api/payments/toss/confirm`
+  - **Logic**:
+    - 1. **(주문 생성 API 수정)** `POST /api/orders` 호출 시, 주문 상태를 `PENDING`으로 설정하고 `payment_order_id` (e.g., `orderId-uuid`)를 생성하여 DB에 저장 후, 이 ID를 프론트에 반환합니다.
+    - 2. **(결제 승인 API 신규)** 프론트에서 결제 완료 후 `paymentKey`, `orderId`, `amount`를 받아 `POST /api/payments/toss/confirm`을 호출합니다.
+    - 3. 백엔드에서는 `payment_order_id`로 주문을 찾고, **금액을 비교하여 위변조를 검증**합니다.
+    - 4. 토스 페이먼츠의 최종 승인 API를 호출하고, 성공 시 주문 상태를 `PAID`로 변경하고 `payment_key`를 저장합니다.
+  - **Tables**: `orders` (결제 관련 컬럼 추가: `payment_order_id`, `payment_key`, `payment_method`)
   - **Status**: 신규 추가
   - **Tasks**:
-    - `[ ]` PG사 연동 라이브러리 의존성 추가
-    - `[ ]` `PaymentService` 생성 (결제 준비, 완료, 검증 로직)
-    - `[ ]` `OrderService`의 `createOrder` 로직을 결제 완료 후 호출되도록 수정
-    - `[ ]` `PaymentController` 생성
+    - `[ ]` `orders` 테이블에 `payment_order_id`, `payment_key`, `payment_method` 컬럼 추가
+    - `[ ]` `OrderService`의 주문 생성 로직을 '결제 대기(PENDING)' 주문을 생성하고 `payment_order_id`를 반환하도록 수정
+    - `[ ]` `PaymentController` 및 `PaymentService` 생성
+    - `[ ]` `PaymentService`에 토스 결제 승인 및 검증 로직 구현 (`/api/payments/toss/confirm`)
+    - `[ ]` 결제 승인 성공 시, 재고 차감 로직을 `PaymentService`로 이동
 
 - ✅ [완료] `P-401`: 주문 내역 조회
   - **Page**: `P-401` (마이페이지)
