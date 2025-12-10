@@ -150,3 +150,6 @@ clean {
 tasks.withType(JavaCompile) {
     options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
 }
+war {
+    version='1.0'
+}

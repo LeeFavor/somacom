@@ -16,10 +16,13 @@ public class CorsConfig implements WebMvcConfigurer {
 	@Value("${file.resource-locations}")
 	private String resourceLocations;
 
+	@Value("${cors.allowed-origins}")
+	private String allowedOrigins;
+
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-				.allowedOriginPatterns("http://localhost:5173") // 허용할 오리진 패턴
+				.allowedOriginPatterns(allowedOrigins) // 허용할 오리진 패턴
 				.allowedMethods("*") // 모든 HTTP 메소드 허용
 				.allowedHeaders("*") // 모든 헤더 허용
 				.allowCredentials(true) // 쿠키/Authorization 정보 허용
