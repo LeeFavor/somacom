@@ -177,6 +177,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
             builder.and(baseSpec.category.eq(PartCategory.CPU)); // 카테고리 강제
             builder.and(cpuSpec.hasIgpu.eq(Boolean.valueOf(filters.get("hasIgpu"))));
         }
+        if (StringUtils.hasText(filters.get("supportedMemoryTypes"))) {
+            builder.and(baseSpec.category.eq(PartCategory.CPU)); // 카테고리 강제
+            builder.and(cpuSpec.supportedMemoryTypes.containsIgnoreCase(filters.get("supportedMemoryTypes")));
+        }
 
         // --- Motherboard 상세 필터 ---
         if (StringUtils.hasText(filters.get("chipset"))) {
@@ -211,9 +215,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
             BooleanBuilder memoryTypeBuilder = new BooleanBuilder(); // OR 조건을 위한 별도 Builder
 
             // 검색 카테고리에 맞는 필드만 정확히 AND 조건으로 비교
-            if ("CPU".equalsIgnoreCase(searchCategory)) {
-                memoryTypeBuilder.or(cpuSpec.supportedMemoryTypes.containsIgnoreCase(memoryType));
-            } else if ("Motherboard".equalsIgnoreCase(searchCategory)) {
+//            if ("CPU".equalsIgnoreCase(searchCategory)) {
+//                memoryTypeBuilder.or(cpuSpec.supportedMemoryTypes.containsIgnoreCase(memoryType));
+//            } else 
+            if ("Motherboard".equalsIgnoreCase(searchCategory)) {
                 memoryTypeBuilder.or(motherboardSpec.memoryType.equalsIgnoreCase(memoryType));
             } else if ("RAM".equalsIgnoreCase(searchCategory)) {
                 memoryTypeBuilder.or(ramSpec.memoryType.equalsIgnoreCase(memoryType));
