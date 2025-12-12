@@ -41,8 +41,7 @@ public class AdminPartService {
         String generatedId = "base_" +
                 request.getCategory().name().toLowerCase() + "_" +
                 request.getManufacturer().toLowerCase().replaceAll("\\s+", "") + "_" +
-                request.getName().toLowerCase().replaceAll("\\s+", "-") + "_" +
-                UUID.randomUUID().toString().substring(0, 8);
+                request.getName().toLowerCase().replaceAll("\\s+", "-");
 
         // DTO를 Entity로 변환
         BaseSpec baseSpec = request.toEntity(generatedId);
