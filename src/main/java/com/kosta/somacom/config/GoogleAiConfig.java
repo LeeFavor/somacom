@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.threeten.bp.Duration;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.io.IOException;
  * application.properties에 설정된 인증 정보를 자동으로 사용합니다.
  */
 @Configuration
+@PropertySource(value = "classpath:secret.properties", ignoreResourceNotFound = true)
 public class GoogleAiConfig {
 
     @Value("${gcp.location}")
