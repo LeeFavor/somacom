@@ -77,7 +77,7 @@ public class RecommendationService {
 
     private static final String DEFAULT_CATALOG = "default_catalog";
     private static final String DEFAULT_BRANCH = "default_branch";
-    private static final String DEFAULT_PLACEMENT = "default-placement";
+    private static final String DEFAULT_PLACEMENT = "default-placement2";
 
     // Google AI로부터 추천 후보를 넉넉하게 받아오기 위한 풀 사이즈
     private static final int RECOMMENDATION_CANDIDATE_POOL_SIZE = 20;
@@ -436,7 +436,7 @@ public class RecommendationService {
     private List<String> callPredictionAPI(String userId, String eventType, String filter, List<BaseSpec> itemsInCart) throws IOException {
         // API 요청 생성
         String placement = String.format("projects/%s/locations/%s/catalogs/%s/servingConfigs/%s",
-                projectId, location, DEFAULT_CATALOG, "default-placement");
+                projectId, location, DEFAULT_CATALOG, "default-placement2");
         // [수정] "유사 상품" 모델 대신 "함께 구매한 상품(FBT)" 모델이 배포된 서빙 구성을 사용합니다.
         // Google Cloud 콘솔에서 생성한 FBT용 서빙 구성 ID로 변경해야 합니다. (예: "fbt-placement")
         // String placementId = "frequently-bought-together"; // 실제 서빙 구성 ID로 교체 필요

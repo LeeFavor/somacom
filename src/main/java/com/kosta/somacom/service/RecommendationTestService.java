@@ -221,7 +221,7 @@ public class RecommendationTestService {
         // [수정 v3.16] PlacementName 클래스 대신 String.format() 사용
         String placement = String.format(
             "projects/%s/locations/%s/catalogs/default_catalog/servingConfigs/%s",
-            projectId, location, "default-placement"
+            projectId, location, "default-placement2"
         );
 
         // 1. 추천 컨텍스트(장바구니) 생성
@@ -273,7 +273,7 @@ public class RecommendationTestService {
         // [수정 v3.16] PlacementName 클래스 대신 String.format() 사용
         String placement = String.format(
             "projects/%s/locations/%s/catalogs/default_catalog/servingConfigs/%s",
-            projectId, location, "default-placement"
+            projectId, location, "default-placement2"
         );
 
         // 1. 추천 컨텍스트(현재 보고 있는 상품) 생성
