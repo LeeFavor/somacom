@@ -2,6 +2,7 @@ package com.kosta.somacom.config;
 
 // [추가] Google API의 핵심 인증 공급자
 import com.google.api.gax.core.CredentialsProvider; 
+import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.retail.v2.PredictionServiceClient;
 import com.google.cloud.retail.v2.PredictionServiceSettings;
 import com.google.cloud.retail.v2.ProductServiceClient;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.threeten.bp.Duration;
 
 import java.io.IOException;
 
@@ -22,6 +25,7 @@ import java.io.IOException;
  * application.properties에 설정된 인증 정보를 자동으로 사용합니다.
  */
 @Configuration
+@PropertySource(value = "classpath:secret.properties", ignoreResourceNotFound = true)
 public class GoogleAiConfig {
 
     @Value("${gcp.location}")
@@ -68,11 +72,20 @@ public class GoogleAiConfig {
      */
     @Bean
     public PredictionServiceClient predictionServiceClient() throws IOException {
-        PredictionServiceSettings settings = PredictionServiceSettings.newBuilder()
+        PredictionServiceSettings.Builder settingsBuilder = PredictionServiceSettings.newBuilder()
                 .setEndpoint(getEndpoint())
                  // [수정] 주입받은 인증 정보를 명시적으로 설정합니다.
-                .setCredentialsProvider(credentialsProvider)
+                .setCredentialsProvider(credentialsProvider);
+
+        // 타임아웃 설정 강화 (DEADLINE_EXCEEDED 방지)
+        RetrySettings retrySettings = settingsBuilder.predictSettings().getRetrySettings().toBuilder()
+                .setTotalTimeout(Duration.ofSeconds(30))       // 총 재시도 허용 시간: 30초
+                .setInitialRpcTimeout(Duration.ofSeconds(5))   // 첫 요청 타임아웃: 5초
+                .setMaxRpcTimeout(Duration.ofSeconds(10))      // 최대 요청 타임아웃: 10초
                 .build();
-        return PredictionServiceClient.create(settings);
+
+        settingsBuilder.predictSettings().setRetrySettings(retrySettings);
+
+        return PredictionServiceClient.create(settingsBuilder.build());
     }
 }

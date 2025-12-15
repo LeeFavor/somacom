@@ -89,7 +89,7 @@ public class RecommendationTestController {
     public List<String> testGetSimilarItems() {
         try {
             // "i7-14700k"와 유사한 CPU 2개를 요청
-            String referenceProductId = "base_14700k";
+            String referenceProductId = "base_ram_crucial_pro-48gb-(2x24gb)-ddr5-5600";
 
             List<PredictResponse.PredictionResult> results = 
                 recommendationService.getSimilarItems(referenceProductId);
