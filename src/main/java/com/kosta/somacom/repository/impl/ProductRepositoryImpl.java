@@ -13,6 +13,9 @@ import static com.kosta.somacom.domain.user.QSellerInfo.sellerInfo;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +36,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -287,14 +291,19 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     public List<ProductSimpleResponse> findTopPopularProducts(int limit) {
         // 인기도 점수 합계를 계산하는 Expression
         Expression<Long> popularitySum = popularityScore.score.sum().coalesce(0L);
+        
+        // 중복 제거를 위해 요청된 limit보다 더 많은 데이터를 조회합니다.
+        int fetchLimit = limit * 5;
 
-        return queryFactory
-                .select(Projections.constructor(ProductSimpleResponse.class,
+        List<Tuple> results = queryFactory
+                .select(
                         product.id,
                         product.name,
                         sellerInfo.companyName,
                         product.price,
-                        product.image_url))
+                        product.image_url,
+                        baseSpec.id,
+                        popularitySum)
                 .from(product)
                 .join(product.baseSpec, baseSpec)
                 .join(product.seller.sellerInfo, sellerInfo)
@@ -311,10 +320,33 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         sellerInfo.companyName,
                         product.price,
                         product.image_url,
-                        product.createdAt // GROUP BY 절에 정렬과 무관한 created_at 추가
+                        product.createdAt, // GROUP BY 절에 정렬과 무관한 created_at 추가
+                        baseSpec.id
                 )
                 .orderBy(new OrderSpecifier<>(Order.DESC, popularitySum), product.price.asc()) // 1. 인기도순, 2. 가격순
-                .limit(limit)
+                .limit(fetchLimit)
                 .fetch();
+
+        List<ProductSimpleResponse> response = new ArrayList<>();
+        Set<String> seenBaseSpecs = new HashSet<>();
+
+        for (Tuple tuple : results) {
+            String specId = tuple.get(baseSpec.id);
+            if (specId != null && !seenBaseSpecs.contains(specId)) {
+                seenBaseSpecs.add(specId);
+                response.add(new ProductSimpleResponse(
+                        tuple.get(product.id),
+                        tuple.get(product.name),
+                        tuple.get(sellerInfo.companyName),
+                        tuple.get(product.price),
+                        tuple.get(product.image_url)
+                ));
+            }
+            if (response.size() >= limit) {
+                break;
+            }
+        }
+
+        return response;
     }
 }
