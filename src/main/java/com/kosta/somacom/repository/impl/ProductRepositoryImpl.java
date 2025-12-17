@@ -293,7 +293,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         Expression<Long> popularitySum = popularityScore.score.sum().coalesce(0L);
         
         // 중복 제거를 위해 요청된 limit보다 더 많은 데이터를 조회합니다.
-        int fetchLimit = limit * 5;
+        int fetchLimit = limit * 10;
 
         List<Tuple> results = queryFactory
                 .select(
