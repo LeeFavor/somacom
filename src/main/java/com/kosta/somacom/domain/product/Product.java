@@ -103,6 +103,11 @@ public class Product {
             this.image_url = imageUrl;
         }
     }
+
+    public void updateImageUrl(String imageUrl) {
+        this.image_url = imageUrl;
+    }
+
     public void softDelete() {
         this.isVisible = false;
     }

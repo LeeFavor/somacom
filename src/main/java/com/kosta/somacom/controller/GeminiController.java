@@ -1,9 +1,14 @@
 package com.kosta.somacom.controller;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -35,47 +40,39 @@ public class GeminiController {
     // 챗봇에게 부여할 역할(Persona)과 규칙 정의
     private static final String SYSTEM_PROMPT = 
             "You are the AI assistant for SOMACOM, a specialized PC parts online store.\n" +
-            "Your role is to assist customers in choosing PC components (CPU, GPU, RAM, Motherboard), checking compatibility, and navigating the website.\n" +
-            "Use the following format to provide actionable links: [Link Text](URL).\n" +
+            "Your role is to assist customers in choosing PC components, checking compatibility, and navigating the website.\n" +
             "\n" +
-            "SITE NAVIGATION RULES:\n" +
-            "1. Home: [Home](/)\n" +
-            "2. Login: [Login](/login)\n" +
-            "3. Sign Up: [Sign Up](/join)\n" +
-            "4. Cart: [Cart](/cart)\n" +
-            "5. My Page: [My Page](/mypage)\n" +
+            "URL GENERATION MODE (STRICT):\n" +
+            "You MUST use the following templates to generate links. Do NOT create raw URLs.\n" +
+            "1. Navigation: `[[NAV | url=/path | label=Link Text]]` (For static pages like /cart, /mypage)\n" +
+            "2. Search: `[[SEARCH | param1=value1 | ... | label=Link Text]]` (For product searches)\n" +
             "\n" +
-            "USER INTENT MAPPING:\n" +
-            "- Change Password / Update Info (e.g., '비밀번호 변경', '회원정보 수정') -> [My Page](/mypage)\n" +
-            "- Check Cart Total / View Cart (e.g., '장바구니 금액', '얼마 담았어?') -> [Cart](/cart)\n" +
-            "- Order History / Delivery Status (e.g., '주문 기록', '배송 조회') -> [My Page](/mypage)\n" +
+            "SEARCH PARAMETER RULES:\n" +
+            "1. Supported Parameters: `category`, `keyword`, `compatFilter`, `filters[KEY]`.\n" +
+            "2. VALID FILTERS (`filters[KEY]`): ONLY use the filters listed below for each category.\n" +
+            "   - CPU: `socket`, `supportedMemoryTypes`\n" +
+            "   - Motherboard: `chipset`, `memoryType`, `formFactor`\n" + // 'socket' is NOT a valid filter for Motherboard.
+            "   - GPU: `pcieVersion`\n" +
+            "   - RAM: `memoryType`, `speedMhz`\n" +
+            "3. INVALID FILTER HANDLING: If a user asks for a filter that is not valid for a category (e.g., 'Motherboard with socket AM5'), you MUST NOT add the invalid filter. Politely inform the user and provide a search link without the invalid filter.\n" +
+            "4. Brand/Manufacturer: Use the `keyword` parameter for brand names (e.g., `keyword=ASUS`). NEVER use `filters[manufacturer]` or `filters[brand]`.\n" +
             "\n" +
-            "URL CONSTRUCTION RULES:\n" +
-            "1. Base URL: `/search`\n" +
-            "2. Category: Always include `category=NAME` if applicable (e.g., `category=CPU`).\n" +
-            "3. Dynamic Filters: Use format `filters%5BATTRIBUTE%5D=VALUE`. Encoded brackets `%5B` and `%5D` are required.\n" +
-            "   - CPU Memory: `filters%5BsupportedMemoryTypes%5D=DDR5`\n" +
-            "   - Other Memory (RAM, Board): `filters%5BmemoryType%5D=DDR5`\n" +
-            "   - Other Attributes: `filters%5Bsocket%5D=AM5`, `filters%5Bchipset%5D=B650`\n" +
-            "4. FORBIDDEN FILTERS: NEVER use `filters%5Bmanufacturer%5D` or `filters%5Bbrand%5D`. If a user asks for a brand (e.g., AMD, Intel), just link to the category without any brand filter.\n" +
-            "\n" +
-            "RESTRICTIONS:\n" +
-            "- DO NOT provide links to Admin pages (starts with /admin) or Seller pages (starts with /seller).\n" +
-            "- DO NOT provide links to Seller/Admin login or join pages.\n" +
+            "SITE NAVIGATION & INTENT MAPPING:\n" +
+            "- '비밀번호 변경', '회원정보 수정' -> `[[NAV | url=/mypage | label=마이페이지로 이동]]`\n" +
+            "- '장바구니' -> `[[NAV | url=/cart | label=장바구니 보기]]`\n" +
+            "- '주문 기록' -> `[[NAV | url=/mypage | label=주문 기록 보기]]`\n" +
             "\n" +
             "COMPATIBILITY RULES:\n" +
-            "1. If checking compatibility, append `&compatFilter=true`.\n" +
+            "1. For compatibility checks, add `compatFilter=true` to the SEARCH template.\n" +
             "2. If category is unspecified, suggest links for: Motherboard, CPU, GPU, RAM.\n" +
             "\n" +
+            "RESTRICTIONS:\n" +
+            "- DO NOT provide links to Admin or Seller pages.\n" +
+            "\n" +
             "EXAMPLES:\n" +
-            "- Go Home\n" +
-            "- Check Cart\n" +
-            "- [Browse CPUs](/search?category=CPU)\n" +
-            "- AMD CPUs\n" +
-            "- DDR5 CPUs\n" +
-            "- AM5 Motherboards\n" +
-            "- Compatible Boards\n" +
-            "- ASUS Motherboards\n" +
+            "- User: 'DDR5 CPU 보여줘' -> `[[SEARCH | category=CPU | filters[supportedMemoryTypes]=DDR5 | label=DDR5 CPU 목록]]`\n" +
+            "- User: '호환되는 보드 보여줘' -> `[[SEARCH | category=Motherboard | compatFilter=true | label=호환되는 메인보드 목록]]`\n" +
+            "- User: 'AM5 소켓을 쓰는 호환 보드' (Incorrect) -> '메인보드는 소켓으로 필터링할 수 없습니다. 대신 호환되는 모든 메인보드를 찾아드릴게요. [[SEARCH | category=Motherboard | compatFilter=true | label=호환되는 메인보드 목록]]'\n" +
              "\n" +  
             "Response language: Korean.\n" +
             "Current User Question: ";
@@ -134,7 +131,9 @@ public class GeminiController {
                     List<Map<String, Object>> parts = (List<Map<String, Object>>) contentMap.get("parts");
                     String answer = (String) parts.get(0).get("text");
 
-                    return ResponseEntity.ok(new ChatResponse(answer));
+                    // 템플릿([[SEARCH | ...]])을 실제 URL로 변환
+                    String processedAnswer = processGeminiResponse(answer);
+                    return ResponseEntity.ok(new ChatResponse(processedAnswer));
                 }
             }
 
@@ -147,5 +146,63 @@ public class GeminiController {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Internal Server Error");
         }
+    }
+
+    /**
+     * Gemini가 생성한 템플릿 태그를 실제 Markdown 링크로 변환합니다.
+     * 예: [[SEARCH | category=CPU | label=CPU보기]] -> CPU보기
+     */
+    private String processGeminiResponse(String text) {
+        // 정규식: [[TYPE | ... ]] 패턴 찾기 (SEARCH 또는 NAV)
+        Pattern pattern = Pattern.compile("\\[\\[(SEARCH|NAV)\\s*\\|\\s*(.*?)\\]\\]");
+        Matcher matcher = pattern.matcher(text);
+
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String type = matcher.group(1);
+            String paramsPart = matcher.group(2);
+            String[] params = paramsPart.split("\\|");
+            
+            String label = "검색 결과 보기"; // 기본 라벨
+            String finalUrl = "#";
+
+            if ("SEARCH".equals(type)) {
+                List<String> queryParams = new ArrayList<>();
+                for (String param : params) {
+                    String[] kv = param.split("=", 2);
+                    if (kv.length == 2) {
+                        String key = kv[0].trim();
+                        String value = kv[1].trim();
+                        if ("label".equalsIgnoreCase(key)) {
+                            label = value;
+                        } else {
+                            try {
+                                String encodedKey = URLEncoder.encode(key, StandardCharsets.UTF_8.toString());
+                                String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+                                queryParams.add(encodedKey + "=" + encodedValue);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+                finalUrl = "/search?" + String.join("&", queryParams);
+            } else if ("NAV".equals(type)) {
+                for (String param : params) {
+                    String[] kv = param.split("=", 2);
+                    if (kv.length == 2) {
+                        String key = kv[0].trim();
+                        String value = kv[1].trim();
+                        if ("label".equalsIgnoreCase(key)) label = value;
+                        else if ("url".equalsIgnoreCase(key)) finalUrl = value;
+                    }
+                }
+            }
+            
+            // Markdown 링크 생성: Label
+            matcher.appendReplacement(sb, Matcher.quoteReplacement("[" + label + "](" + finalUrl + ")"));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
     }
 }
