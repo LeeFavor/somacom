@@ -22,6 +22,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
     // 동일한 기반 모델을 가진 상품 목록 조회 (가격 비교용)
     // List<Product> findByBaseSpec_Id(String baseSpecId); // 이 메소드 대신 아래 페치 조인 사용
 
+    // 배치 작업용: BaseSpec ID로 상품 목록 조회 (Fetch Join 없음)
+    List<Product> findByBaseSpecId(String baseSpecId);
+
     // 페치 조인을 사용하여 Product와 연관된 Seller(User), SellerInfo를 함께 조회
     @Query("SELECT p FROM Product p JOIN FETCH p.seller s LEFT JOIN FETCH s.sellerInfo WHERE p.baseSpec.id = :baseSpecId AND p.isVisible = true")
     List<Product> findWithSellerByBaseSpecId(@Param("baseSpecId") String baseSpecId);

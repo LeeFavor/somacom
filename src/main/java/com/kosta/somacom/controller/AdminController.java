@@ -33,6 +33,7 @@ import com.kosta.somacom.order.dto.OrderListResponseDto;
 import com.kosta.somacom.service.AdminService;
 import com.kosta.somacom.service.LogService;
 import com.kosta.somacom.service.OrderService;
+import com.kosta.somacom.service.ProductImageBatchService;
 import com.kosta.somacom.service.RecommendationService;
 
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,7 @@ public class AdminController {
     private final Job popularityBatchJob;
     private final OrderService orderService;
     private final LogService logService;
+    private final ProductImageBatchService productImageBatchService;
 
     @GetMapping("/seller-requests")
     public ResponseEntity<Page<SellerRequestDto>> getSellerRequests(Pageable pageable) {
@@ -175,6 +177,15 @@ public class AdminController {
             log.error("Failed to run popularity batch job manually", e);
             return ResponseEntity.internalServerError().body("Failed to start popularity batch job: " + e.getMessage());
         }
+    }
+
+    /**
+     * [신규] 제품 이미지 자동 업데이트 배치를 수동으로 실행합니다.
+     */
+    @PostMapping("/batch/product-images")
+    public ResponseEntity<String> runProductImageBatch() {
+        productImageBatchService.runBatchUpdate();
+        return ResponseEntity.ok("Product image update batch job has been triggered asynchronously.");
     }
     
     /**
