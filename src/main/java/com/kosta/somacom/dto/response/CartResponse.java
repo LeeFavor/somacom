@@ -25,7 +25,13 @@ public class CartResponse {
         this.totalPrice = items.stream()
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        this.partA = compatibilityResult.getPartA().getName();
-        this.partB = compatibilityResult.getPartB().getName();
+
+        BaseSpec partA = compatibilityResult.getPartA();
+        BaseSpec partB = compatibilityResult.getPartB();
+        
+        if(partA != null) this.partA = partA.getName();
+        else this.partA = null;
+        if(partB != null) this.partB = partB.getName();
+        else this.partB = null;
     }
 }

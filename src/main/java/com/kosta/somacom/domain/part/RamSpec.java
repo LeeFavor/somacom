@@ -18,11 +18,58 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "ram_specs")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RamSpec {
 
-    @Id
+    public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMemoryType() {
+		return memoryType;
+	}
+
+	public void setMemoryType(String memoryType) {
+		this.memoryType = memoryType;
+	}
+
+	public int getSpeedMhz() {
+		return speedMhz;
+	}
+
+	public void setSpeedMhz(int speedMhz) {
+		this.speedMhz = speedMhz;
+	}
+
+	public int getCapacityGb() {
+		return capacityGb;
+	}
+
+	public void setCapacityGb(int capacityGb) {
+		this.capacityGb = capacityGb;
+	}
+
+	public int getKitQuantity() {
+		return kitQuantity;
+	}
+
+	public void setKitQuantity(int kitQuantity) {
+		this.kitQuantity = kitQuantity;
+	}
+
+	public Integer getHeightMm() {
+		return heightMm;
+	}
+
+	public void setHeightMm(Integer heightMm) {
+		this.heightMm = heightMm;
+	}
+
+	@Id
     @Column(name = "base_spec_id")
     private String id;
 

@@ -20,11 +20,42 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "cpu_specs")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CpuSpec {
 
-    @Id
+    public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getSocket() {
+		return socket;
+	}
+
+	public void setSocket(String socket) {
+		this.socket = socket;
+	}
+
+	public String getSupportedMemoryTypes() {
+		return supportedMemoryTypes;
+	}
+
+	public void setSupportedMemoryTypes(String supportedMemoryTypes) {
+		this.supportedMemoryTypes = supportedMemoryTypes;
+	}
+
+	public boolean isHasIgpu() {
+		return hasIgpu;
+	}
+
+	public void setHasIgpu(boolean hasIgpu) {
+		this.hasIgpu = hasIgpu;
+	}
+
+	@Id
     @Column(name = "base_spec_id")
     private String id;
 

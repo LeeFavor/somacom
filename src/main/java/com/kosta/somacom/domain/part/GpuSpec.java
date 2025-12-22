@@ -18,11 +18,42 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "gpu_specs")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GpuSpec {
 
-    @Id
+    public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public BigDecimal getPcieVersion() {
+		return pcieVersion;
+	}
+
+	public void setPcieVersion(BigDecimal pcieVersion) {
+		this.pcieVersion = pcieVersion;
+	}
+
+	public Integer getPcieLanes() {
+		return pcieLanes;
+	}
+
+	public void setPcieLanes(Integer pcieLanes) {
+		this.pcieLanes = pcieLanes;
+	}
+
+	public Integer getLengthMm() {
+		return lengthMm;
+	}
+
+	public void setLengthMm(Integer lengthMm) {
+		this.lengthMm = lengthMm;
+	}
+
+	@Id
     @Column(name = "base_spec_id")
     private String id;
 
