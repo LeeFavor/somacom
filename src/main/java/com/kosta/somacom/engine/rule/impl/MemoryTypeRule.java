@@ -31,7 +31,7 @@ public class MemoryTypeRule implements CompatibilityRule {
             boolean isSupported = Arrays.stream(cpu.getSupportedMemoryTypes().split(","))
                     .anyMatch(type -> type.equalsIgnoreCase(mb.getMemoryType()));
 
-            return isSupported ? CompatibilityResult.success() : new CompatibilityResult(CompatibilityStatus.FAIL, "CPU_MB_MEMORY_MISMATCH");
+            return isSupported ? CompatibilityResult.success() : new CompatibilityResult(CompatibilityStatus.FAIL, "CPU와 메인보드의 메모리 타입이 일치하지 않습니다.", partA, partB);
         }
 
         // RAM <-> Motherboard
@@ -40,7 +40,7 @@ public class MemoryTypeRule implements CompatibilityRule {
             RamSpec ram = (partA.getCategory() == PartCategory.RAM) ? partA.getRamSpec() : partB.getRamSpec();
             MotherboardSpec mb = (partA.getCategory() == PartCategory.Motherboard) ? partA.getMotherboardSpec() : partB.getMotherboardSpec();
 
-            return ram.getMemoryType().equalsIgnoreCase(mb.getMemoryType()) ? CompatibilityResult.success() : new CompatibilityResult(CompatibilityStatus.FAIL, "RAM_MB_MEMORY_MISMATCH");
+            return ram.getMemoryType().equalsIgnoreCase(mb.getMemoryType()) ? CompatibilityResult.success() : new CompatibilityResult(CompatibilityStatus.FAIL, "RAM과 메인보드의 메모리 타입이 일치하지 않습니다.", partA, partB);
         }
 
         // [추가] RAM <-> CPU
@@ -54,7 +54,7 @@ public class MemoryTypeRule implements CompatibilityRule {
             }
 
             boolean isSupported = Arrays.stream(cpu.getSupportedMemoryTypes().split(",")).anyMatch(type -> type.equalsIgnoreCase(ram.getMemoryType()));
-            return isSupported ? CompatibilityResult.success() : new CompatibilityResult(CompatibilityStatus.FAIL, "RAM_CPU_MEMORY_MISMATCH");
+            return isSupported ? CompatibilityResult.success() : new CompatibilityResult(CompatibilityStatus.FAIL, "RAM과 CPU의 메모리 지원 규격이 일치하지 않습니다.", partA, partB);
         }
 
         return CompatibilityResult.success();
