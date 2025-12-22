@@ -25,13 +25,13 @@ public class SocketRule implements CompatibilityRule {
         MotherboardSpec motherboard = (partA.getCategory() == PartCategory.Motherboard) ? partA.getMotherboardSpec() : partB.getMotherboardSpec();
 
         if (cpu == null || motherboard == null) {
-            return new CompatibilityResult(CompatibilityStatus.WARN, "SPEC_INFO_MISSING");
+            return new CompatibilityResult(CompatibilityStatus.WARN, "소켓 정보가 부족하여 호환성을 확인할 수 없습니다.", partA, partB);
         }
 
         if (cpu.getSocket().equalsIgnoreCase(motherboard.getSocket())) {
             return CompatibilityResult.success();
         } else {
-            return new CompatibilityResult(CompatibilityStatus.FAIL, "SOCKET_MISMATCH");
+            return new CompatibilityResult(CompatibilityStatus.FAIL, "CPU와 메인보드의 소켓이 일치하지 않습니다.", partA, partB);
         }
     }
 }

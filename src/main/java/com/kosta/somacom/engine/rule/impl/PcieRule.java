@@ -25,7 +25,7 @@ public class PcieRule implements CompatibilityRule {
 
         // 상세 스펙 정보가 없으면 검사 통과
         if (gpu == null || motherboard == null || motherboard.getPcieVersion() == null || motherboard.getPcieLanes() == null) {
-            return new CompatibilityResult(CompatibilityStatus.WARN, "PCIE_SPEC_INFO_MISSING");
+            return new CompatibilityResult(CompatibilityStatus.WARN, "PCIe 스펙 정보가 부족하여 호환성을 확인할 수 없습니다.", partA, partB);
         }
 
         // GPU의 PCIe 버전이 메인보드 슬롯 버전보다 높으면 호환 실패 (예: 5.0 GPU를 4.0 슬롯에 장착 불가 - 성능 저하가 아닌 물리적/인식 문제 가능성 고려)
@@ -36,7 +36,7 @@ public class PcieRule implements CompatibilityRule {
         if (versionCompatible && lanesCompatible) {
             return CompatibilityResult.success();
         } else {
-            return new CompatibilityResult(CompatibilityStatus.FAIL, "PCIE_MISMATCH");
+            return new CompatibilityResult(CompatibilityStatus.FAIL, "GPU의 PCIe 사양이 메인보드 슬롯보다 높아 호환되지 않거나 성능이 저하될 수 있습니다.", partA, partB);
         }
     }
 }

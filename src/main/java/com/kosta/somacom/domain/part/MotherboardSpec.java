@@ -19,11 +19,74 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "motherboard_specs")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MotherboardSpec {
 
-    @Id
+    public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getSocket() {
+		return socket;
+	}
+
+	public void setSocket(String socket) {
+		this.socket = socket;
+	}
+
+	public String getChipset() {
+		return chipset;
+	}
+
+	public void setChipset(String chipset) {
+		this.chipset = chipset;
+	}
+
+	public String getMemoryType() {
+		return memoryType;
+	}
+
+	public void setMemoryType(String memoryType) {
+		this.memoryType = memoryType;
+	}
+
+	public int getMemorySlots() {
+		return memorySlots;
+	}
+
+	public void setMemorySlots(int memorySlots) {
+		this.memorySlots = memorySlots;
+	}
+
+	public String getFormFactor() {
+		return formFactor;
+	}
+
+	public void setFormFactor(String formFactor) {
+		this.formFactor = formFactor;
+	}
+
+	public BigDecimal getPcieVersion() {
+		return pcieVersion;
+	}
+
+	public void setPcieVersion(BigDecimal pcieVersion) {
+		this.pcieVersion = pcieVersion;
+	}
+
+	public Integer getPcieLanes() {
+		return pcieLanes;
+	}
+
+	public void setPcieLanes(Integer pcieLanes) {
+		this.pcieLanes = pcieLanes;
+	}
+
+	@Id
     @Column(name = "base_spec_id")
     private String id;
 

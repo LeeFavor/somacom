@@ -15,7 +15,18 @@ public class ProductSimpleResponse {
     private String companyName; // 판매자 상호명
     private BigDecimal price;
     private String imageUrl;
+    private String baseSpecName;
 
+    @QueryProjection
+    public ProductSimpleResponse(Long productId, String productName, String companyName, BigDecimal price, String imageUrl, String baseSpecName) {
+        this.productId = productId;
+        this.productName = productName;
+        this.companyName = companyName;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.baseSpecName = baseSpecName;
+    }
+    
     @QueryProjection
     public ProductSimpleResponse(Long productId, String productName, String companyName, BigDecimal price, String imageUrl) {
         this.productId = productId;
@@ -23,6 +34,15 @@ public class ProductSimpleResponse {
         this.companyName = companyName;
         this.price = price;
         this.imageUrl = imageUrl;
+    }
+    
+    public ProductSimpleResponse(Product p, String baseSpecName) {
+        this.productId = p.getId();
+        this.productName = p.getName();
+        this.companyName = p.getSeller().getSellerInfo().getCompanyName();
+        this.price = p.getPrice();
+        this.imageUrl = p.getImage_url();
+        this.baseSpecName = baseSpecName;
     }
     
     public ProductSimpleResponse(Product p) {

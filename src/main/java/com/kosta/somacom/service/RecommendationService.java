@@ -329,25 +329,25 @@ public class RecommendationService {
         }
 
         // 4. 2차 시도(Fallback): 1차에서 대표 상품을 못찾았다면, 최상위 의도를 기준으로 "유사 부품" 추천
-        if (!topIntents.isEmpty()) {
-            log.warn("Could not find a 'next part' seed item. Falling back to highest intent.");
-            String highestIntent = topIntents.get(0);
-            String[] parts = highestIntent.split("_");
-            if (parts.length >= 2) {
-                String intentCategory = parts[0];
-
-                List<String> targetPartCategories = mapIntentToPartCategory(intentCategory);
-                if (!targetPartCategories.isEmpty()) {
-                    // Fallback에서는 첫 번째 매핑된 카테고리만 사용
-                    String targetPartCategory = targetPartCategories.get(0);
-                    Optional<BaseSpec> seed = findMatchingSeedItem(targetPartCategory, highestIntent);
-                    if (seed.isPresent()) {
-                        log.info("Fallback seed item found (Similar part recommendation for {}).", targetPartCategory);
-                        return seed;
-                    }
-                }
-            }
-        }
+//        if (!topIntents.isEmpty()) {
+//            log.warn("Could not find a 'next part' seed item. Falling back to highest intent.");
+//            String highestIntent = topIntents.get(0);
+//            String[] parts = highestIntent.split("_");
+//            if (parts.length >= 2) {
+//                String intentCategory = parts[0];
+//
+//                List<String> targetPartCategories = mapIntentToPartCategory(intentCategory);
+//                if (!targetPartCategories.isEmpty()) {
+//                    // Fallback에서는 첫 번째 매핑된 카테고리만 사용
+//                    String targetPartCategory = targetPartCategories.get(0);
+//                    Optional<BaseSpec> seed = findMatchingSeedItem(targetPartCategory, highestIntent);
+//                    if (seed.isPresent()) {
+//                        log.info("Fallback seed item found (Similar part recommendation for {}).", targetPartCategory);
+//                        return seed;
+//                    }
+//                }
+//            }
+//        }
 
         return Optional.empty(); // 적절한 대표 상품을 찾지 못함
     }
@@ -542,6 +542,7 @@ public class RecommendationService {
      * 추천된 상품 목록과 장바구니 아이템 간의 호환성을 검사하고, 그 결과에 따라 정렬합니다.
      */
     private List<RecommendationResponseDto> checkCompatibilityAndSort(List<Product> recommendedProducts, List<BaseSpec> itemsInCart) {
+    	
         if (itemsInCart.isEmpty()) {
             // 장바구니가 비어있으면 호환성 검사 없이 SUCCESS로 반환
             return recommendedProducts.stream()

@@ -303,6 +303,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         product.price,
                         product.image_url,
                         baseSpec.id,
+                        baseSpec.name,
                         popularitySum)
                 .from(product)
                 .join(product.baseSpec, baseSpec)
@@ -339,7 +340,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         tuple.get(product.name),
                         tuple.get(sellerInfo.companyName),
                         tuple.get(product.price),
-                        tuple.get(product.image_url)
+                        tuple.get(product.image_url),
+                        tuple.get(baseSpec.name)
                 ));
             }
             if (response.size() >= limit) {
