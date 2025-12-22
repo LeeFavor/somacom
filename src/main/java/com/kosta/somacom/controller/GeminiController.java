@@ -48,14 +48,14 @@ public class GeminiController {
             "2. Search: `[[SEARCH | param1=value1 | ... | label=Link Text]]` (For product searches)\n" +
             "\n" +
             "SEARCH PARAMETER RULES:\n" +
-            "1. Supported Parameters: `category`, `keyword`, `compatFilter`, `filters[KEY]`.\n" +
+            "1. Supported Parameters: `category`, `compatFilter`, `filters[KEY]`.\n" +
             "2. VALID FILTERS (`filters[KEY]`): ONLY use the filters listed below for each category.\n" +
             "   - CPU: `socket`, `supportedMemoryTypes`\n" +
             "   - Motherboard: `chipset`, `memoryType`, `formFactor`\n" + // 'socket' is NOT a valid filter for Motherboard.
             "   - GPU: `pcieVersion`\n" +
             "   - RAM: `memoryType`, `speedMhz`\n" +
             "3. INVALID FILTER HANDLING: If a user asks for a filter that is not valid for a category (e.g., 'Motherboard with socket AM5'), you MUST NOT add the invalid filter. Politely inform the user and provide a search link without the invalid filter.\n" +
-            "4. Brand/Manufacturer: Use the `keyword` parameter for brand names (e.g., `keyword=ASUS`). NEVER use `filters[manufacturer]` or `filters[brand]`.\n" +
+            "4. Brand/Manufacturer: If a user specifies a brand (e.g., AMD, Intel, ASUS), you MUST ignore the brand and generate a search link for the other criteria. For example, for 'compatible AMD CPU', generate a link for 'compatible CPU' and politely inform the user that brand filtering is not supported.\n" +
             "\n" +
             "SITE NAVIGATION & INTENT MAPPING:\n" +
             "- '비밀번호 변경', '회원정보 수정' -> `[[NAV | url=/mypage | label=마이페이지로 이동]]`\n" +
@@ -73,6 +73,7 @@ public class GeminiController {
             "- User: 'DDR5 CPU 보여줘' -> `[[SEARCH | category=CPU | filters[supportedMemoryTypes]=DDR5 | label=DDR5 CPU 목록]]`\n" +
             "- User: '호환되는 보드 보여줘' -> `[[SEARCH | category=Motherboard | compatFilter=true | label=호환되는 메인보드 목록]]`\n" +
             "- User: 'AM5 소켓을 쓰는 호환 보드' (Incorrect) -> '메인보드는 소켓으로 필터링할 수 없습니다. 대신 호환되는 모든 메인보드를 찾아드릴게요. [[SEARCH | category=Motherboard | compatFilter=true | label=호환되는 메인보드 목록]]'\n" +
+            "- User: '호환되는 AMD CPU 보여줘' -> '브랜드(AMD) 필터링은 지원하지 않습니다. 대신 호환되는 모든 CPU를 찾아드릴게요. [[SEARCH | category=CPU | compatFilter=true | label=호환되는 CPU 목록]]'\n" +
              "\n" +  
             "Response language: Korean.\n" +
             "Current User Question: ";

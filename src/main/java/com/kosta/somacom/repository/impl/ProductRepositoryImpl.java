@@ -129,10 +129,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
 
     // P-203: 호환성 필터
-    private BooleanBuilder compatibilityFilter(boolean isCompatFilter, Long userId) {
+    private BooleanBuilder compatibilityFilter(boolean isCompatFilter, Long userId, String category) {
         if (!isCompatFilter || userId == null) {
-
-        	System.out.println("111111111111111필터링 실패");
             return new BooleanBuilder(); // 빈 Builder 반환
         }
 
@@ -142,6 +140,18 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         }
 
         BooleanBuilder compatibilityBuilder = new BooleanBuilder();
+
+        // [신규] 카테고리가 지정되지 않은 경우, 장바구니 아이템을 기반으로 추천 카테고리 필터링
+        if (!StringUtils.hasText(category)) {
+            Set<PartCategory> targetCategories = new HashSet<>();
+            for (BaseSpec item : itemsInCart) {
+                targetCategories.addAll(getCompatibleCategories(item.getCategory()));
+            }
+
+            if (!targetCategories.isEmpty()) {
+                compatibilityBuilder.and(baseSpec.category.in(targetCategories));
+            }
+        }
 
         // 장바구니의 모든 아이템과 호환되어야 함
         for (BaseSpec itemInCart : itemsInCart) {
@@ -162,6 +172,24 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         }
 
         return compatibilityBuilder;
+    }
+
+    private Set<PartCategory> getCompatibleCategories(PartCategory category) {
+        Set<PartCategory> targets = new HashSet<>();
+        if (category == PartCategory.CPU) {
+            targets.add(PartCategory.Motherboard);
+            targets.add(PartCategory.RAM);
+        } else if (category == PartCategory.Motherboard) {
+            targets.add(PartCategory.CPU);
+            targets.add(PartCategory.RAM);
+            targets.add(PartCategory.GPU);
+        } else if (category == PartCategory.RAM) {
+            targets.add(PartCategory.CPU);
+            targets.add(PartCategory.Motherboard);
+        } else if (category == PartCategory.GPU) {
+            targets.add(PartCategory.Motherboard);
+        }
+        return targets;
     }
 
     // 상세 필터들을 동적으로 조합하는 메소드
@@ -259,7 +287,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         product.isVisible.isTrue(),
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
-                        compatibilityFilter(condition.isCompatFilter(), condition.getUserId()), // 리팩토링된 호환성 필터 적용
+                        compatibilityFilter(condition.isCompatFilter(), condition.getUserId(), condition.getCategory()), // 리팩토링된 호환성 필터 적용
                         dynamicFilters(condition.getFilters(), condition.getCategory())
                 )
                 .offset(pageable.getOffset())
@@ -280,7 +308,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         product.isVisible.isTrue(),
                         keywordContains(condition.getKeyword()),
                         categoryEq(condition.getCategory()),
-                        compatibilityFilter(condition.isCompatFilter(), condition.getUserId()),
+                        compatibilityFilter(condition.isCompatFilter(), condition.getUserId(), condition.getCategory()),
                         dynamicFilters(condition.getFilters(), condition.getCategory())
                 );
 
