@@ -29,6 +29,12 @@ public class FileService {
             throw new IllegalArgumentException("업로드할 파일을 선택해주세요.");
         }
 
+        // [추가] MIME 타입 체크: 이미지가 아닌 파일을 빠르게 거절 (1차 필터)
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("이미지 파일만 업로드할 수 있습니다.");
+        }
+
         // [수정] 이미지 리사이징: 높이 400px 고정 (비율 유지)
         BufferedImage originalImage = ImageIO.read(file.getInputStream());
         if (originalImage == null) {
