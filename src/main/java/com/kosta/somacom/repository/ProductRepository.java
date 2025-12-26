@@ -19,6 +19,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
     // S-202: 판매자 상품 목록 조회 (is_visible = true 조건 추가)
     Page<Product> findBySellerIdAndIsVisibleTrue(Long sellerId, Pageable pageable);
     
+    // 판매자 ID로 모든 상품 조회 (상태 변경 시 사용)
+    List<Product> findBySellerId(Long sellerId);
+
     // 동일한 기반 모델을 가진 상품 목록 조회 (가격 비교용)
     // List<Product> findByBaseSpec_Id(String baseSpecId); // 이 메소드 대신 아래 페치 조인 사용
 
