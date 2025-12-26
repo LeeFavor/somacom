@@ -155,6 +155,9 @@ public class ProductImageBatchService {
             String query = baseSpec.getName() + " official product image white background -site:thepcwholesale.com";
             List<String> imageUrls = googleImageSearchService.searchImages(query, 20);
 
+            // [수정] 중복된 이미지 URL 제거 (동일한 이미지가 다른 파일명으로 저장되는 것 방지)
+            imageUrls = imageUrls.stream().distinct().collect(Collectors.toList());
+
             List<String> savedFileNames = new ArrayList<>();
             int downloadIndex = 0;
 
