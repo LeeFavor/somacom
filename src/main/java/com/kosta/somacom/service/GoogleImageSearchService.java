@@ -72,4 +72,51 @@ public class GoogleImageSearchService {
             return List.of();
         }
     }
+
+    /**
+     * [신규] 지정된 개수만큼 이미지를 검색합니다. (10개 이상 검색 가능)
+     * @param query 검색어
+     * @param totalCount 가져올 이미지 최대 개수
+     * @return 이미지 URL 리스트
+     */
+    public List<String> searchImages(String query, int totalCount) {
+        List<String> allLinks = new ArrayList<>();
+        int start = 1; // Google API는 1-based index 사용
+
+        while (allLinks.size() < totalCount) {
+            int num = Math.min(10, totalCount - allLinks.size()); // 한 번에 최대 10개
+            try {
+                URI uri = UriComponentsBuilder.fromHttpUrl(GOOGLE_SEARCH_URL)
+                        .queryParam("key", apiKey)
+                        .queryParam("cx", cx)
+                        .queryParam("q", query)
+                        .queryParam("searchType", "image")
+                        .queryParam("num", num)
+                        .queryParam("start", start)
+                        .queryParam("fileType", "jpg")
+                        .build()
+                        .toUri();
+
+                ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
+                if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                    break;
+                }
+
+                JsonNode root = objectMapper.readTree(response.getBody());
+                JsonNode items = root.path("items");
+                if (items.isMissingNode() || items.size() == 0) {
+                    break;
+                }
+
+                for (JsonNode item : items) {
+                    allLinks.add(item.path("link").asText());
+                }
+                start += items.size();
+            } catch (Exception e) {
+                log.error("Error searching images with count for query: {}", query, e);
+                break;
+            }
+        }
+        return allLinks;
+    }
 }

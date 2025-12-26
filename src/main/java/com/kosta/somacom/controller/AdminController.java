@@ -187,6 +187,15 @@ public class AdminController {
         productImageBatchService.runBatchUpdate();
         return ResponseEntity.ok("Product image update batch job has been triggered asynchronously.");
     }
+
+    /**
+     * [신규] 제품 이미지 다양화 배치를 수동으로 실행합니다. (모델별 20개 수집 후 분산 배정)
+     */
+    @PostMapping("/batch/product-images/diverse")
+    public ResponseEntity<String> runDiverseProductImageBatch() {
+        productImageBatchService.runDiverseImageBatchUpdate();
+        return ResponseEntity.ok("Diverse product image update batch job has been triggered asynchronously.");
+    }
     
     /**
      * 시스템 로그를 조회하는 API
