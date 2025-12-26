@@ -132,4 +132,67 @@ public class ProductImageBatchService {
         log.info("Batch Job Finished. Processed BaseSpecs: {}, Updated Groups: {}, Failed Groups: {}, Skipped Groups: {}, API Calls: {}", 
                 baseSpecs.size(), successCount, failCount, skipCount, apiCallCount);
     }
+
+    /**
+     * [신규] 각 BaseSpec별로 20개의 다양한 이미지를 수집하여 Product들에 분산 배정합니다.
+     * 이미지가 깨지거나 다운로드 실패 시, 성공한 이미지들만으로 순환 배정합니다.
+     */
+    @Async
+    public void runDiverseImageBatchUpdate() {
+        log.info("Starting Diverse Product Image Update Batch Job...");
+
+        List<BaseSpec> baseSpecs = baseSpecRepository.findAll();
+        int processedCount = 0;
+
+        for (BaseSpec baseSpec : baseSpecs) {
+            List<Product> products = productRepository.findByBaseSpecId(baseSpec.getId());
+            if (products.isEmpty()) {
+                continue;
+            }
+
+            // 1. 20개 이미지 검색
+            String query = baseSpec.getName() + " official product image white background -site:thepcwholesale.com";
+            List<String> imageUrls = googleImageSearchService.searchImages(query, 20);
+
+            List<String> savedFileNames = new ArrayList<>();
+            int downloadIndex = 0;
+
+            // 2. 이미지 다운로드 및 저장 (파일명에 인덱스 추가하여 구분)
+            for (String imageUrl : imageUrls) {
+                // 파일명: product_{baseSpecId}_{index}.jpg (슬래시 제거 포함)
+                String safeBaseSpecId = baseSpec.getId().replace("/", "");
+                String newFileName = "product_" + safeBaseSpecId + "_" + downloadIndex + ".jpg";
+
+                if (imageDownloadService.downloadAndSave(imageUrl, newFileName)) {
+                    savedFileNames.add(newFileName);
+                    downloadIndex++;
+                }
+            }
+
+            // 3. Product에 이미지 배정 (Round-Robin 방식)
+            if (!savedFileNames.isEmpty()) {
+                int assignIndex = 0;
+                for (Product product : products) {
+                    // 성공한 이미지 리스트를 순환하며 배정
+                    String targetImage = savedFileNames.get(assignIndex % savedFileNames.size());
+                    product.updateImageUrl(targetImage);
+                    assignIndex++;
+                }
+                productRepository.saveAll(products);
+                processedCount++;
+            } else {
+                log.warn("No valid images downloaded for BaseSpec: {}. Keeping existing images.", baseSpec.getId());
+                // 20개 모두 실패 시 업데이트하지 않음 (기존 유지)
+            }
+
+            // API Rate Limit 조절 (너무 빠른 요청 방지)
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        log.info("Diverse Batch Job Finished. Processed BaseSpecs: {}", processedCount);
+    }
 }
