@@ -2,6 +2,7 @@ package com.kosta.somacom.service;
 
 import com.kosta.somacom.admin.dto.SellerRequestDto;
 import com.kosta.somacom.admin.dto.UserManagementResponse;
+import com.kosta.somacom.domain.product.Product;
 import com.kosta.somacom.domain.request.BaseSpecRequest;
 import com.kosta.somacom.domain.request.BaseSpecRequestStatus;
 import com.kosta.somacom.domain.user.User;
@@ -10,6 +11,7 @@ import com.kosta.somacom.domain.user.UserStatus;
 import com.kosta.somacom.dto.request.BaseSpecRequestProcessDto;
 import com.kosta.somacom.dto.response.BaseSpecRequestResponseDto;
 import com.kosta.somacom.repository.BaseSpecRequestRepository;
+import com.kosta.somacom.repository.ProductRepository;
 import com.kosta.somacom.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,7 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final BaseSpecRequestRepository baseSpecRequestRepository;
+    private final ProductRepository productRepository;
 
     /**
      * A-203: PENDING 상태의 모델 등록 요청 목록 조회
@@ -110,6 +113,14 @@ public class AdminService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
         user.updateStatus(status);
+
+        // [신규] 판매자가 비활성화(DEACTIVATED)되면 해당 판매자의 모든 상품을 숨김 처리
+        if (status == UserStatus.DEACTIVATED && user.getRole() == UserRole.SELLER) {
+            List<Product> products = productRepository.findBySellerId(userId);
+            for (Product product : products) {
+                product.softDelete();
+            }
+        }
     }
     
     public Long findUsersCounts() {
