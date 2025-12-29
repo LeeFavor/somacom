@@ -6,6 +6,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ public class BatchScheduler {
     private final Job popularityBatchJob;
 
     // 매일 새벽 3시에 실행
+    @Async
     @Scheduled(cron = "0 0 3 * * ?")
     public void runCompatibilityJob() {
         log.info("Starting scheduled compatibility batch job...");
@@ -33,6 +35,7 @@ public class BatchScheduler {
     }
     
  // 매일 새벽 4시에 실행
+    @Async
     @Scheduled(cron = "0 0 4 * * ?")
     public void runPopularityJob() {
         log.info("Starting scheduled popularity batch job...");
