@@ -201,10 +201,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         }
 
         // --- CPU 상세 필터 ---
-        if (StringUtils.hasText(filters.get("socket"))) {
-            builder.and(baseSpec.category.eq(PartCategory.CPU)); // 카테고리 강제
-            builder.and(cpuSpec.socket.equalsIgnoreCase(filters.get("socket")));
-        }
         if (StringUtils.hasText(filters.get("hasIgpu"))) {
             builder.and(baseSpec.category.eq(PartCategory.CPU)); // 카테고리 강제
             builder.and(cpuSpec.hasIgpu.eq(Boolean.valueOf(filters.get("hasIgpu"))));
@@ -223,10 +219,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
             builder.and(baseSpec.category.eq(PartCategory.Motherboard)); // 카테고리 강제
             builder.and(motherboardSpec.formFactor.equalsIgnoreCase(filters.get("formFactor")));
         }
-        if (StringUtils.hasText(filters.get("socket"))) {
-            builder.and(baseSpec.category.eq(PartCategory.Motherboard)); // 카테고리 강제
-            builder.and(motherboardSpec.socket.equalsIgnoreCase(filters.get("socket")));
-        }
 
         // --- RAM 상세 필터 ---
         if (StringUtils.hasText(filters.get("speedMhz"))) {
@@ -243,6 +235,23 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
             builder.and(baseSpec.category.eq(PartCategory.GPU)); // 카테고리 강제
             // pcieVersion 필드는 BigDecimal 타입이므로, new BigDecimal()로 변환해야 합니다.
             builder.and(gpuSpec.pcieVersion.eq(new java.math.BigDecimal(filters.get("pcieVersion"))));
+        }
+
+        // --- Socket 필터 (CPU, Motherboard 공통) ---
+        if (StringUtils.hasText(filters.get("socket"))) {
+            String socket = filters.get("socket");
+            if ("CPU".equalsIgnoreCase(searchCategory)) {
+                builder.and(baseSpec.category.eq(PartCategory.CPU));
+                builder.and(cpuSpec.socket.equalsIgnoreCase(socket));
+            } else if ("Motherboard".equalsIgnoreCase(searchCategory)) {
+                builder.and(baseSpec.category.eq(PartCategory.Motherboard));
+                builder.and(motherboardSpec.socket.equalsIgnoreCase(socket));
+            } else {
+                builder.and(
+                        (baseSpec.category.eq(PartCategory.CPU).and(cpuSpec.socket.equalsIgnoreCase(socket)))
+                                .or(baseSpec.category.eq(PartCategory.Motherboard).and(motherboardSpec.socket.equalsIgnoreCase(socket)))
+                );
+            }
         }
 
         // --- 공통 필터 (여러 부품에 걸쳐 있을 수 있음) ---
