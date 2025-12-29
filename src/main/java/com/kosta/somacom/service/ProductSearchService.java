@@ -87,8 +87,10 @@ public class ProductSearchService {
                 );
             case Motherboard:
                 return Map.of(
+                        "socket", baseSpecRepository.findDistinctMotherboardSockets(),
                         "chipset", baseSpecRepository.findDistinctMotherboardChipsets(),
-                        "memoryType", baseSpecRepository.findDistinctMotherboardMemoryTypes()
+                        "memoryType", baseSpecRepository.findDistinctMotherboardMemoryTypes(),
+                        "formFactor", baseSpecRepository.findDistinctMotherboardFormFactors()
                 );
             case RAM:
                 return Map.of(

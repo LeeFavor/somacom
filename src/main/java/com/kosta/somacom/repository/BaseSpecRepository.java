@@ -56,4 +56,12 @@ public interface BaseSpecRepository extends JpaRepository<BaseSpec, String>, Bas
 
 	@Query("SELECT DISTINCT gs.pcieVersion FROM GpuSpec gs JOIN gs.baseSpec bs WHERE bs.isDeleted = false ORDER BY gs.pcieVersion")
 	Set<Double> findDistinctGpuPcieVersions();
+	
+	// Motherboard 관련 필터 옵션 조회
+    @Query("SELECT DISTINCT m.socket FROM MotherboardSpec m WHERE m.socket IS NOT NULL ORDER BY m.socket")
+    Set<String> findDistinctMotherboardSockets();
+
+    @Query("SELECT DISTINCT m.formFactor FROM MotherboardSpec m WHERE m.formFactor IS NOT NULL ORDER BY m.formFactor")
+    Set<String> findDistinctMotherboardFormFactors();
+
 }
