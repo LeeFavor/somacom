@@ -223,6 +223,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
             builder.and(baseSpec.category.eq(PartCategory.Motherboard)); // 카테고리 강제
             builder.and(motherboardSpec.formFactor.equalsIgnoreCase(filters.get("formFactor")));
         }
+        if (StringUtils.hasText(filters.get("socket"))) {
+            builder.and(baseSpec.category.eq(PartCategory.Motherboard)); // 카테고리 강제
+            builder.and(motherboardSpec.socket.equalsIgnoreCase(filters.get("socket")));
+        }
 
         // --- RAM 상세 필터 ---
         if (StringUtils.hasText(filters.get("speedMhz"))) {
